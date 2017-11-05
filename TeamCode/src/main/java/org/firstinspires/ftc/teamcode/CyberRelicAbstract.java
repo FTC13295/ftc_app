@@ -131,11 +131,12 @@ public abstract class CyberRelicAbstract extends OpMode {
         sGlyphR = hardwareMap.servo.get(GLYPH_RIGHT);
         sGem = hardwareMap.servo.get(Gem);
 
-        //sGLift = hardwareMap.crservo.get(Servo_GlyphLift);
+        //Initialize vex motor
+        sGLift = hardwareMap.crservo.get(Servo_GlyphLift);
 
         //sGLift.setPower(0);
 
-        sGLift2 = hardwareMap.servo.get(Servo_GlyphLift);
+        //sGLift2 = hardwareMap.servo.get(Servo_GlyphLift);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
@@ -217,15 +218,15 @@ public abstract class CyberRelicAbstract extends OpMode {
     public void gliftUp ()
     {
 
-        sGLift.setDirection(CRServo.Direction.FORWARD);
-        sGLift.setPower(1);
+        //sGLift.setDirection(CRServo.Direction.FORWARD);
+        sGLift.setPower(0.7);
 
     }
 
     public void gliftDown()
     {
-        sGLift.setDirection(CRServo.Direction.REVERSE);
-        sGLift.setPower(1);
+        //sGLift.setDirection(CRServo.Direction.REVERSE);
+        sGLift.setPower(-0.7);
 
     }
 

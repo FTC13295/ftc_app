@@ -42,7 +42,7 @@ package org.firstinspires.ftc.teamcode;
         import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
         import static android.os.SystemClock.sleep;
 
-@TeleOp(name = "DMRelicBot")
+@TeleOp(name = "DMRelicTest")
 public class CyberRelicTeleOp extends CyberRelicAbstract {
     public CyberRelicTeleOp() {
     }
@@ -232,19 +232,23 @@ public class CyberRelicTeleOp extends CyberRelicAbstract {
         }
 
         // Glyph Lift operations
- /*       if(gamepad2.dpad_down)
+       if(gamepad2.dpad_down)
         {
             gliftDown();
+            telemetry.addData("Glyph Lift ", "down");
         }
         else if (gamepad2.dpad_up)
         {
             gliftUp();
+            telemetry.addData("Glyph Lift ", "up");
         }
         else {
             gliftStop();
+           telemetry.addData("Glyph Lift ", "stop");
         }
-*/
+
         //testing.....
+        /*
         if(gamepad2.x)
         {
             sGLift2.setDirection(Servo.Direction.REVERSE);
@@ -257,7 +261,7 @@ public class CyberRelicTeleOp extends CyberRelicAbstract {
             sGLift2.setPosition(1);
             sleep(150);
         }
-
+*/
 
         //testing with dpad for position of servos
 /*
