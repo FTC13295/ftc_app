@@ -43,7 +43,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 import static android.os.SystemClock.sleep;
 
-@TeleOp(name = "DMRelicTO")
+@TeleOp(name = "DMRelicTeleOp")
 public class DMRelicTeleOp extends DMRelicAbstract {
     public DMRelicTeleOp() {
     }
@@ -209,21 +209,36 @@ public class DMRelicTeleOp extends DMRelicAbstract {
                     Gdown = false;
                 }
             }
-
+        //Test Color/Distance sensor
+        /*
+            if (Gdown) {
+                telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
+                telemetry.addData("Alpha", sensorColor.alpha());
+                telemetry.addData("Red  ", sensorColor.red());
+                telemetry.addData("Green", sensorColor.green());
+                telemetry.addData("Blue ", sensorColor.blue());
+                if (sensorColor.red() > sensorColor.blue()) {
+                    telemetry.addData("Gem ", "RED");
+                }
+                else {
+                    telemetry.addData("Gem ", "BLUE");
+                }
+            }
+         */
 
         //Controls for grabbing the glyph
         if (gamepad2.a) {
             if (Gopen) {
                 spos = 27/180;
-                sGlyphL.setPosition(0.16);
+                sGlyphL.setPosition(0.2);  //Used to be 0.16
                 spos=133/180;
-                sGlyphR.setPosition(0.72);
+                sGlyphR.setPosition(0.65);  //Used to be 0.72
                 sleep(150);
                 Gopen = false;
             }
             else {
                 spos=10/180;
-                sGlyphL.setPosition(0.09);
+                sGlyphL.setPosition(0.05);
                 spos=145/180;
                 sGlyphR.setPosition(0.83);
                 sleep(150);
@@ -233,19 +248,23 @@ public class DMRelicTeleOp extends DMRelicAbstract {
         }
 
         // Glyph Lift operations
- /*       if(gamepad2.dpad_down)
+        if(gamepad2.dpad_down)
         {
             gliftDown();
+            telemetry.addData("Glyph Lift ", "down");
         }
         else if (gamepad2.dpad_up)
         {
             gliftUp();
+            telemetry.addData("Glyph Lift ", "up");
         }
         else {
             gliftStop();
+            telemetry.addData("Glyph Lift ", "stop");
         }
-*/
+
         //testing Glyph Lift.....
+        /*
         if(gamepad2.x)
         {
             //sGLift2.setDirection(Servo.Direction.REVERSE);
@@ -261,7 +280,7 @@ public class DMRelicTeleOp extends DMRelicAbstract {
         else {
             sGLift2.setPosition(0.5);
         }
-
+        */
 
         //testing with dpad for position of servos
 /*

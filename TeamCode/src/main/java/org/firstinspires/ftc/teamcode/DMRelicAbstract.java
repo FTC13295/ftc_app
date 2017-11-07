@@ -7,7 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 public abstract class DMRelicAbstract extends OpMode {
 
@@ -18,7 +24,13 @@ public abstract class DMRelicAbstract extends OpMode {
             sGlyphL, sGlyphR, sGem, sGLift2;
 
     protected ColorSensor
-            placeHolderCs;
+            snColor;
+
+    protected DistanceSensor
+            snDistance;
+
+    protected VuforiaLocalizer
+            vuforia;
 
     BNO055IMU imu;
 
@@ -90,8 +102,9 @@ public abstract class DMRelicAbstract extends OpMode {
             GLYPH_LEFT = "sGlyphL",
             GLYPH_RIGHT = "sGlyphR",
             Gem = "sGem",
-            Servo_GlyphLift = "sGLift";
+            Servo_GlyphLift = "sGLift",
             //GLYPH_LIFT = "gLift";
+            Sensor_Color_Distance = "snCD";
 
 
 
@@ -129,25 +142,54 @@ public abstract class DMRelicAbstract extends OpMode {
         sGlyphR = hardwareMap.servo.get(GLYPH_RIGHT);
         sGem = hardwareMap.servo.get(Gem);
 
-        //sGLift = hardwareMap.crservo.get(Servo_GlyphLift);
+        sGLift = hardwareMap.crservo.get(Servo_GlyphLift);
 
         //sGLift.setPower(0);
 
-        sGLift2 = hardwareMap.servo.get(Servo_GlyphLift);
+        //sGLift2 = hardwareMap.servo.get(Servo_GlyphLift);
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        BNO055IMU.Parameters iparameters = new BNO055IMU.Parameters();
+        iparameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
+        imu.initialize(iparameters);
 
         imu = hardwareMap.get(BNO055IMU.class,"imu");
-        imu.initialize(parameters);
+        imu.initialize(iparameters);
 
         //servoGlyph1.setPosition(180);
         //servoGlyph2.setPosition(180);
 
         bDirection = true;
+
+        // get a reference to the color sensor.
+        //snColor = hardwareMap.get(ColorSensor.class, Sensor_Color_Distance);
+
+        // get a reference to the distance sensor that shares the same name.
+        //snDistance = hardwareMap.get(DistanceSensor.class, Sensor_Color_Distance);
+
+         /*
+         * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
+         * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
+         */
+
+         /*
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        VuforiaLocalizer.Parameters vparameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+
+        // OR...  Do Not Activate the Camera Monitor View, to save power
+        // VuforiaLocalizer.Parameters vparameters = new VuforiaLocalizer.Parameters();
+
+        vparameters.vuforiaLicenseKey = "AaRImwv/////AAAAGUjFLy92WE8UlmWKUSNcUNYpTptTmSX6QFQYt5PR6Far3tcNpmDCqgAxQDXowjTxfxTraIFnoWUUuHv5BfINsEyM88rx4xY6G8yuq/ys88jHy+m7sKtzKHYVlMSpjQaPUx47BOFSaC97HlAXFBZ0a/gs4IE7q6TQFxUJxhsl4UEaJp0T79um2REaDI9N1Zd33XrUJMfM52gWFgLqny4pAQcXEAaORowMlFYMx2GjlhWFTlo17bCwGnLr8cEHwFpthWYHgIL8Be/bsNR4kdHz6KajNuNzP7U0dj0xG/yxJSlzuRzxjgKwxlHHMl2yWXks6kON/AUVyQRF6bxDGWkW/Y+WsO0XlQlpypXeRbjscV/H";
+
+        vparameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        this.vuforia = ClassFactory.createVuforiaLocalizer(vparameters);
+
+        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
+        */
+
     } // End OpMode Initialization Method
 
     //------------------------------------------------------------------
@@ -214,16 +256,13 @@ public abstract class DMRelicAbstract extends OpMode {
 
     public void gliftUp ()
     {
-
-        sGLift.setDirection(CRServo.Direction.FORWARD);
-        sGLift.setPower(1);
+        sGLift.setPower(0.9);
 
     }
 
     public void gliftDown()
     {
-        sGLift.setDirection(CRServo.Direction.REVERSE);
-        sGLift.setPower(1);
+        sGLift.setPower(-0.9);
 
     }
 

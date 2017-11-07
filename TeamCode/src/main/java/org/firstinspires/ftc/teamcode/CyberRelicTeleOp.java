@@ -214,15 +214,15 @@ public class CyberRelicTeleOp extends CyberRelicAbstract {
         if (gamepad2.a) {
             if (Gopen) {
                 spos = 27/180;
-                sGlyphL.setPosition(0.16);
+                sGlyphL.setPosition(0.2); //used to be 0.16
                 spos=133/180;
-                sGlyphR.setPosition(0.72);
+                sGlyphR.setPosition(0.65); //used to be 0.72
                 sleep(150);
                 Gopen = false;
             }
             else {
                 spos=10/180;
-                sGlyphL.setPosition(0.09);
+                sGlyphL.setPosition(0.05);
                 spos=145/180;
                 sGlyphR.setPosition(0.83);
                 sleep(150);
