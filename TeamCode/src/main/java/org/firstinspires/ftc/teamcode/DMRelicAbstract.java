@@ -50,7 +50,8 @@ public abstract class DMRelicAbstract extends OpMode {
             fieldOrient,
             bDirection,
             grabbed,
-            Gdown, Gopen;
+            Gdown, Gopen,
+            leftCol, rightCol, centerCol;
 
     protected float
             targetDrDistInch,                   // Targets for motor moves in sequence (engineering units)
@@ -79,7 +80,9 @@ public abstract class DMRelicAbstract extends OpMode {
 
     // Establish Integer Constants
     final static int
-            PLACE_HOLDER = 0;
+            DECRIPT_ROTATE = 0,
+            GLYPH_ROTATE = 28,  // need to confirm # of encoder rotations for 90 deg
+            END_ROTATE = 0;    // final position - left facing cypher
     // Establish Float Constants
     final static float
             PLACE_HOLDER_FLOAT = 0f;
@@ -163,10 +166,10 @@ public abstract class DMRelicAbstract extends OpMode {
         bDirection = true;
 
         // get a reference to the color sensor.
-        //snColor = hardwareMap.get(ColorSensor.class, Sensor_Color_Distance);
+        snColor = hardwareMap.get(ColorSensor.class, Sensor_Color_Distance);
 
         // get a reference to the distance sensor that shares the same name.
-        //snDistance = hardwareMap.get(DistanceSensor.class, Sensor_Color_Distance);
+        snDistance = hardwareMap.get(DistanceSensor.class, Sensor_Color_Distance);
 
          /*
          * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
