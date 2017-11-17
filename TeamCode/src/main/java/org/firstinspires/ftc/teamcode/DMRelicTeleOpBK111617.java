@@ -34,7 +34,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -44,8 +43,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import static android.os.SystemClock.sleep;
 
 @TeleOp(name = "DMRelicTeleOp")
-public class DMRelicTeleOp extends DMRelicAbstract {
-    public DMRelicTeleOp() {
+public class DMRelicTeleOpBK111617 extends DMRelicAbstract {
+    public DMRelicTeleOpBK111617() {
     }
 
     @Override
@@ -60,14 +59,14 @@ public class DMRelicTeleOp extends DMRelicAbstract {
         motorLeftB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //fieldOrient = false;
-        //bDirection = true;
+        fieldOrient = false;
+        bDirection = true;
 
-        //BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        //parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
 
-        //imu = hardwareMap.get(BNO055IMU.class, "imu");
-        //imu.initialize(parameters);
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
         glyphL=0;
         glyphR=180;
         IncVal = 5;
@@ -96,7 +95,33 @@ public class DMRelicTeleOp extends DMRelicAbstract {
         strafeDrive = gamepad1.left_stick_x;
         rotationDrive = gamepad1.right_stick_x;
 
-       // Scale drive motor power for better control at low power
+        //Field-Oriented drive code
+
+            if (gamepad1.dpad_up) {
+                fieldOrient = true;
+            }
+            if (gamepad1.dpad_down) {
+                fieldOrient = false;
+            }
+            //Set doubles x,y,and gyro
+            x = strafeDrive;
+            y = velocityDrive;
+            gyro = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
+
+            //Field-Oriented drive Algorithm
+            if (fieldOrient) {
+                temp = y * Math.cos(gyro) + x * Math.sin(gyro);
+                x = -y * Math.sin(gyro) + x * Math.cos(gyro);
+                y = temp;
+            }
+
+            //Set floats strafeDrive and velocityDrive
+            strafeDrive = (float) x;
+            velocityDrive = (float) y;
+
+
+        // Scale drive motor power for better control at low power
         powerRightA = (float) scaleInput(powerRightA);
         powerRightB = (float) scaleInput(powerRightB);
         powerLeftA = (float) scaleInput(powerLeftA);
@@ -140,11 +165,6 @@ public class DMRelicTeleOp extends DMRelicAbstract {
 
         }
 
-        powerRightA = velocityDrive + rotationDrive + strafeDrive;
-        powerRightB = velocityDrive + rotationDrive - strafeDrive;
-        powerLeftA = velocityDrive - rotationDrive - strafeDrive;
-        powerLeftB = velocityDrive - rotationDrive + strafeDrive;
-        /*
         //Change direction that is front for the robot
 
             if (gamepad1.dpad_left) {
@@ -171,7 +191,7 @@ public class DMRelicTeleOp extends DMRelicAbstract {
                 powerLeftA = velocityDrive + rotationDrive + strafeDrive;
                 powerLeftB = velocityDrive + rotationDrive - strafeDrive;
             }
-*/
+
 
         //Control Gem arm
 

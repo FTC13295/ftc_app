@@ -40,6 +40,9 @@ public class DMRelicBlueFront extends DMRelicAbstract{
 
         super.loop();
 
+        telemetry.addData("Entering switch - seq = ", seqRobot);
+        telemetry.update();
+
         switch (seqRobot) {
 
             case 1: {
@@ -481,6 +484,7 @@ public class DMRelicBlueFront extends DMRelicAbstract{
 
 
         }
+        telemetry.update();
 
 
 

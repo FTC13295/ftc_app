@@ -47,8 +47,8 @@ public abstract class DMRelicAbstract extends OpMode {
             pulseCaseMoveDone,                          // Case move complete pulse
             red,
             blue,
-            fieldOrient,
-            bDirection,
+            //fieldOrient,
+            //bDirection,
             grabbed,
             Gdown, Gopen,
             leftCol, rightCol, centerCol;
@@ -151,25 +151,28 @@ public abstract class DMRelicAbstract extends OpMode {
 
         //sGLift2 = hardwareMap.servo.get(Servo_GlyphLift);
 
-        BNO055IMU.Parameters iparameters = new BNO055IMU.Parameters();
-        iparameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        //BNO055IMU.Parameters iparameters = new BNO055IMU.Parameters();
+        //iparameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(iparameters);
+        //imu = hardwareMap.get(BNO055IMU.class, "imu");
+        //imu.initialize(iparameters);
 
-        imu = hardwareMap.get(BNO055IMU.class,"imu");
-        imu.initialize(iparameters);
+        //imu = hardwareMap.get(BNO055IMU.class,"imu");
+        //imu.initialize(iparameters);
 
         //servoGlyph1.setPosition(180);
         //servoGlyph2.setPosition(180);
 
-        bDirection = true;
+        //bDirection = true;
 
         // get a reference to the color sensor.
         snColor = hardwareMap.get(ColorSensor.class, Sensor_Color_Distance);
 
         // get a reference to the distance sensor that shares the same name.
         snDistance = hardwareMap.get(DistanceSensor.class, Sensor_Color_Distance);
+
+        //set starting case #
+        seqRobot = 1;
 
          /*
          * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
