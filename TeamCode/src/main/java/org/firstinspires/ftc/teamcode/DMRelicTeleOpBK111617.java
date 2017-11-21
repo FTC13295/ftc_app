@@ -42,7 +42,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 import static android.os.SystemClock.sleep;
 
-@TeleOp(name = "DMRelicTeleOp")
+@TeleOp(name = "DMRelicTeleOpbk")
 public class DMRelicTeleOpBK111617 extends DMRelicAbstract {
     public DMRelicTeleOpBK111617() {
     }

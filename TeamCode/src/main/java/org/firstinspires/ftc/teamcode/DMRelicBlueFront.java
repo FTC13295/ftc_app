@@ -58,12 +58,26 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 motorLeftB.setTargetPosition(0);
                 motorRightA.setTargetPosition(0);
                 motorRightB.setTargetPosition(0);
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
                 seqRobot = 4;
                 break;
             }
 
             case 4: {
                 sGem.setPosition(0.8);
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
                 seqRobot+=2;
                 break;
             }
@@ -103,6 +117,16 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 targetPosRightB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
                 */
 
+                while (!gamepad1.b) {
+                    telemetry.addData("Alpha", snColor.alpha());
+                    telemetry.addData("Red  ", snColor.red());
+                    telemetry.addData("Green", snColor.green());
+                    telemetry.addData("Blue ", snColor.blue());
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
                 seqRobot+=2;
                 break;
             }
@@ -117,6 +141,13 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 motorLeftB.setPower(.1);
                 motorRightA.setPower(.1);
                 motorRightB.setPower(.1);
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
                 seqRobot+=2;
                 break;
             }
@@ -134,6 +165,13 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 motorLeftB.setTargetPosition(0);
                 motorRightA.setTargetPosition(0);
                 motorRightB.setTargetPosition(0);
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
                 seqRobot+=2;
                 break;
             }
@@ -147,6 +185,13 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 motorLeftB.setPower(.1);
                 motorRightA.setPower(.1);
                 motorRightB.setPower(.1);
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
                 seqRobot+=2;
                 break;
             }
@@ -236,6 +281,13 @@ public class DMRelicBlueFront extends DMRelicAbstract{
 
 
                     telemetry.update();
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
                 seqRobot+=2;
                 break;
             }
@@ -250,6 +302,13 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 motorLeftB.setPower(.1);
                 motorRightA.setPower(.1);
                 motorRightB.setPower(.1);
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
                 seqRobot+=2;
                 break;
             }
@@ -268,7 +327,14 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 motorLeftB.setTargetPosition(0);
                 motorRightA.setTargetPosition(0);
                 motorRightB.setTargetPosition(0);
-                seqRobot++;
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
+                seqRobot+=2;
                 break;
             }
             case 20:  // Move robot to correct column
@@ -307,6 +373,12 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                     targetPosRightB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
                 }
 
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
                 seqRobot+=2;
                 break;
             }
@@ -325,7 +397,14 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 motorLeftB.setTargetPosition(0);
                 motorRightA.setTargetPosition(0);
                 motorRightB.setTargetPosition(0);
-                seqRobot++;
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
+                seqRobot+=2;
                 break;
             }
 
@@ -339,6 +418,13 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 motorLeftB.setPower(.1);
                 motorRightA.setPower(.1);
                 motorRightB.setPower(.1);
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
                 seqRobot+=2;
                 break;
             }
@@ -357,6 +443,13 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 motorLeftB.setTargetPosition(0);
                 motorRightA.setTargetPosition(0);
                 motorRightB.setTargetPosition(0);
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
                 seqRobot+=2;
                 break;
             }
@@ -373,6 +466,11 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 targetPosRightA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
                 targetPosRightB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
 
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
 
                 seqRobot+=2;
                 break;
@@ -392,6 +490,13 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 motorLeftB.setTargetPosition(0);
                 motorRightA.setTargetPosition(0);
                 motorRightB.setTargetPosition(0);
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
                 seqRobot+=2;
                 break;
             }
@@ -400,6 +505,13 @@ public class DMRelicBlueFront extends DMRelicAbstract{
             {
                 sGlyphL.setPosition(0.05);
                 sGlyphR.setPosition(0.83);
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
                 seqRobot+=2;
                 break;
             }
@@ -415,6 +527,11 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 targetPosRightA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
                 targetPosRightB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
 
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
 
                 seqRobot+=2;
                 break;
@@ -434,7 +551,14 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 motorLeftB.setTargetPosition(0);
                 motorRightA.setTargetPosition(0);
                 motorRightB.setTargetPosition(0);
-                seqRobot++;
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
+                seqRobot+=2;
                 break;
             }
 
@@ -448,6 +572,13 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 motorLeftB.setPower(.1);
                 motorRightA.setPower(.1);
                 motorRightB.setPower(.1);
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
                 seqRobot+=2;
                 break;
             }
@@ -466,7 +597,14 @@ public class DMRelicBlueFront extends DMRelicAbstract{
                 motorLeftB.setTargetPosition(0);
                 motorRightA.setTargetPosition(0);
                 motorRightB.setTargetPosition(0);
-                seqRobot++;
+
+                while (!gamepad1.b) {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                }
+
+                seqRobot+=2;
                 break;
             }
 

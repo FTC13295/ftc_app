@@ -63,11 +63,11 @@ public class DMRelicTeleOp extends DMRelicAbstract {
         //fieldOrient = false;
         //bDirection = true;
 
-        //BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        //parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
 
-        //imu = hardwareMap.get(BNO055IMU.class, "imu");
-        //imu.initialize(parameters);
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
         glyphL=0;
         glyphR=180;
         IncVal = 5;
