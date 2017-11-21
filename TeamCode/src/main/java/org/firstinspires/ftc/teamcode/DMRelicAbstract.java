@@ -50,6 +50,7 @@ public abstract class DMRelicAbstract extends OpMode {
             fieldOrient,
             bDirection,
             grabbed,
+            debug,                      // Flag for debugging
             Gdown, Gopen,
             leftCol, rightCol, centerCol;
 
