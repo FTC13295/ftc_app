@@ -34,18 +34,13 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 import static android.os.SystemClock.sleep;
 
-@TeleOp(name = "DMRelicTeleOp")
-public class DMRelicTeleOp extends DMRelicAbstract {
-    public DMRelicTeleOp() {
+@TeleOp(name = "TestMecanumReg")
+public class TestMecanum extends DMRelicAbstract {
+    public TestMecanum() {
     }
 
     @Override
@@ -58,25 +53,14 @@ public class DMRelicTeleOp extends DMRelicAbstract {
         motorRightB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftA.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //fieldOrient = false;
-        //bDirection = true;
+        //BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        //parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        //imu = hardwareMap.get(BNO055IMU.class, "imu");
+        //imu.initialize(parameters);
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-        glyphL=0;
-        glyphR=180;
         IncVal = 5;
-        Gdown = false;
-        Gopen = true;
-
-        //init glyph position
-        sGlyphL.setPosition(0.1);
-        sGlyphR.setPosition(0.8);
 
     }
 
@@ -144,212 +128,12 @@ public class DMRelicTeleOp extends DMRelicAbstract {
         powerRightB = velocityDrive + rotationDrive - strafeDrive;
         powerLeftA = velocityDrive - rotationDrive - strafeDrive;
         powerLeftB = velocityDrive - rotationDrive + strafeDrive;
-        /*
-        //Change direction that is front for the robot
-
-            if (gamepad1.dpad_left) {
-                bDirection = true; // Arm is front.
-            }
-            if (gamepad1.dpad_right) {
-                bDirection = false; // Collection is front
-            }
-
-            if (fieldOrient) {
-                bDirection = true;
-            }
-
-            if (bDirection) // Glyph is front
-            {
-                powerRightA = velocityDrive + rotationDrive + strafeDrive;
-                powerRightB = velocityDrive + rotationDrive - strafeDrive;
-                powerLeftA = velocityDrive - rotationDrive - strafeDrive;
-                powerLeftB = velocityDrive - rotationDrive + strafeDrive;
-            } else  // Relic is front
-            {
-                powerRightA = velocityDrive - rotationDrive - strafeDrive;
-                powerRightB = velocityDrive - rotationDrive + strafeDrive;
-                powerLeftA = velocityDrive + rotationDrive + strafeDrive;
-                powerLeftB = velocityDrive + rotationDrive - strafeDrive;
-            }
-*/
-
-        //Control Gem arm
-
-            if (gamepad2.b) {
-                if (!Gdown) {
-                    spos=135/180;
-                    sGem.setPosition(0.8);
-                    sleep(150);
-                    Gdown = true;
-                }
-                else {
-                    sGem.setPosition(0);
-                    sleep(150);
-                    Gdown = false;
-                }
-            }
-        //Test Color/Distance sensor
-        /*
-            if (Gdown) {
-                telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
-                telemetry.addData("Alpha", sensorColor.alpha());
-                telemetry.addData("Red  ", sensorColor.red());
-                telemetry.addData("Green", sensorColor.green());
-                telemetry.addData("Blue ", sensorColor.blue());
-                if (sensorColor.red() > sensorColor.blue()) {
-                    telemetry.addData("Gem ", "RED");
-                }
-                else {
-                    telemetry.addData("Gem ", "BLUE");
-                }
-            }
-         */
-
-        //Controls for grabbing the glyph
-        if (gamepad2.a) {
-            if (Gopen) {
-                spos = 27/180;
-                sGlyphL.setPosition(0.2);  //Used to be 0.16
-                spos=133/180;
-                sGlyphR.setPosition(0.65);  //Used to be 0.72
-                sleep(150);
-                Gopen = false;
-            }
-            else {
-                spos=10/180;
-                sGlyphL.setPosition(0.05);
-                spos=145/180;
-                sGlyphR.setPosition(0.83);
-                sleep(150);
-                Gopen = true;
-            }
-
-        }
-
-        // Glyph Lift operations
-        if(gamepad2.dpad_down)
-        {
-            gliftDown();
-            telemetry.addData("Glyph Lift ", "down");
-        }
-        else if (gamepad2.dpad_up)
-        {
-            gliftUp();
-            telemetry.addData("Glyph Lift ", "up");
-        }
-        else {
-            gliftStop();
-            telemetry.addData("Glyph Lift ", "stop");
-        }
-
-        //testing Glyph Lift.....
-        /*
-        if(gamepad2.x)
-        {
-            //sGLift2.setDirection(Servo.Direction.REVERSE);
-            //sGLift2.setPosition(1);
-            sGLift2.setPosition(1.0);
-        }
-        else if(gamepad2.y)
-        {
-            //sGLift2.setDirection(Servo.Direction.FORWARD);
-            //sGLift2.setPosition(1);
-            sGLift2.setPosition(0.0);
-        }
-        else {
-            sGLift2.setPosition(0.5);
-        }
-        */
-
-        //testing with dpad for position of servos
-/*
-            if (gamepad2.dpad_right)
-            {
-                glyphL = glyphL + IncVal;
-                sGlyphL.setPosition(glyphL/180);
-                sleep(100);
-
-            }
-
-            if (gamepad2.dpad_left)
-            {
-                if (glyphL > 0)
-                {
-                    glyphL = glyphL - IncVal;
-                }
-                else
-                {
-                    glyphL = 0;
-                }
-                sGlyphL.setPosition(glyphL/180);
-                sleep(100);
-
-            }
-            if (gamepad2.dpad_up)
-            {
-                if (glyphR < 180)
-                {
-                    glyphR = glyphR + IncVal;
-                }
-                else
-                {
-                    glyphR = 180;
-                }
-                sGlyphR.setPosition(glyphR/180);
-                sleep(100);
-
-            }
-
-            if (gamepad2.dpad_down)
-            {
-                glyphR = glyphR - IncVal;
-                sGlyphR.setPosition(glyphR/180);
-                sleep(100);
-
-            }
-*/
-        /*
 
 
-            if (gamepad2.x && !grabbed)
-            {
-                grabbed = true;
-            }
-            if (gamepad2.x && grabbed)
-            {
-                grabbed = false;
-            }
-
-            if (grabbed) {
-                servoGlyph1.setPosition(90);
-                servoGlyph2.setPosition(90);
-            }
-            if (!grabbed) {
-                servoGlyph1.setPosition(45);
-                servoGlyph2.setPosition(45);
-            }
-
-*/
-
-        //Controls for lifting the glyph
-        /*
-
-            //Set controls for lift
-            throttleLift = gamepad2.left_stick_y;
-
-            // Clip and scale the throttle, and then set motor power.
-            throttleLift = Range.clip(throttleLift, -1, 1);
-            throttleLift = (float) scaleInput(throttleLift);
-            motorGlyphLift.setPower(throttleLift);
-
-            //Create dead-zone for lift control
-            if (gamepad2.left_stick_y <= 0.05 && gamepad2.left_stick_y >= -0.05) {
-                gamepad2.left_stick_y = 0;
-            }
-
-        */
-        telemetry.addData("Glyph Left: ",  glyphL);
-        telemetry.addData("Glyph Right: ",  glyphR);
+        telemetry.addData("RightA: ",  powerRightA);
+        telemetry.addData("RightB: ",  powerRightB);
+        telemetry.addData("LeftA: ",  powerLeftA);
+        telemetry.addData("LeftB: ",  powerLeftB);
         telemetry.update();
 // End OpMode Loop Method
     }

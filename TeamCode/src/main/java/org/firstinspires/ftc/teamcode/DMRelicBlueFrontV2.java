@@ -44,7 +44,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
 
         switch (seqRobot) {
 
-            case 1: {
+            case 1: {  //Reset encoder
                 motorLeftA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 motorRightA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 motorLeftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -61,31 +61,35 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                 if (debug) {
                     while (!gamepad1.b) {
                         telemetry.addData("In case ", seqRobot);
+                        telemetry.addData("Reset encoders", "");
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot = 4;
                 break;
             }
 
-            case 4: {
+            case 4: {  //Lower gem arm
                 sGem.setPosition(0.8);
 
                 if (debug) {
                     while (!gamepad1.b) {
                         telemetry.addData("In case ", seqRobot);
+                        telemetry.addData("Lower gem arm", "");
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
                 break;
             }
 
-            case 6: {
+            case 6: {  // check color and push gem
                 //lightSensor.getLightDetected();
 
                 //telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", snDistance.getDistance(DistanceUnit.CM)));
@@ -102,6 +106,10 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                     targetPower = -0.1d;  // Set power
                 }
 
+                if (debug) {
+                    telemetry.update();
+                    sleep(1000);
+                }
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = 2f; // Set target distance
 
@@ -130,6 +138,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -153,6 +162,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -179,6 +189,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -201,6 +212,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -299,6 +311,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -322,6 +335,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -349,6 +363,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -396,6 +411,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -423,6 +439,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -446,6 +463,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -473,6 +491,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -497,6 +516,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -524,6 +544,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -541,6 +562,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -564,6 +586,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -591,6 +614,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -614,6 +638,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -641,6 +666,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
 
                 seqRobot+=2;
@@ -655,6 +681,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
                 break;
             }
@@ -667,6 +694,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(400);
                 }
                 break;
             }
