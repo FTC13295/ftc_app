@@ -91,7 +91,9 @@ public abstract class DMRelicAbstract extends OpMode {
     // Establish Double Constants
     final static double
             DELAY_DRV_MOV_DONE = 0.1d,        // Hold/wait 0.1s after drive train move complete (seconds)
-            ENCODER_CNT_PER_IN_DRIVE = 59.41979167d; // (28 count/motor rev x 40 motor rev / shaft rev) / (6" dia. wheel x pi)
+            ENCODER_CNT_PER_IN_DRIVE = 0.01122d;        //59.41979167d; // (28 count/motor rev x 40 motor rev / shaft rev) / (6" dia. wheel x pi)
+                                                        //Ticks per rev - 1120 (AndyMark)
+                                                        //Circ * PI / 1120 = 4 * 3.1415 / 1120 = 0.01122
 
     // Establish Controller and Device String Constants
     // These names need to match the Robot Controller configuration file device names.
@@ -152,6 +154,7 @@ public abstract class DMRelicAbstract extends OpMode {
 
         //sGLift2 = hardwareMap.servo.get(Servo_GlyphLift);
 
+        /*
         BNO055IMU.Parameters iparameters = new BNO055IMU.Parameters();
         iparameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
 
@@ -160,6 +163,7 @@ public abstract class DMRelicAbstract extends OpMode {
 
         imu = hardwareMap.get(BNO055IMU.class,"imu");
         imu.initialize(iparameters);
+*/
 
         //servoGlyph1.setPosition(180);
         //servoGlyph2.setPosition(180);
