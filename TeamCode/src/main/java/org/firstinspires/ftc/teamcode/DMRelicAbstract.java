@@ -32,7 +32,7 @@ public abstract class DMRelicAbstract extends OpMode {
     protected VuforiaLocalizer
             vuforia;
 
-    BNO055IMU imu;
+    //BNO055IMU imu;
 
     protected CRServo
             sGLift;
@@ -86,14 +86,14 @@ public abstract class DMRelicAbstract extends OpMode {
             END_ROTATE = 0;    // final position - left facing cypher
     // Establish Float Constants
     final static float
-            PLACE_HOLDER_FLOAT = 0f;
+            ENCODER_CNT_PER_IN_DRIVE = 89.12677f;        //59.41979167d; // (28 count/motor rev x 40 motor rev / shaft rev) / (6" dia. wheel x pi)
+                                                        //Ticks per rev - 1120 (AndyMark)
+                                                        //1120 / Diam * PI = 1120 / 4 * 3.1415 = 89.12677
 
     // Establish Double Constants
     final static double
-            DELAY_DRV_MOV_DONE = 0.1d,        // Hold/wait 0.1s after drive train move complete (seconds)
-            ENCODER_CNT_PER_IN_DRIVE = 0.01122d;        //59.41979167d; // (28 count/motor rev x 40 motor rev / shaft rev) / (6" dia. wheel x pi)
-                                                        //Ticks per rev - 1120 (AndyMark)
-                                                        //Circ * PI / 1120 = 4 * 3.1415 / 1120 = 0.01122
+            DELAY_DRV_MOV_DONE = 0.1d;        // Hold/wait 0.1s after drive train move complete (seconds)
+
 
     // Establish Controller and Device String Constants
     // These names need to match the Robot Controller configuration file device names.
@@ -282,6 +282,20 @@ public abstract class DMRelicAbstract extends OpMode {
         sGLift.setPower(0);
 
     }
+
+    /*
+    public void MvFrwdDist(double power, int distance)
+    {
+        // reset encoders
+        motorRightA.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        motorRightB.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        motorLeftA.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        motorLeftB.setMode(DcMotor.RunMode.RESET_ENCODERS);
+
+        // set targt position
+        motorRightA.setTargetPosition(distance);
+    }*/
+
     // cmdMoveA Method
     // Convert desired distance from inches to encoder counts, establish new motor target, and set
     // motor power. New motor target is assumed to be absolute; in other words, motor target is

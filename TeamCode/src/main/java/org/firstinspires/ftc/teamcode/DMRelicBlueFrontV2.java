@@ -97,26 +97,32 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                 telemetry.addData("Red  ", snColor.red());
                 telemetry.addData("Green", snColor.green());
                 telemetry.addData("Blue ", snColor.blue());
+                telemetry.addData("Entering color check", " -- IF --");
                 if (snColor.red() > snColor.blue()) {  //move forward
+                    telemetry.addData("-----", " Gem Color");
                     telemetry.addData("Gem ", "RED");
-                    targetPower = 0.1d;  // Set power
+                    telemetry.addData("-----", " Gem Color");
+                    targetPower = 0.2d;  // Set power
                 }
                 else {  //move back
+                    telemetry.addData("-----", " Gem Color");
                     telemetry.addData("Gem ", "BLUE");
-                    targetPower = -0.1d;  // Set power
+                    telemetry.addData("-----", " Gem Color");
+                    targetPower = -0.2d;  // Set power
                 }
+                telemetry.addData("Exit color check", " -- IF --");
 
                 if (debug) {
                     telemetry.update();
-                    sleep(1000);
+                    sleep(500);
                 }
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = 2f; // Set target distance
 
-                targetPosLeftA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
-                targetPosLeftB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
-                targetPosRightA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
-                targetPosRightB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
+                targetPosLeftA = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
+                targetPosLeftB = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
+                targetPosRightA = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
+                targetPosRightB = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
 
                 /*
                 //Move back to start position
