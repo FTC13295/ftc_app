@@ -74,9 +74,17 @@ public class DMRelicTeleOp extends DMRelicAbstract {
         Gdown = false;
         Gopen = true;
 
+        snColor.enableLed(false);
+
+        slowdown = false;
+        drivepower = 1.0f;  //default drive speed
+
         //init glyph position
         sGlyphL.setPosition(0.1);
-        sGlyphR.setPosition(0.8);
+        sGlyphR.setPosition(0.75); //changed from 0.8
+
+        //init back arm
+        barminit();
 
     }
 
@@ -93,8 +101,8 @@ public class DMRelicTeleOp extends DMRelicAbstract {
 
         // Set controls
         velocityDrive = -gamepad1.left_stick_y; //
-        strafeDrive = gamepad1.left_stick_x;
-        rotationDrive = gamepad1.right_stick_x;
+        strafeDrive = -gamepad1.left_stick_x;  //change to -
+        rotationDrive = -gamepad1.right_stick_x;  //change to -
 
        // Scale drive motor power for better control at low power
         powerRightA = (float) scaleInput(powerRightA);
@@ -133,10 +141,24 @@ public class DMRelicTeleOp extends DMRelicAbstract {
 
         } else {
 
-            powerRightA = Range.clip(powerRightA, -1, 1);
-            powerRightB = Range.clip(powerRightB, -1, 1);
-            powerLeftA = Range.clip(powerLeftA, -1, 1);
-            powerLeftB = Range.clip(powerLeftB, -1, 1);
+            if (gamepad1.x ) {
+                if (slowdown) {
+                    slowdown = false;
+                    drivepower = 1.0f;
+                    telemetry.addData("Changed to ", "Regular speed");
+                } else {
+                    slowdown = true;
+                    drivepower = PowerRatio;
+                    telemetry.addData("Changed to ", "Half speed");
+                }
+                sleep(200);
+            }
+
+            powerRightA = Range.clip(powerRightA, -drivepower, drivepower);
+            powerRightB = Range.clip(powerRightB, -drivepower, drivepower);
+            powerLeftA = Range.clip(powerLeftA, -drivepower, drivepower);
+            powerLeftB = Range.clip(powerLeftB, -drivepower, drivepower);
+
 
         }
 
@@ -217,13 +239,20 @@ public class DMRelicTeleOp extends DMRelicAbstract {
             }
             else {
                 spos=10/180;
-                sGlyphL.setPosition(0.05);
+                sGlyphL.setPosition(0.09);  //changed from 0.05
                 spos=145/180;
-                sGlyphR.setPosition(0.83);
+                sGlyphR.setPosition(0.75);  //changed from 0.83
                 sleep(150);
                 Gopen = true;
             }
 
+        }
+
+        // lower the back arm
+        if (gamepad1.right_bumper)
+        {
+            barmdown(10);
+            sleep(250);
         }
 
         // Glyph Lift operations
@@ -348,8 +377,8 @@ public class DMRelicTeleOp extends DMRelicAbstract {
             }
 
         */
-        telemetry.addData("Glyph Left: ",  glyphL);
-        telemetry.addData("Glyph Right: ",  glyphR);
+
+        telemetry.addData("Driving at full speed: ", slowdown);
         telemetry.update();
 // End OpMode Loop Method
     }
