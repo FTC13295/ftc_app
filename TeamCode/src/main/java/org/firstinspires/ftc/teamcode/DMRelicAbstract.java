@@ -35,7 +35,7 @@ public abstract class DMRelicAbstract extends OpMode {
     //BNO055IMU imu;
 
     protected CRServo
-            sGLift;
+            sGLift, sBArm;
 
 
     protected DcMotor
@@ -52,11 +52,13 @@ public abstract class DMRelicAbstract extends OpMode {
             grabbed,
             debug,                      // Flag for debugging
             Gdown, Gopen,
+            slowdown = false,
             leftCol, rightCol, centerCol;
 
     protected float
             targetDrDistInch,                   // Targets for motor moves in sequence (engineering units)
             targetDrRotateDeg,
+            drivepower,
             hsvValues[] = {0F, 0F, 0F};
     // Auto: Values used to determine current color detected
 
@@ -82,10 +84,13 @@ public abstract class DMRelicAbstract extends OpMode {
     // Establish Integer Constants
     final static int
             DECRIPT_ROTATE = 0,
-            GLYPH_ROTATE = 28,  // need to confirm # of encoder rotations for 90 deg
-            END_ROTATE = 0;    // final position - left facing cypher
+            ERROR_DRV_POS = 20,                 // Allowed error in encoder counts following drive train position move
+            GLYPH_ROTATE = 1120,                // need to confirm # of encoder rotations for 90 deg
+                                                // full rotation of the wheel = 1120
+            END_ROTATE = 2240;                     // final position - left facing cypher
     // Establish Float Constants
     final static float
+            PowerRatio = 0.5f,
             ENCODER_CNT_PER_IN_DRIVE = 89.12677f;        //59.41979167d; // (28 count/motor rev x 40 motor rev / shaft rev) / (6" dia. wheel x pi)
                                                         //Ticks per rev - 1120 (AndyMark)
                                                         //1120 / Diam * PI = 1120 / 4 * 3.1415 = 89.12677
@@ -109,6 +114,7 @@ public abstract class DMRelicAbstract extends OpMode {
             GLYPH_RIGHT = "sGlyphR",
             Gem = "sGem",
             Servo_GlyphLift = "sGLift",
+            Servo_BackArm = "sBArm",
             //GLYPH_LIFT = "gLift";
             Sensor_Color_Distance = "snCD";
 
@@ -149,6 +155,7 @@ public abstract class DMRelicAbstract extends OpMode {
         sGem = hardwareMap.servo.get(Gem);
 
         sGLift = hardwareMap.crservo.get(Servo_GlyphLift);
+        sBArm = hardwareMap.crservo.get(Servo_BackArm);
 
         //sGLift.setPower(0);
 
@@ -265,6 +272,7 @@ public abstract class DMRelicAbstract extends OpMode {
         return target;
     }
 
+    // control glyph lift
     public void gliftUp ()
     {
         sGLift.setPower(0.9);
@@ -283,6 +291,22 @@ public abstract class DMRelicAbstract extends OpMode {
 
     }
 
+    // control back arm
+    public void barmdown(int climit)
+    {
+        for(int counter = 0; counter < climit; counter++)
+        {
+            sBArm.setPower(0.3);
+        }
+        sBArm.setPower(0);
+
+    }
+
+    public void barminit()
+    {
+        sBArm.setPower(0.1);
+        sBArm.setPower(0);
+    }
     /*
     public void MvFrwdDist(double power, int distance)
     {
@@ -420,4 +444,31 @@ public abstract class DMRelicAbstract extends OpMode {
         return powerValue;
     }
 
+    //Reset motor encoder and set target position
+    void resetME(int position) {
+        motorLeftA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRightA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLeftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRightB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRightA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLeftA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorRightB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLeftB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLeftA.setTargetPosition(position);
+        motorLeftB.setTargetPosition(position);
+        motorRightA.setTargetPosition(position);
+        motorRightB.setTargetPosition(position);
+    }
+
+    // move motors back to target position using provided power
+    void movebackME(int position, float power) {
+        motorLeftA.setTargetPosition(position);
+        motorLeftB.setTargetPosition(position);
+        motorRightA.setTargetPosition(position);
+        motorRightB.setTargetPosition(position);
+        motorLeftA.setPower(power);
+        motorLeftB.setPower(power);
+        motorRightA.setPower(power);
+        motorRightB.setPower(power);
+    }
 }
