@@ -84,7 +84,7 @@ public class DMRelicTeleOp extends DMRelicAbstract {
         sGlyphR.setPosition(0.75); //changed from 0.8
 
         //init back arm
-        barminit();
+        initbarm();
 
     }
 
@@ -141,6 +141,7 @@ public class DMRelicTeleOp extends DMRelicAbstract {
 
         } else {
 
+
             if (gamepad1.x ) {
                 if (slowdown) {
                     slowdown = false;
@@ -152,6 +153,21 @@ public class DMRelicTeleOp extends DMRelicAbstract {
                     telemetry.addData("Changed to ", "Half speed");
                 }
                 sleep(200);
+            } else {
+                if (slowdown) {
+                    drivepower = PowerRatio;
+                    telemetry.addData("Driving at ", "half speed");
+                } else {
+                    slowdown = true;
+                    drivepower = 1.0f;
+                    telemetry.addData("Driving at ", "full speed");
+                }
+            }
+
+            if (gamepad1.right_bumper)
+            {
+                drivepower = PowerRatio;
+                telemetry.addData("Driving at ", "half speed - bumper pushed - override");
             }
 
             powerRightA = Range.clip(powerRightA, -drivepower, drivepower);
@@ -249,9 +265,10 @@ public class DMRelicTeleOp extends DMRelicAbstract {
         }
 
         // lower the back arm
-        if (gamepad1.right_bumper)
+        if (gamepad1.y && !bArmDown)
         {
-            barmdown(10);
+            bArmDown = true;
+            lowerbarm(10);
             sleep(250);
         }
 

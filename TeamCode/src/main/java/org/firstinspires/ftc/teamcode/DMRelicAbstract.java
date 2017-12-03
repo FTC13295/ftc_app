@@ -51,7 +51,8 @@ public abstract class DMRelicAbstract extends OpMode {
             bDirection,
             grabbed,
             debug,                      // Flag for debugging
-            Gdown, Gopen,
+            Gdown, Gopen,               // Flag for Glyph lift down and Glygh open or closed
+            bArmDown = false,           // Flag for Back Arm
             slowdown = false,
             leftCol, rightCol, centerCol;
 
@@ -292,7 +293,7 @@ public abstract class DMRelicAbstract extends OpMode {
     }
 
     // control back arm
-    public void barmdown(int climit)
+    public void lowerbarm(int climit)
     {
         for(int counter = 0; counter < climit; counter++)
         {
@@ -302,7 +303,7 @@ public abstract class DMRelicAbstract extends OpMode {
 
     }
 
-    public void barminit()
+    public void initbarm()
     {
         sBArm.setPower(0.1);
         sBArm.setPower(0);
