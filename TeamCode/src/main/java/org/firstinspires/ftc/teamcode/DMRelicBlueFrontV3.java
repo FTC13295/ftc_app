@@ -13,11 +13,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 import static android.os.SystemClock.sleep;
 
-@Autonomous(name = "DMRelicBlueFrontV2", group = "RiderModes")
-public class DMRelicBlueFrontV2 extends DMRelicAbstract{
+/* ------------------------------------------------------------------
+ * This Op Mode is a template for Autonomous Control
+ *
+ * Gamepads
+ * 	Not used; however, for troubleshooting prior to competition, Gamepad1's "A" button will allow
+ * 	the programmer to advance the sequence 1 step.
+ * ------------------------------------------------------------------
+ */
+
+@Autonomous(name = "DMRelicBlueFrontV3", group = "RiderModes")
+public class DMRelicBlueFrontV3 extends DMRelicAbstract{
+
+    //------------------------------------------------------------------
+    // Robot OpMode Loop Method
+    //------------------------------------------------------------------
 
     OpenGLMatrix lastLocation = null;
-
 
     VuforiaLocalizer vuforia;
 
@@ -29,6 +41,12 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
         //lightSensor.enableLed(true);
         debug = true;
 
+        //set motors to use encoders
+        motorLeftA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     @Override
@@ -37,26 +55,27 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
 
         super.loop();
 
+        // START ROBOT SEQUENCE
+        // Establish the robot sequence of operation with the Switch operation.
+        // The active Case (i.e., sequence step) is established by the value in seqRobot.
+        // After a Case executes, Break the switch to prevent executing subsequent cases unintentionally.
+
         telemetry.addData("Entering switch - seq = ", seqRobot);
         telemetry.addData("Debug - ", debug);
         telemetry.update();
-        sleep(500);
 
         switch (seqRobot) {
 
-            case 1: {  //Reset encoder
-                motorLeftA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorLeftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorRightB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setTargetPosition(0);
-                motorLeftB.setTargetPosition(0);
-                motorRightA.setTargetPosition(0);
-                motorRightB.setTargetPosition(0);
+            case 1:
+            case 10:
+            case 18:
+            case 22:
+            case 26:
+            case 30:
+            case 36:
+            case 44:
+                {  //Reset encoder
+                resetME(0);  //function to reset encoders to 0
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -65,15 +84,20 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
-                    sleep(400);
+                    sleep(200);
                 }
 
-                seqRobot = 4;
+                if (seqRobot == 1) {
+                    seqRobot = 4;
+                } else {
+                    seqRobot += 2;
+                }
+
                 break;
             }
 
             case 4: {  //Lower gem arm
-                sGem.setPosition(0.8);
+                sGem.setPosition(0.8);  //lowers gem arm to 80% of 180 degree movement
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -82,7 +106,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
-                    sleep(400);
+                    sleep(200);
                 }
 
                 seqRobot+=2;
@@ -90,49 +114,40 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
             }
 
             case 6: {  // check color and push gem
-                //lightSensor.getLightDetected();
 
-                //telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", snDistance.getDistance(DistanceUnit.CM)));
                 telemetry.addData("Alpha", snColor.alpha());
                 telemetry.addData("Red  ", snColor.red());
                 telemetry.addData("Green", snColor.green());
                 telemetry.addData("Blue ", snColor.blue());
                 telemetry.addData("Entering color check", " -- IF --");
-                if (snColor.red() > snColor.blue()) {  //move forward
+                if (snColor.red() > snColor.blue()) {  //move forward to push red gem
                     telemetry.addData("-----", " Gem Color");
                     telemetry.addData("Gem ", "RED");
                     telemetry.addData("-----", " Gem Color");
-                    targetPower = 0.2d;  // Set power
+                    targetDrDistInch = 2.5f; // Set target distance - forward
                 }
-                else {  //move back
+                else {  //move back to push red gem
                     telemetry.addData("-----", " Gem Color");
                     telemetry.addData("Gem ", "BLUE");
                     telemetry.addData("-----", " Gem Color");
-                    targetPower = -0.2d;  // Set power
+                    targetDrDistInch = -2.5f; // Set target distance - back
                 }
                 telemetry.addData("Exit color check", " -- IF --");
 
                 if (debug) {
                     telemetry.update();
-                    sleep(500);
+                    sleep(600);
                 }
-                targetDrRotateDeg = 0f;
-                targetDrDistInch = 2f; // Set target distance
+                targetDrRotateDeg = 0f;  // Not used for this
+                targetPower = 0.2d;  // Set power
 
+                // Use this OpModes's custom cmdMoveA method to calculate new target (in encoder
+                // counts) and to initiate the move. cmdMoveA initiates a relative move.
+                // cmdMove Parameters (distance inches, encoder count per inch, power, motor).
                 targetPosLeftA = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                 targetPosLeftB = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
                 targetPosRightA = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
                 targetPosRightB = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
-
-                /*
-                //Move back to start position
-                targetPower *= -1;  // Set power
-
-                targetPosLeftA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
-                targetPosLeftB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
-                targetPosRightA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
-                targetPosRightB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
-                */
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -144,58 +159,27 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
-                    sleep(400);
+                    sleep(200);
                 }
 
                 seqRobot+=2;
                 break;
             }
 
-            case 8: {  // Move robot back to starting position
-                sGem.setPosition(0);
-                motorLeftA.setTargetPosition(0);
-                motorLeftB.setTargetPosition(0);
-                motorRightA.setTargetPosition(0);
-                motorRightB.setTargetPosition(0);
-                motorLeftA.setPower(.1);
-                motorLeftB.setPower(.1);
-                motorRightA.setPower(.1);
-                motorRightB.setPower(.1);
+            case 8: {  // Move robot back to starting position and turn off color sensor
+                sGem.setPosition(0); //move gem arm to start position
+                snColor.enableLed(false); //turn off color sensor LED - does not seem to work
+
+                movebackME(0,0.2f);  //use movebacME function to move motors back to provided position using given power (position,power)
 
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
+                        telemetry.addData("In case - ", seqRobot);
+                        telemetry.addData("Move robot back to starting position", " ");
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
-                    sleep(400);
-                }
-
-                seqRobot+=2;
-                break;
-            }
-
-            case 10: {  // Reset motors/encoders
-                motorLeftA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorLeftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorRightB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setTargetPosition(0);
-                motorLeftB.setTargetPosition(0);
-                motorRightA.setTargetPosition(0);
-                motorRightB.setTargetPosition(0);
-
-                if (debug) {
-                    while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
-                        telemetry.update();
-                    }
-                    sleep(400);
+                    sleep(200);
                 }
 
                 seqRobot+=2;
@@ -203,6 +187,10 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
             }
 
             case 12: { // Rotate to face decryption key
+
+                //not needed....
+
+/*
                 motorLeftA.setTargetPosition(DECRIPT_ROTATE);
                 motorLeftB.setTargetPosition(DECRIPT_ROTATE);
                 motorRightA.setTargetPosition(-DECRIPT_ROTATE);
@@ -220,7 +208,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                     }
                     sleep(400);
                 }
-
+*/
                 seqRobot+=2;
                 break;
             }
@@ -232,9 +220,10 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                 * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
                 */
                 int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-                VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+                //Turned off the screen
+                //VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);  //screen is on
                 // OR...  Do Not Activate the Camera Monitor View, to save power
-                // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+                VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();  //screen is off
 
                 parameters.vuforiaLicenseKey = "AaRImwv/////AAAAGUjFLy92WE8UlmWKUSNcUNYpTptTmSX6QFQYt5PR6Far3tcNpmDCqgAxQDXowjTxfxTraIFnoWUUuHv5BfINsEyM88rx4xY6G8yuq/ys88jHy+m7sKtzKHYVlMSpjQaPUx47BOFSaC97HlAXFBZ0a/gs4IE7q6TQFxUJxhsl4UEaJp0T79um2REaDI9N1Zd33XrUJMfM52gWFgLqny4pAQcXEAaORowMlFYMx2GjlhWFTlo17bCwGnLr8cEHwFpthWYHgIL8Be/bsNR4kdHz6KajNuNzP7U0dj0xG/yxJSlzuRzxjgKwxlHHMl2yWXks6kON/AUVyQRF6bxDGWkW/Y+WsO0XlQlpypXeRbjscV/H";
 
@@ -251,15 +240,18 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                  * but differ in their instance id information.
                  * @see VuMarkInstanceId
                  */
+
                 VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
                 VuforiaTrackable relicTemplate = relicTrackables.get(0);
                 relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
 
                 relicTrackables.activate();
 
-                    RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-                    if (vuMark != RelicRecoveryVuMark.UNKNOWN)
-                    {
+                sleep(200); //pause for 0.2 sec
+
+                RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+                if (vuMark != RelicRecoveryVuMark.UNKNOWN)
+                {
 
 
                         telemetry.addData("VuMark", "%s visible", vuMark);
@@ -283,57 +275,38 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                             rightCol = true;
                         }
 
-                        /*
-                        OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) relicTemplate.getListener()).getPose();
-
-                        if (pose != null)
-                        {
-                            VectorF trans = pose.getTranslation();
-                            Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-
-                            // Extract the X, Y, and Z components of the offset of the target relative to the robot
-                            double tX = trans.get(0);
-                            double tY = trans.get(1);
-                            double tZ = trans.get(2);
-
-                            // Extract the rotational components of the target relative to the robot
-                            double rX = rot.firstAngle;
-                            double rY = rot.secondAngle;
-                            double rZ = rot.thirdAngle;
-                        }
-                        */
                     }
                     else
                     {
                         telemetry.addData("VuMark", "not visible");
+                        leftCol = false;
+                        centerCol = true;
+                        rightCol = false;
+                        telemetry.addData("Defaulting to ", "center column");
                     }
 
-
-                    telemetry.update();
 
                 if (debug) {
                     while (!gamepad1.b) {
                         telemetry.addData("In case ", seqRobot);
+                        telemetry.addData("vuforia", "");
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
+                    sleep(200);
+                } else {
+                    telemetry.update();
                     sleep(400);
                 }
 
-                seqRobot+=2;
+                seqRobot+=4;  //skip 16 and go to 18
                 break;
             }
 
+/*
             case 16: // Reset position after vuforia
             {
-                motorLeftA.setTargetPosition(0);
-                motorLeftB.setTargetPosition(0);
-                motorRightA.setTargetPosition(0);
-                motorRightB.setTargetPosition(0);
-                motorLeftA.setPower(.1);
-                motorLeftB.setPower(.1);
-                motorRightA.setPower(.1);
-                motorRightB.setPower(.1);
+                movebackME(0,0.2f);  //use movebacME function to move motors back to provided position using given power (position,power)
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -341,69 +314,40 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
-                    sleep(400);
+                    sleep(200);
                 }
 
                 seqRobot+=2;
                 break;
             }
+*/
 
-            case 18:  // Reset positions
-            {
-                motorLeftA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorLeftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorRightB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setTargetPosition(0);
-                motorLeftB.setTargetPosition(0);
-                motorRightA.setTargetPosition(0);
-                motorRightB.setTargetPosition(0);
-
-                if (debug) {
-                    while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
-                        telemetry.update();
-                    }
-                    sleep(400);
-                }
-
-                seqRobot+=2;
-                break;
-            }
             case 20:  // Move robot to correct column
                         //28", 35", 42" - 9"
             {
 
+                targetDrRotateDeg = 0f; //not used
+                targetPower = 0.2d;  // Set power
+
                 if (leftCol)
                 {
-                    targetDrRotateDeg = 0f;
-                    targetDrDistInch = 19f; // Set target distance
-                    targetPower = 0.1d;  // Set power
+                    targetDrDistInch = 19f; // Set target distance - left column
 
-                    targetPosLeftA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
-                    targetPosLeftB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
-                    targetPosRightA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
-                    targetPosRightB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
+                    targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
+                    targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
+                    targetPosRightA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
+                    targetPosRightB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
                 } else if (centerCol)
                 {
-                    targetDrRotateDeg = 0f;
-                    targetDrDistInch = 26f; // Set target distance
-                    targetPower = 0.1d;  // Set power
+                    targetDrDistInch = 26f; // Set target distance - center column
 
-                    targetPosLeftA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
-                    targetPosLeftB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
-                    targetPosRightA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
-                    targetPosRightB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
+                    targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
+                    targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
+                    targetPosRightA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
+                    targetPosRightB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
                 } else if (rightCol)
                 {
-                    targetDrRotateDeg = 0f;
-                    targetDrDistInch = 33f; // Set target distance
-                    targetPower = 0.1d;  // Set power
+                    targetDrDistInch = 33f; // Set target distance - right column
 
                     targetPosLeftA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                     targetPosLeftB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -414,42 +358,54 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                 if (debug) {
                     while (!gamepad1.b) {
                         telemetry.addData("In case ", seqRobot);
+                        telemetry.addData("Move robot in front of a column", "");
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
-                    sleep(400);
+                    sleep(200);
                 }
 
-                seqRobot+=2;
+                seqRobot++;
                 break;
             }
 
-            case 22:  // Reset position
+            case 21:
+            case 29:
+            case 35:    // Hold until drive train move is complete
             {
-                motorLeftA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorLeftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorRightB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setTargetPosition(0);
-                motorLeftB.setTargetPosition(0);
-                motorRightA.setTargetPosition(0);
-                motorRightB.setTargetPosition(0);
+                // Use this OpModes's custom chkMove to determine if motor move(s) are complete
+                // chkMove Parameters (motor, target, allowed +/- error counts from target)
+                // May need to add motor-is-busy check to ensure electric breaking complete.
+                // May need to compensate for motor power if one motor is faster than another to keep straight line.
+                if (chkMove(motorLeftA, targetPosLeftA, ERROR_DRV_POS) &&
+                        chkMove(motorRightA, targetPosRightA, ERROR_DRV_POS) &&
+                            chkMove(motorLeftB, targetPosLeftB, ERROR_DRV_POS) &&
+                                chkMove(motorRightB, targetPosRightB, ERROR_DRV_POS))
+                {    // If drive train at target, hold position for 0.1s to stabilize motors.
+                    sleep(100);
+
+                    if (debug) {
+                        while (!gamepad1.b) {
+                            telemetry.addData("In case ", seqRobot);
+                            telemetry.addData("Please press B to continue", "");
+                            telemetry.update();
+                        }
+                        sleep(200);
+                    }
+
+                    seqRobot++;
+                    break;
+                }
 
                 if (debug) {
                     while (!gamepad1.b) {
                         telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
+                        telemetry.addData("Waiting for motors to stop", "");
                         telemetry.update();
                     }
-                    sleep(400);
+                    sleep(200);
                 }
 
-                seqRobot+=2;
-                break;
             }
 
             case 24:  // Rotate to Glyph
@@ -458,10 +414,10 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                 motorLeftB.setTargetPosition(-GLYPH_ROTATE);
                 motorRightA.setTargetPosition(GLYPH_ROTATE);
                 motorRightB.setTargetPosition(GLYPH_ROTATE);
-                motorLeftA.setPower(.1);
-                motorLeftB.setPower(.1);
-                motorRightA.setPower(.1);
-                motorRightB.setPower(.1);
+                motorLeftA.setPower(.2);
+                motorLeftB.setPower(.2);
+                motorRightA.setPower(.2);
+                motorRightB.setPower(.2);
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -469,39 +425,48 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
-                    sleep(400);
+                    sleep(200);
                 }
 
-                seqRobot+=2;
+                seqRobot++;
                 break;
             }
 
-            case 26:
+            case 25:
+            case 39:    // Check to see if the turn was up to standards
             {
-                motorLeftA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorLeftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorRightB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setTargetPosition(0);
-                motorLeftB.setTargetPosition(0);
-                motorRightA.setTargetPosition(0);
-                motorRightB.setTargetPosition(0);
-
-                if (debug) {
-                    while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
-                        telemetry.update();
+                telemetry.addData("Checking to see if turn was completed", "");
+                if (motorLeftA.getCurrentPosition() <= -GLYPH_ROTATE+ERROR_DRV_POS && motorLeftA.getCurrentPosition() >= -GLYPH_ROTATE-ERROR_DRV_POS &&
+                        motorLeftB.getCurrentPosition() <= -GLYPH_ROTATE+ERROR_DRV_POS && motorLeftB.getCurrentPosition() >= -GLYPH_ROTATE-ERROR_DRV_POS &&
+                            motorRightA.getCurrentPosition() >= GLYPH_ROTATE-ERROR_DRV_POS && motorRightA.getCurrentPosition() <= GLYPH_ROTATE+ERROR_DRV_POS &&
+                                motorRightB.getCurrentPosition() >= GLYPH_ROTATE-ERROR_DRV_POS && motorRightB.getCurrentPosition() <= GLYPH_ROTATE+ERROR_DRV_POS )
+                {
+                    if (debug) {
+                        while (!gamepad1.b) {
+                            telemetry.addData("In case ", seqRobot);
+                            telemetry.addData("Turn successful - moving to next step", "");
+                            telemetry.update();
+                        }
+                        sleep(200);
                     }
-                    sleep(400);
-                }
 
-                seqRobot+=2;
-                break;
+                    seqRobot++;
+                    break;
+                }
+                else
+                {
+                    if (debug) {
+                        while (!gamepad1.b) {
+                            telemetry.addData("In case ", seqRobot);
+                            telemetry.addData("Turn unsuccessful - going back to turn", "");
+                            telemetry.update();
+                        }
+                        sleep(200);
+                    }
+
+                    seqRobot--;
+                    break;
+                }
             }
 
             case 28: // move forward 5 "
@@ -509,40 +474,12 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
 
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = 5f; // Set target distance
-                targetPower = 0.1d;  // Set power
+                targetPower = 0.2d;  // Set power
 
-                targetPosLeftA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
-                targetPosLeftB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
-                targetPosRightA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
-                targetPosRightB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
-
-                if (debug) {
-                    while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
-                        telemetry.update();
-                    }
-                    sleep(400);
-                }
-
-                seqRobot+=2;
-                break;
-            }
-
-            case 30:
-            {
-                motorLeftA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorLeftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorRightB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setTargetPosition(0);
-                motorLeftB.setTargetPosition(0);
-                motorRightA.setTargetPosition(0);
-                motorRightB.setTargetPosition(0);
+                targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
+                targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
+                targetPosRightA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
+                targetPosRightB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -550,17 +487,18 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
-                    sleep(400);
+                    sleep(200);
                 }
 
-                seqRobot+=2;
+                seqRobot++;
                 break;
             }
+
 
             case 32:  // move and open Glyph
             {
-                sGlyphL.setPosition(0.05);
-                sGlyphR.setPosition(0.83);
+                sGlyphL.setPosition(0.09);
+                sGlyphR.setPosition(0.75);
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -568,7 +506,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
-                    sleep(400);
+                    sleep(200);
                 }
 
                 seqRobot+=2;
@@ -579,40 +517,12 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
             {
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = -5f; // Set target distance
-                targetPower = 0.1d;  // Set power
+                targetPower = 0.2d;  // Set power
 
-                targetPosLeftA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
-                targetPosLeftB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
-                targetPosRightA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
-                targetPosRightB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
-
-                if (debug) {
-                    while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
-                        telemetry.update();
-                    }
-                    sleep(400);
-                }
-
-                seqRobot+=2;
-                break;
-            }
-
-            case 36:
-            {
-                motorLeftA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorLeftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorRightB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setTargetPosition(0);
-                motorLeftB.setTargetPosition(0);
-                motorRightA.setTargetPosition(0);
-                motorRightB.setTargetPosition(0);
+                targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
+                targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
+                targetPosRightA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
+                targetPosRightB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -620,23 +530,24 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
-                    sleep(400);
+                    sleep(200);
                 }
 
-                seqRobot+=2;
+                seqRobot++;
                 break;
             }
 
-            case 38:
+
+            case 38:  // rotate 180 deg
             {
                 motorLeftA.setTargetPosition(END_ROTATE);
                 motorLeftB.setTargetPosition(END_ROTATE);
                 motorRightA.setTargetPosition(-END_ROTATE);
                 motorRightB.setTargetPosition(-END_ROTATE);
-                motorLeftA.setPower(.1);
-                motorLeftB.setPower(.1);
-                motorRightA.setPower(.1);
-                motorRightB.setPower(.1);
+                motorLeftA.setPower(.2);
+                motorLeftB.setPower(.2);
+                motorRightA.setPower(.2);
+                motorRightB.setPower(.2);
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -644,27 +555,24 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
-                    sleep(400);
+                    sleep(200);
                 }
 
-                seqRobot+=2;
+                seqRobot++;
                 break;
             }
 
-            case 40:
+            case 42: // move back 5 "
             {
-                motorLeftA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorLeftB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorRightA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorRightB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeftA.setTargetPosition(0);
-                motorLeftB.setTargetPosition(0);
-                motorRightA.setTargetPosition(0);
-                motorRightB.setTargetPosition(0);
+
+                targetDrRotateDeg = 0f;
+                targetDrDistInch = -5f; // Set target distance
+                targetPower = 0.2d;  // Set power
+
+                targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
+                targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
+                targetPosRightA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
+                targetPosRightB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -672,12 +580,13 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                         telemetry.addData("Please press B to continue", "");
                         telemetry.update();
                     }
-                    sleep(400);
+                    sleep(200);
                 }
 
-                seqRobot+=2;
+                seqRobot++;
                 break;
             }
+
 
             case 99:  // Done
             {
