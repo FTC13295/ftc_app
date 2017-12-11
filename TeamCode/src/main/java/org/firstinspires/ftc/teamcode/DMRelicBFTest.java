@@ -190,7 +190,7 @@ public class DMRelicBFTest extends DMRelicAbstract {
                     sleep(500);
                 }
                 targetDrRotateDeg = 0f;
-                targetPower = 0.2d;  // Set power
+                targetPower = 0.2f;  // Set power
 
                 targetPosLeftA = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                 targetPosLeftB = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -463,7 +463,7 @@ public class DMRelicBFTest extends DMRelicAbstract {
                 {
                     targetDrRotateDeg = 0f;
                     targetDrDistInch = 19f; // Set target distance
-                    targetPower = 0.2d;  // Set power
+                    targetPower = 0.2f;  // Set power
 
                     targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                     targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -473,7 +473,7 @@ public class DMRelicBFTest extends DMRelicAbstract {
                 {
                     targetDrRotateDeg = 0f;
                     targetDrDistInch = 26f; // Set target distance
-                    targetPower = 0.2d;  // Set power
+                    targetPower = 0.2f;  // Set power
 
                     targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                     targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -483,7 +483,7 @@ public class DMRelicBFTest extends DMRelicAbstract {
                 {
                     targetDrRotateDeg = 0f;
                     targetDrDistInch = 33f; // Set target distance
-                    targetPower = 0.2d;  // Set power
+                    targetPower = 0.2f;  // Set power
 
                     targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                     targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -589,7 +589,7 @@ public class DMRelicBFTest extends DMRelicAbstract {
 
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = 5f; // Set target distance
-                targetPower = 0.2d;  // Set power
+                targetPower = 0.2f;  // Set power
 
                 targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                 targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -659,7 +659,7 @@ public class DMRelicBFTest extends DMRelicAbstract {
             {
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = -5f; // Set target distance
-                targetPower = 0.2d;  // Set power
+                targetPower = 0.2f;  // Set power
 
                 targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                 targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
