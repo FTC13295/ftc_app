@@ -24,7 +24,7 @@ import static android.os.SystemClock.sleep;
  */
 
 @Autonomous(name = "DMRelicBlueFrontV4", group = "RiderModes")
-public class DMRelicBlueFrontV4 extends DMRelicAbstract{
+public class DMRelicBlueFrontV5 extends DMRelicAbstract{
 
     //------------------------------------------------------------------
     // Robot OpMode Loop Method
@@ -54,27 +54,11 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
 
         //turn off auto clear for telemetry
         telemetry.setAutoClear(false);
-        Telemetry.Item modeItem = telemetry.addData("1. I am alive - ","init");
-        Telemetry.Item debugItem = telemetry.addData("2. Debug mode: ", debug);
-        Telemetry.Item seqItem = telemetry.addData("3. Sequence # ", seqRobot);
-        Telemetry.Item countItem = telemetry.addData("count", 0);
-        Telemetry.Item elapsedItem = telemetry.addData("elapsedTime", 0);
-        Telemetry.Item
 
+        telemetry.addData("I am alive - ","init");
+        telemetry.addData("Debug mode: ", debug);
 
-        telemetry.addData("3. ", "Channel Left mode = " + motorLeft.getMode());
-        telemetry.addData("4. ", "Drive Pos L/R" + motorLeft.getCurrentPosition() + "/" + motorRight.getCurrentPosition());
-        telemetry.addData("5a. ", "Minimum goal: " + ROTATE_COUNTS);
-        telemetry.addData("5b. ", "Maximum goal: " + ROTATE_COUNTS_MAX);
-        telemetry.addData("Color Values","");
-        telemetry.addData("Hue", hsvValues[0]);
-        telemetry.addData("Sat", hsvValues[1]);
-        telemetry.addData("V", hsvValues[2]);
-        telemetry.addData("Current color Blue?", blue);
-        telemetry.addData("Current color Red?", red);
-        telemetry.addData("Current color White?", white);
-        telemetry.addData("White line set?", whiteLine);
-        telemetry.addData("Runtime", getRuntime());
+        telemetry.update();
 
 
     }
@@ -90,8 +74,28 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
         // The active Case (i.e., sequence step) is established by the value in seqRobot.
         // After a Case executes, Break the switch to prevent executing subsequent cases unintentionally.
 
-        telemetry.addData("Entering switch - seq = ", seqRobot);
-        telemetry.addData("Debug - ", debug);
+        //turn off auto clear for telemetry
+        telemetry.clear();
+
+        Telemetry.Item modeItem = telemetry.addData("1. I am alive - ","init");
+        Telemetry.Item debugItem = telemetry.addData("2. Debug mode: ", debug);
+        Telemetry.Item debugnoteItem = telemetry.addData("2b. ---> ", " ------ ");
+        Telemetry.Item seqItem = telemetry.addData("3a. Sequence # ", seqRobot);
+        Telemetry.Item caseItem = telemetry.addData("3b.    ---> ", "");
+        Telemetry.Item casenoteItem = telemetry.addData("3c.     --> ", "");
+        Telemetry.Item redItem = telemetry.addData("4a. Red value ", "");
+        Telemetry.Item blueItem = telemetry.addData("4b. Blue value ", "");
+        Telemetry.Item redblueItem = telemetry.addData("4c. --> Gem is: ", "");
+        Telemetry.Item vuforiaItem = telemetry.addData("5a. Vuforia: ", "");
+        Telemetry.Item vuforiamarkItem = telemetry.addData("5b. -->  ", "");
+        Telemetry.Item targetdistItem = telemetry.addData("6a. Distance: ", "");
+        Telemetry.Item targetpowerItem = telemetry.addData("6b. Power: ", "");
+        telemetry.addData("Runtime", getRuntime());
+
+        modeItem.setValue("running");
+        debugItem.setValue(debug);
+        seqItem.setValue(seqRobot);
+        caseItem.setValue("Entering switch");
         telemetry.update();
 
         switch (seqRobot) {
@@ -101,23 +105,24 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
             case 18:
             case 22:
             case 26:
-            case 30:
-            case 36:
-            case 44:
+            case 34:
+            case 38:
+            case 42:
                 {  //Reset encoder
-                resetME(0);  //function to reset encoders to 0
+                    resetME(0);  //function to reset encoders to 0
+
+                    //Update telemetry data
+                    seqItem.setValue(seqRobot);
+                    caseItem.setValue("Reset encoders");
 
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Reset encoders", "");
-                        telemetry.addData("Please press B to continue", "");
+                        debugnoteItem.setValue("Please press B to continue");
                         telemetry.update();
                     }
                     sleep(200);
                 } else {
-                    telemetry.addData("In case ", seqRobot);
-                    telemetry.addData("Reset encoders", "");
+                    debugnoteItem.setValue("  -----  ");
                     telemetry.update();
                     sleep(SLEEP_TIME/2);
                 }
@@ -132,6 +137,11 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
             }
 
             case 3: {  //initialize the robot and load glyph
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Init robot and grab glyph");
+                telemetry.update();
+
                 //Gem arm up
                 sGem.setPosition(0);
                 //Grab glyph
@@ -140,15 +150,12 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
 
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Init robot and load glyph", "");
-                        telemetry.addData("Please press B to continue", "");
+                        debugnoteItem.setValue("Please press B to continue");
                         telemetry.update();
                     }
                     sleep(200);
                 } else {
-                    telemetry.addData("In case ", seqRobot);
-                    telemetry.addData("Init robot and load glyph", "");
+                    debugnoteItem.setValue("  -----  ");
                     telemetry.update();
                     sleep(SLEEP_TIME);
                 }
@@ -158,19 +165,21 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
             }
 
             case 4: {  //Lower gem arm
+//Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Lower gem arm");
+                telemetry.update();
+
                 sGem.setPosition(0.8);  //lowers gem arm to 80% of 180 degree movement
 
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Lower gem arm", "");
-                        telemetry.addData("Please press B to continue", "");
+                        debugnoteItem.setValue("Please press B to continue");
                         telemetry.update();
                     }
                     sleep(200);
                 } else {
-                    telemetry.addData("In case ", seqRobot);
-                    telemetry.addData("Lower gem arm", "");
+                    debugnoteItem.setValue("  -----  ");
                     telemetry.update();
                     sleep(SLEEP_TIME);
                 }
@@ -181,32 +190,31 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
 
             case 6: {  // check color and push gem
 
-                telemetry.addData("Alpha", snColor.alpha());
-                telemetry.addData("Red  ", snColor.red());
-                telemetry.addData("Green", snColor.green());
-                telemetry.addData("Blue ", snColor.blue());
-                telemetry.addData("Entering color check", " -- IF --");
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Check color and push gem");
+                redItem.setValue(snColor.red());
+                blueItem.setValue(snColor.blue());
+                telemetry.update();
+
                 sleep(SLEEP_TIME); // Pause to read color
                 if (snColor.red() > snColor.blue()) {  //move forward to push red gem
-                    telemetry.addData("-----", " Gem Color");
-                    telemetry.addData("Gem ", "RED");
-                    telemetry.addData("-----", " Gem Color");
-                    targetDrDistInch = 3f; // Set target distance - forward
+                    redblueItem.setValue("RED");
+                    telemetry.update();
+                    targetDrDistInch = GEM_DISTANCE; // Set target distance - forward
                 }
                 else {  //move back to push red gem
-                    telemetry.addData("-----", " Gem Color");
-                    telemetry.addData("Gem ", "BLUE");
-                    telemetry.addData("-----", " Gem Color");
-                    targetDrDistInch = -3f; // Set target distance - back
-                }
-                telemetry.addData("Exit color check", " -- IF --");
-
-                if (debug) {
+                    redblueItem.setValue("BLUE");
                     telemetry.update();
-                    sleep(300);
+                    targetDrDistInch = -GEM_DISTANCE; // Set target distance - back
                 }
+
                 targetDrRotateDeg = 0f;  // Not used for this
-                targetPower = 0.3d;  // Set power
+                targetPower = 0.3f;  // Set power
+
+                targetdistItem.setValue(targetDrDistInch);
+                targetpowerItem.setValue(targetPower);
+                telemetry.update();
 
                 // Use this OpModes's custom cmdMoveA method to calculate new target (in encoder
                 // counts) and to initiate the move. cmdMoveA initiates a relative move.
@@ -218,21 +226,12 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
 
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("Alpha", snColor.alpha());
-                        telemetry.addData("Red  ", snColor.red());
-                        telemetry.addData("Green", snColor.green());
-                        telemetry.addData("Blue ", snColor.blue());
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
+                        debugnoteItem.setValue("Please press B to continue");
                         telemetry.update();
                     }
                     sleep(200);
                 } else {
-                    telemetry.addData("Alpha", snColor.alpha());
-                    telemetry.addData("Red  ", snColor.red());
-                    telemetry.addData("Green", snColor.green());
-                    telemetry.addData("Blue ", snColor.blue());
-                    telemetry.addData("In case ", seqRobot);
+                    debugnoteItem.setValue("  -----  ");
                     telemetry.update();
                     sleep(SLEEP_TIME);
                 }
@@ -242,6 +241,11 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
             }
 
             case 8: {  // Lift jem arm, move robot back to starting position and turn off color sensor
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Move robot back to starting position and lift gem arm");
+                telemetry.update();
+
                 sGem.setPosition(0); //move gem arm to start position
                 snColor.enableLed(false); //turn off color sensor LED - does not seem to work
 
@@ -249,15 +253,12 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
 
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case - ", seqRobot);
-                        telemetry.addData("Move robot back to starting position", " ");
-                        telemetry.addData("Please press B to continue", "");
+                        debugnoteItem.setValue("Please press B to continue");
                         telemetry.update();
                     }
                     sleep(200);
                 } else {
-                    telemetry.addData("In case - ", seqRobot);
-                    telemetry.addData("Move robot back to starting position", " ");
+                    debugnoteItem.setValue("  -----  ");
                     telemetry.update();
                     sleep(SLEEP_TIME);
                 }
@@ -269,6 +270,11 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
             case 12: { // Rotate to face decryption key
 
                 //not needed....
+
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Not in use...");
+                telemetry.update();
 
 /*
                 motorLeftA.setTargetPosition(DECRIPT_ROTATE);
@@ -293,8 +299,13 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
                 break;
             }
 
-            case 14:  // Setup vuforia and scan decryption key
+            case 14:  // Use vuforia to scan decryption key
             {
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Use vuforia to read cypher");
+                telemetry.update();
+
                 /*
                 * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
                 * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
@@ -322,62 +333,62 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
                  */
 
                 sleep(SLEEP_TIME/2);  // Pause before reading
+
                 VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
                 VuforiaTrackable relicTemplate = relicTrackables.get(0);
                 relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
 
                 relicTrackables.activate();
 
-                sleep(SLEEP_TIME/2); //pause after reding
+                sleep(SLEEP_TIME/2); //pause after reading
 
                 RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN)
                 {
-
-
-                        telemetry.addData("VuMark", "%s visible", vuMark);
+                        vuforiaItem.setValue("VuMark", "%s visible", vuMark);
 
                         if (vuMark == RelicRecoveryVuMark.LEFT)
                         {
                             leftCol = true;
                             centerCol = false;
                             rightCol = false;
+                            vuforiamarkItem.setValue("LEFT");
                         }
                         else if (vuMark == RelicRecoveryVuMark.CENTER )
                         {
                             leftCol = false;
                             centerCol = true;
                             rightCol = false;
+                            vuforiamarkItem.setValue("CENTER");
                         }
                         else if (vuMark == RelicRecoveryVuMark.RIGHT )
                         {
                             leftCol = false;
                             centerCol = false;
                             rightCol = true;
+                            vuforiamarkItem.setValue("RIGHT");
                         }
 
                     }
                     else
                     {
-                        telemetry.addData("VuMark", "not visible");
+                        vuforiaItem.setValue("VuMark not visible");
                         leftCol = false;
                         centerCol = true;
                         rightCol = false;
-                        telemetry.addData("Defaulting to ", "center column");
+                        vuforiamarkItem.setValue("Defaulting to center column");
                     }
 
+                    telemetry.update();
 
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("vuforia", "");
-                        telemetry.addData("Please press B to continue", "");
+                        debugnoteItem.setValue("Please press B to continue");
                         telemetry.update();
                     }
                     sleep(200);
                 } else {
-                    telemetry.addData("In case ", seqRobot);
-                    telemetry.addData("vuforia", "");
+                    debugnoteItem.setValue("  -----  ");
                     telemetry.update();
                     sleep(SLEEP_TIME);
                 }
@@ -386,31 +397,18 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
                 break;
             }
 
-/*
-            case 16: // Reset position after vuforia
-            {
-                movebackME(0,0.2f);  //use movebacME function to move motors back to provided position using given power (position,power)
-
-                if (debug) {
-                    while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
-                        telemetry.update();
-                    }
-                    sleep(200);
-                }
-
-                seqRobot+=2;
-                break;
-            }
-*/
 
             case 20:  // Move robot to correct column
-                        //27", 34", 41" - 9"
+                        //28", 36", 43" - 9"
             {
 
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Move robot to correct column");
+                telemetry.update();
+
                 targetDrRotateDeg = 0f; //not used
-                targetPower = 0.4d;  // Set power
+                targetPower = 0.4f;  // Set power
                 targetDrDistInch = 36f; //default to center
 
                 if (leftCol)
@@ -425,7 +423,13 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
                 {
                     targetDrDistInch = 43f; // Set target distance - right column
 
+                } else {
+                    casenoteItem.setValue(" - no column info... going with default");
                 }
+
+                targetdistItem.setValue(targetDrDistInch);
+                targetpowerItem.setValue(targetPower);
+                telemetry.update();
 
                 targetPosLeftA = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                 targetPosLeftB = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -434,29 +438,30 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
 
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Move robot in front of a column", "");
-                        telemetry.addData("Please press B to continue", "");
+                        debugnoteItem.setValue("Please press B to continue");
                         telemetry.update();
                     }
                     sleep(200);
                 } else {
-                    telemetry.addData("In case ", seqRobot);
-                    telemetry.addData("Move robot in front of a column", "");
-                    telemetry.addData("Target Distance: ", targetDrDistInch);
-                    telemetry.addData("Target Power: ", targetPower);
+                    debugnoteItem.setValue("  -----  ");
                     telemetry.update();
                     sleep(SLEEP_TIME*3);  //Sleep for 3x the normal sleep length
                 }
 
                 seqRobot++;
+                casenoteItem.setValue("");
                 break;
             }
 
             case 21:
             case 29:
-            case 35:    // Hold until drive train move is complete
+            case 41:    // Hold until drive train move is complete
             {
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Hold until drive train move is complete");
+                telemetry.update();
+
                 // Use this OpModes's custom chkMove to determine if motor move(s) are complete
                 // chkMove Parameters (motor, target, allowed +/- error counts from target)
                 // May need to add motor-is-busy check to ensure electric breaking complete.
@@ -466,17 +471,17 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
                             chkMove(motorLeftB, targetPosLeftB, ERROR_DRV_POS) &&
                                 chkMove(motorRightB, targetPosRightB, ERROR_DRV_POS))
                 {    // If drive train at target, hold position for 0.1s to stabilize motors.
+                    casenoteItem.setValue("");
                     sleep(100);
 
                     if (debug) {
                         while (!gamepad1.b) {
-                            telemetry.addData("In case ", seqRobot);
-                            telemetry.addData("Please press B to continue", "");
+                            debugnoteItem.setValue("Please press B to continue");
                             telemetry.update();
                         }
                         sleep(200);
                     } else {
-                        telemetry.addData("In case ", seqRobot);
+                        debugnoteItem.setValue("  -----  ");
                         telemetry.update();
                         sleep(SLEEP_TIME/2);
                     }
@@ -487,41 +492,51 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
 
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Waiting for motors to stop", "");
+                        debugnoteItem.setValue("Please press B to continue");
+                        casenoteItem.setValue("Waiting for motors to stop");
                         telemetry.update();
                     }
                     sleep(200);
                 } else  {
-                    telemetry.addData("In case ", seqRobot);
-                    telemetry.addData("Waiting for motors to stop", "");
+                    debugnoteItem.setValue("  -----  ");
+                    casenoteItem.setValue("Waiting for motors to stop");
                     telemetry.update();
-                    sleep(SLEEP_TIME);
+                    sleep(SLEEP_TIME/2);
                 }
 
             }
 
             case 24:  // Rotate Left - to place Glyph
             {
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Rotate Left - to place Glyph");
+                telemetry.update();
+
                 motorLeftA.setTargetPosition(-GLYPH_ROTATE);
                 motorLeftB.setTargetPosition(-GLYPH_ROTATE);
                 motorRightA.setTargetPosition(GLYPH_ROTATE);
                 motorRightB.setTargetPosition(GLYPH_ROTATE);
-                motorLeftA.setPower(.2);
-                motorLeftB.setPower(.2);
-                motorRightA.setPower(.2);
-                motorRightB.setPower(.2);
+
+                targetPower = 0.2f;
+
+                targetdistItem.setValue("encoders = " + GLYPH_ROTATE);
+                targetpowerItem.setValue(targetPower);
+                telemetry.update();
+
+                motorLeftA.setPower(targetPower);
+                motorLeftB.setPower(targetPower);
+                motorRightA.setPower(targetPower);
+                motorRightB.setPower(targetPower);
 
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
+                        debugnoteItem.setValue("Please press B to continue");
                         telemetry.update();
                     }
                     sleep(200);
                 } else {
-                    telemetry.addData("In case ", seqRobot);
-                    telemetry.addData("Please press B to continue", "");
+                    debugnoteItem.setValue("  -----  ");
                     telemetry.update();
                     sleep(SLEEP_TIME*2);
                 }
@@ -531,9 +546,13 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
             }
 
             case 25:
-            case 39:    // Check to see if the turn was up to standards
+            case 37:    // Check to see if the turn was up to standards
             {
-                telemetry.addData("Checking to see if turn was completed", "");
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Checking to see if turn was completed");
+                telemetry.update();
+
                 if (motorLeftA.getCurrentPosition() <= -GLYPH_ROTATE+ERROR_DRV_POS && motorLeftA.getCurrentPosition() >= -GLYPH_ROTATE-ERROR_DRV_POS &&
                         motorLeftB.getCurrentPosition() <= -GLYPH_ROTATE+ERROR_DRV_POS && motorLeftB.getCurrentPosition() >= -GLYPH_ROTATE-ERROR_DRV_POS &&
                             motorRightA.getCurrentPosition() >= GLYPH_ROTATE-ERROR_DRV_POS && motorRightA.getCurrentPosition() <= GLYPH_ROTATE+ERROR_DRV_POS &&
@@ -541,64 +560,72 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
                 {
                     if (debug) {
                         while (!gamepad1.b) {
-                            telemetry.addData("In case ", seqRobot);
-                            telemetry.addData("Turn successful - moving to next step", "");
+                            debugnoteItem.setValue("Please press B to continue");
+                            casenoteItem.setValue("Turn successful - moving to next step");
                             telemetry.update();
                         }
                         sleep(200);
                     } else {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Turn successful - moving to next step", "");
+                        debugnoteItem.setValue("  -----  ");
+                        casenoteItem.setValue("Turn successful - moving to next step");
                         telemetry.update();
                         sleep(SLEEP_TIME);
                     }
 
                     seqRobot++;
+                    casenoteItem.setValue("");
                     break;
                 }
                 else
                 {
                     if (debug) {
                         while (!gamepad1.b) {
-                            telemetry.addData("In case ", seqRobot);
-                            telemetry.addData("Turn unsuccessful - going back to turn", "");
+                            debugnoteItem.setValue("Please press B to continue");
+                            casenoteItem.setValue("Turn unsuccessful - going back to turn");
                             telemetry.update();
                         }
                         sleep(200);
                     } else {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Turn unsuccessful - going back to turn", "");
+                        debugnoteItem.setValue("  -----  ");
+                        casenoteItem.setValue("Turn unsuccessful - going back to turn");
                         telemetry.update();
-                        sleep(SLEEP_TIME);
+                        sleep(SLEEP_TIME/2);
                     }
 
                     seqRobot--;
+                    casenoteItem.setValue("");
                     break;
                 }
             }
 
             case 28: // move forward 7 "
             {
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Move forward 7 \"");
+                telemetry.update();
 
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = 7f; // Set target distance
-                targetPower = 0.2d;  // Set power
+                targetPower = 0.2f;  // Set power
 
-                targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
-                targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
-                targetPosRightA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
-                targetPosRightB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
+                targetdistItem.setValue(targetDrDistInch);
+                targetpowerItem.setValue(targetPower);
+                telemetry.update();
+
+                targetPosLeftA = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
+                targetPosLeftB = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
+                targetPosRightA = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
+                targetPosRightB = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
 
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
+                        debugnoteItem.setValue("Please press B to continue");
                         telemetry.update();
                     }
                     sleep(200);
                 } else {
-                    telemetry.addData("In case ", seqRobot);
-                    telemetry.addData("Please press B to continue", "");
+                    debugnoteItem.setValue("  -----  ");
                     telemetry.update();
                     sleep(SLEEP_TIME*2);
                 }
@@ -608,21 +635,24 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
             }
 
 
-            case 32:  // open Glyph
+            case 30:  // open Glyph
             {
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Open Glyph arm");
+                telemetry.update();
+
                 sGlyphL.setPosition(0.09);
                 sGlyphR.setPosition(0.9);
 
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
+                        debugnoteItem.setValue("Please press B to continue");
                         telemetry.update();
                     }
                     sleep(200);
                 } else {
-                    telemetry.addData("In case ", seqRobot);
-                    telemetry.addData("Please press B to continue", "");
+                    debugnoteItem.setValue("  -----  ");
                     telemetry.update();
                     sleep(SLEEP_TIME);
                 }
@@ -631,11 +661,48 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
                 break;
             }
 
+            case 32: {  // Move robot back to starting position
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Move robot back to starting position (after turn)");
+                telemetry.update();
+
+                targetPower = 0.3f;
+
+                targetdistItem.setValue(0);
+                targetpowerItem.setValue(targetPower);
+
+                movebackME(0,targetPower);  //use movebacME function to move motors back to provided position using given power (position,power)
+
+                if (debug) {
+                    while (!gamepad1.b) {
+                        debugnoteItem.setValue("Please press B to continue");
+                        telemetry.update();
+                    }
+                    sleep(200);
+                } else {
+                    debugnoteItem.setValue("  -----  ");
+                    telemetry.update();
+                    sleep(SLEEP_TIME);
+                }
+
+                seqRobot +=2;
+                break;
+            }
+/*
             case 34:  // move back
             {
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Move back 7 \"");
+                telemetry.update();
+
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = -7f; // Set target distance
-                targetPower = 0.2d;  // Set power
+                targetPower = 0.2f;  // Set power
+
+                targetdistItem.setValue(targetDrDistInch);
+                targetpowerItem.setValue(targetPower);
 
                 targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                 targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -644,13 +711,12 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
 
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
+                        debugnoteItem.setValue("Please press B to continue");
                         telemetry.update();
                     }
                     sleep(200);
                 } else {
-                    telemetry.addData("In case ", seqRobot);
+                    debugnoteItem.setValue("  -----  ");
                     telemetry.update();
                     sleep(SLEEP_TIME*2);
                 }
@@ -658,28 +724,39 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
                 seqRobot++;
                 break;
             }
+*/
 
-
-            case 38:  // rotate 180 deg
+            case 36:  // rotate 180 deg
             {
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Rotate 180 deg");
+                telemetry.update();
+
                 motorLeftA.setTargetPosition(END_ROTATE);
                 motorLeftB.setTargetPosition(END_ROTATE);
                 motorRightA.setTargetPosition(-END_ROTATE);
                 motorRightB.setTargetPosition(-END_ROTATE);
-                motorLeftA.setPower(.3);
-                motorLeftB.setPower(.3);
-                motorRightA.setPower(.3);
-                motorRightB.setPower(.3);
+
+                targetPower = 0.3f;
+
+                targetdistItem.setValue("encoders = " + END_ROTATE);
+                targetpowerItem.setValue(targetPower);
+                telemetry.update();
+
+                motorLeftA.setPower(targetPower);
+                motorLeftB.setPower(targetPower);
+                motorRightA.setPower(targetPower);
+                motorRightB.setPower(targetPower);
 
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
+                        debugnoteItem.setValue("Please press B to continue");
                         telemetry.update();
                     }
                     sleep(200);
                 } else {
-                    telemetry.addData("In case ", seqRobot);
+                    debugnoteItem.setValue("  -----  ");
                     telemetry.update();
                     sleep(SLEEP_TIME*3);
                 }
@@ -688,12 +765,20 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
                 break;
             }
 
-            case 42: // move back 5 "
+            case 40: // move back 5 "
             {
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Move back 5 \"");
+                telemetry.update();
 
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = -5f; // Set target distance
-                targetPower = 0.3d;  // Set power
+                targetPower = 0.3f;  // Set power
+
+                targetdistItem.setValue(targetDrDistInch);
+                targetpowerItem.setValue(targetPower);
+                telemetry.update();
 
                 targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                 targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -702,13 +787,12 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
 
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
+                        debugnoteItem.setValue("Please press B to continue");
                         telemetry.update();
                     }
                     sleep(200);
                 } else {
-                    telemetry.addData("In case ", seqRobot);
+                    debugnoteItem.setValue("  -----  ");
                     telemetry.update();
                     sleep(SLEEP_TIME);
                 }
@@ -720,15 +804,18 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
 
             case 99:  // Done
             {
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Case 99 - DONE");
+
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
+                        debugnoteItem.setValue("Please press B to continue");
                         telemetry.update();
                     }
                     sleep(400);
                 } else {
-                    telemetry.addData("In case ", seqRobot);
+                    debugnoteItem.setValue("  -----  ");
                     telemetry.update();
                     sleep(SLEEP_TIME/2);
                 }
@@ -737,15 +824,18 @@ public class DMRelicBlueFrontV4 extends DMRelicAbstract{
 
             default:
             {
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Default case....");
+
                 if (debug) {
                     while (!gamepad1.b) {
-                        telemetry.addData("In case default - # ", seqRobot);
-                        telemetry.addData("Please press B to continue", "");
+                        debugnoteItem.setValue("Please press B to continue");
                         telemetry.update();
                     }
-                    sleep(400);
+                    sleep(200);
                 }  else {
-                    telemetry.addData("In case default - # ", seqRobot);
+                    debugnoteItem.setValue("  -----  ");
                     telemetry.update();
                     sleep(SLEEP_TIME/2);
                 }
