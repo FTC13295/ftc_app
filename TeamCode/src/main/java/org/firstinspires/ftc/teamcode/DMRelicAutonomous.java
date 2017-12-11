@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 /* ------------------------------------------------------------------
  * This Op Mode is a template for Autonomous Control
@@ -15,6 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  */
 
 @Autonomous(name = "DMRelicAuto", group = "RiderModes")
+@Disabled
 public class DMRelicAutonomous extends CyberRelicAbstract{
 
     //------------------------------------------------------------------
