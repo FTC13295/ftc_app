@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import static android.os.SystemClock.sleep;
 
 @Autonomous(name = "DMRelicBlueFrontV2", group = "RiderModes")
+@Disabled
 public class DMRelicBlueFrontV2 extends DMRelicAbstract{
 
     OpenGLMatrix lastLocation = null;
@@ -102,13 +104,13 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                     telemetry.addData("-----", " Gem Color");
                     telemetry.addData("Gem ", "RED");
                     telemetry.addData("-----", " Gem Color");
-                    targetPower = 0.2d;  // Set power
+                    targetPower = 0.2f;  // Set power
                 }
                 else {  //move back
                     telemetry.addData("-----", " Gem Color");
                     telemetry.addData("Gem ", "BLUE");
                     telemetry.addData("-----", " Gem Color");
-                    targetPower = -0.2d;  // Set power
+                    targetPower = -0.2f;  // Set power
                 }
                 telemetry.addData("Exit color check", " -- IF --");
 
@@ -383,7 +385,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                 {
                     targetDrRotateDeg = 0f;
                     targetDrDistInch = 19f; // Set target distance
-                    targetPower = 0.1d;  // Set power
+                    targetPower = 0.1f;  // Set power
 
                     targetPosLeftA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                     targetPosLeftB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -393,7 +395,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                 {
                     targetDrRotateDeg = 0f;
                     targetDrDistInch = 26f; // Set target distance
-                    targetPower = 0.1d;  // Set power
+                    targetPower = 0.1f;  // Set power
 
                     targetPosLeftA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                     targetPosLeftB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -403,7 +405,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
                 {
                     targetDrRotateDeg = 0f;
                     targetDrDistInch = 33f; // Set target distance
-                    targetPower = 0.1d;  // Set power
+                    targetPower = 0.1f;  // Set power
 
                     targetPosLeftA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                     targetPosLeftB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -509,7 +511,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
 
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = 5f; // Set target distance
-                targetPower = 0.1d;  // Set power
+                targetPower = 0.1f;  // Set power
 
                 targetPosLeftA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                 targetPosLeftB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -579,7 +581,7 @@ public class DMRelicBlueFrontV2 extends DMRelicAbstract{
             {
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = -5f; // Set target distance
-                targetPower = 0.1d;  // Set power
+                targetPower = 0.1f;  // Set power
 
                 targetPosLeftA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                 targetPosLeftB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
