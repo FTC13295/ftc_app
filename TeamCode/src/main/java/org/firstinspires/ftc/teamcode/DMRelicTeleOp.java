@@ -81,7 +81,7 @@ public class DMRelicTeleOp extends DMRelicAbstract {
 
         //init glyph position
         sGlyphL.setPosition(0.1);
-        sGlyphR.setPosition(0.75); //changed from 0.8
+        sGlyphR.setPosition(0.9); //changed from 0.8 - changed from 0.75
 
         //init back arm
         initbarm();
@@ -141,7 +141,7 @@ public class DMRelicTeleOp extends DMRelicAbstract {
 
         } else {
 
-
+/*
             if (gamepad1.x ) {
                 if (slowdown) {
                     slowdown = false;
@@ -163,11 +163,16 @@ public class DMRelicTeleOp extends DMRelicAbstract {
                     telemetry.addData("Driving at ", "full speed");
                 }
             }
+*/
 
             if (gamepad1.right_bumper)
             {
                 drivepower = PowerRatio;
-                telemetry.addData("Driving at ", "half speed - bumper pushed - override");
+                telemetry.addData("Driving at half speed - bumper pushed - override: ", drivepower);
+            } else
+            {
+                drivepower = 1.0f;
+                telemetry.addData("Driving at full speed - bumper released: ", drivepower);
             }
 
             powerRightA = Range.clip(powerRightA, -drivepower, drivepower);
@@ -178,10 +183,11 @@ public class DMRelicTeleOp extends DMRelicAbstract {
 
         }
 
-        powerRightA = velocityDrive + rotationDrive + strafeDrive;
-        powerRightB = velocityDrive + rotationDrive - strafeDrive;
-        powerLeftA = velocityDrive - rotationDrive - strafeDrive;
-        powerLeftB = velocityDrive - rotationDrive + strafeDrive;
+
+        powerRightA = (velocityDrive + rotationDrive + strafeDrive) * drivepower;
+        powerRightB = (velocityDrive + rotationDrive - strafeDrive) * drivepower;
+        powerLeftA = (velocityDrive - rotationDrive - strafeDrive) * drivepower;
+        powerLeftB = (velocityDrive - rotationDrive + strafeDrive) * drivepower;
         /*
         //Change direction that is front for the robot
 
@@ -249,7 +255,7 @@ public class DMRelicTeleOp extends DMRelicAbstract {
                 spos = 27/180;
                 sGlyphL.setPosition(0.2);  //Used to be 0.16
                 spos=133/180;
-                sGlyphR.setPosition(0.65);  //Used to be 0.72
+                sGlyphR.setPosition(0.8);  //Used to be 0.72 - added 0.15 to 0.65
                 sleep(150);
                 Gopen = false;
             }
@@ -257,7 +263,7 @@ public class DMRelicTeleOp extends DMRelicAbstract {
                 spos=10/180;
                 sGlyphL.setPosition(0.09);  //changed from 0.05
                 spos=145/180;
-                sGlyphR.setPosition(0.75);  //changed from 0.83
+                sGlyphR.setPosition(0.9);  //changed from 0.83 - added 0.15 to 0.75
                 sleep(150);
                 Gopen = true;
             }
@@ -265,11 +271,27 @@ public class DMRelicTeleOp extends DMRelicAbstract {
         }
 
         // lower the back arm
-        if (gamepad1.y && !bArmDown)
+        if (gamepad2.y && !bArmDown)
         {
             bArmDown = true;
-            lowerbarm(10);
+            lowerbarm(20);
             sleep(250);
+        }
+
+        //Back Arm testing...
+        if(gamepad2.right_bumper)
+        {
+            barmDown();
+            telemetry.addData("Back Arm  ", "down");
+        }
+        else if (gamepad2.left_bumper)
+        {
+            barmUp();
+            telemetry.addData("Back Arm  ", "up");
+        }
+        else {
+            barmStop();
+            telemetry.addData("Back Arm  ", "stop");
         }
 
         // Glyph Lift operations
