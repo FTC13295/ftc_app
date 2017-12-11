@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode;
 
+        import com.qualcomm.robotcore.eventloop.opmode.Disabled;
         import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
         import com.qualcomm.robotcore.hardware.DcMotor;
         import com.qualcomm.robotcore.hardware.Servo;
@@ -43,6 +44,7 @@ package org.firstinspires.ftc.teamcode;
         import static android.os.SystemClock.sleep;
 
 @TeleOp(name = "DMRelicTest")
+@Disabled
 public class CyberRelicTeleOp extends CyberRelicAbstract {
     public CyberRelicTeleOp() {
     }
