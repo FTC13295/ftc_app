@@ -60,11 +60,11 @@ public abstract class DMRelicAbstract extends OpMode {
             targetDrDistInch,                   // Targets for motor moves in sequence (engineering units)
             targetDrRotateDeg,
             drivepower,
+            targetPower,                        // General motor power variable (%, -1.0 to 1.0)
             hsvValues[] = {0F, 0F, 0F};
     // Auto: Values used to determine current color detected
 
     protected double
-            targetPower, // General motor power variable (%, -1.0 to 1.0)
             temp, gyro,
             x,y,
             glyphL, glyphR,
@@ -85,14 +85,17 @@ public abstract class DMRelicAbstract extends OpMode {
     // Establish Integer Constants
     final static int
             DECRIPT_ROTATE = 0,
+            SLEEP_TIME = 500,                   // Default wait time = 0.5 sec
             ERROR_DRV_POS = 20,                 // Allowed error in encoder counts following drive train position move
-            GLYPH_ROTATE = 1120,                // need to confirm # of encoder rotations for 90 deg
+            GLYPH_ROTATE = 2000,                // need to confirm # of encoder rotations for 90 deg
                                                 // full rotation of the wheel = 1120
-            END_ROTATE = 2240;                     // final position - left facing cypher
+                                                // 2240 = 95 deg
+            END_ROTATE = 4000;                     // final position - left facing cypher
     // Establish Float Constants
     final static float
-            PowerRatio = 0.5f,
-            ENCODER_CNT_PER_IN_DRIVE = 89.12677f;        //59.41979167d; // (28 count/motor rev x 40 motor rev / shaft rev) / (6" dia. wheel x pi)
+            PowerRatio = 0.3f,
+            GEM_DISTANCE = 3.0f,                        //Set distance to 3 inches
+            ENCODER_CNT_PER_IN_DRIVE = 89.12677f;       //59.41979167d; // (28 count/motor rev x 40 motor rev / shaft rev) / (6" dia. wheel x pi)
                                                         //Ticks per rev - 1120 (AndyMark)
                                                         //1120 / Diam * PI = 1120 / 4 * 3.1415 = 89.12677
 
@@ -297,7 +300,7 @@ public abstract class DMRelicAbstract extends OpMode {
     {
         for(int counter = 0; counter < climit; counter++)
         {
-            sBArm.setPower(0.3);
+            sBArm.setPower(0.9);
         }
         sBArm.setPower(0);
 
@@ -305,8 +308,27 @@ public abstract class DMRelicAbstract extends OpMode {
 
     public void initbarm()
     {
-        sBArm.setPower(0.1);
+        sBArm.setPower(0.9);
         sBArm.setPower(0);
+    }
+
+    //Test Back Arm
+    public void barmUp ()
+    {
+        sBArm.setPower(0.9);
+
+    }
+
+    public void barmDown()
+    {
+        sBArm.setPower(0.1);
+
+    }
+
+    public void barmStop()
+    {
+        sBArm.setPower(0);
+
     }
     /*
     public void MvFrwdDist(double power, int distance)
@@ -332,7 +354,7 @@ public abstract class DMRelicAbstract extends OpMode {
     //		motor = motor
     // Return: New target (encoder counts)
 
-    int cmdMoveA(float distIn, float encoderCntPerIn, double power, DcMotor motor)
+    int cmdMoveA(float distIn, float encoderCntPerIn, float power, DcMotor motor)
     {
         // Solve for encoder count target. (int) needed to cast result as integer
         int target = (int) (distIn * encoderCntPerIn);
