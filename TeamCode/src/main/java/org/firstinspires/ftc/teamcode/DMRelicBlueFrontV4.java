@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
@@ -17,13 +18,13 @@ import static android.os.SystemClock.sleep;
  * This Op Mode is a template for Autonomous Control
  *
  * Gamepads
- * 	Not used; however, for troubleshooting prior to competition, Gamepad1's "A" button will allow
- * 	the programmer to advance the sequence 1 step.
+ * 	Not used; however, for troubleshooting prior to competition, Gamepad1's "X" button will allow
+ * 	the programmer to enter debug mode (in init).
  * ------------------------------------------------------------------
  */
 
-@Autonomous(name = "DMRelicBlueFrontV3", group = "RiderModes")
-public class DMRelicBlueFrontV3 extends DMRelicAbstract{
+@Autonomous(name = "DMRelicBlueFrontV4", group = "RiderModes")
+public class DMRelicBlueFrontV4 extends DMRelicAbstract{
 
     //------------------------------------------------------------------
     // Robot OpMode Loop Method
@@ -38,14 +39,21 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
 
         super.init();
 
-        //lightSensor.enableLed(true);
-        debug = true;
+        //Set debug to false
+        debug = false;
+
+        if(gamepad1.x) {
+            debug = true;
+        }
 
         //set motors to use encoders
         motorLeftA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRightA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLeftB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRightB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //turn off auto clear for telemetry
+        telemetry.setAutoClear(false);
 
     }
 
@@ -86,7 +94,10 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                     }
                     sleep(200);
                 } else {
-                    sleep(100);
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Reset encoders", "");
+                    telemetry.update();
+                    sleep(SLEEP_TIME/2);
                 }
 
                 //if (seqRobot == 1) {
@@ -114,7 +125,10 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                     }
                     sleep(200);
                 } else {
-                    sleep(250);
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Init robot and load glyph", "");
+                    telemetry.update();
+                    sleep(SLEEP_TIME);
                 }
 
                 seqRobot ++;
@@ -133,7 +147,10 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                     }
                     sleep(200);
                 } else {
-                    sleep(250);
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Lower gem arm", "");
+                    telemetry.update();
+                    sleep(SLEEP_TIME);
                 }
 
                 seqRobot+=2;
@@ -147,6 +164,7 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                 telemetry.addData("Green", snColor.green());
                 telemetry.addData("Blue ", snColor.blue());
                 telemetry.addData("Entering color check", " -- IF --");
+                sleep(SLEEP_TIME); // Pause to read color
                 if (snColor.red() > snColor.blue()) {  //move forward to push red gem
                     telemetry.addData("-----", " Gem Color");
                     telemetry.addData("Gem ", "RED");
@@ -166,7 +184,7 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                     sleep(300);
                 }
                 targetDrRotateDeg = 0f;  // Not used for this
-                targetPower = 0.3d;  // Set power
+                targetPower = 0.3f;  // Set power
 
                 // Use this OpModes's custom cmdMoveA method to calculate new target (in encoder
                 // counts) and to initiate the move. cmdMoveA initiates a relative move.
@@ -188,7 +206,13 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                     }
                     sleep(200);
                 } else {
-                    sleep(250);
+                    telemetry.addData("Alpha", snColor.alpha());
+                    telemetry.addData("Red  ", snColor.red());
+                    telemetry.addData("Green", snColor.green());
+                    telemetry.addData("Blue ", snColor.blue());
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.update();
+                    sleep(SLEEP_TIME);
                 }
 
                 seqRobot+=2;
@@ -210,7 +234,10 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                     }
                     sleep(200);
                 } else {
-                    sleep(300);
+                    telemetry.addData("In case - ", seqRobot);
+                    telemetry.addData("Move robot back to starting position", " ");
+                    telemetry.update();
+                    sleep(SLEEP_TIME);
                 }
 
                 seqRobot+=2;
@@ -272,13 +299,14 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                  * @see VuMarkInstanceId
                  */
 
+                sleep(SLEEP_TIME/2);  // Pause before reading
                 VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
                 VuforiaTrackable relicTemplate = relicTrackables.get(0);
                 relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
 
                 relicTrackables.activate();
 
-                sleep(200); //pause for 0.2 sec
+                sleep(SLEEP_TIME/2); //pause after reding
 
                 RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN)
@@ -326,8 +354,10 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                     }
                     sleep(200);
                 } else {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("vuforia", "");
                     telemetry.update();
-                    sleep(400);
+                    sleep(SLEEP_TIME);
                 }
 
                 seqRobot+=4;  //skip 16 and go to 18
@@ -358,33 +388,27 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
             {
 
                 targetDrRotateDeg = 0f; //not used
-                targetPower = 0.4d;  // Set power
+                targetPower = 0.4f;  // Set power
+                targetDrDistInch = 36f; //default to center
 
                 if (leftCol)
                 {
-                    targetDrDistInch = 27f; // Set target distance - left column
+                    targetDrDistInch = 28f; // Set target distance - left column
 
-                    targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
-                    targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
-                    targetPosRightA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
-                    targetPosRightB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
                 } else if (centerCol)
                 {
-                    targetDrDistInch = 34f; // Set target distance - center column
+                    targetDrDistInch = 36f; // Set target distance - center column
 
-                    targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
-                    targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
-                    targetPosRightA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
-                    targetPosRightB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
                 } else if (rightCol)
                 {
-                    targetDrDistInch = 41f; // Set target distance - right column
+                    targetDrDistInch = 43f; // Set target distance - right column
 
-                    targetPosLeftA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
-                    targetPosLeftB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
-                    targetPosRightA = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
-                    targetPosRightB = cmdMoveR(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
                 }
+
+                targetPosLeftA = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
+                targetPosLeftB = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
+                targetPosRightA = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
+                targetPosRightB = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -394,6 +418,13 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                         telemetry.update();
                     }
                     sleep(200);
+                } else {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Move robot in front of a column", "");
+                    telemetry.addData("Target Distance: ", targetDrDistInch);
+                    telemetry.addData("Target Power: ", targetPower);
+                    telemetry.update();
+                    sleep(SLEEP_TIME*3);  //Sleep for 3x the normal sleep length
                 }
 
                 seqRobot++;
@@ -422,6 +453,10 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                             telemetry.update();
                         }
                         sleep(200);
+                    } else {
+                        telemetry.addData("In case ", seqRobot);
+                        telemetry.update();
+                        sleep(SLEEP_TIME/2);
                     }
 
                     seqRobot++;
@@ -436,7 +471,10 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                     }
                     sleep(200);
                 } else  {
-                    sleep(200);
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Waiting for motors to stop", "");
+                    telemetry.update();
+                    sleep(SLEEP_TIME);
                 }
 
             }
@@ -460,7 +498,10 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                     }
                     sleep(200);
                 } else {
-                    sleep(1000);
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                    sleep(SLEEP_TIME*2);
                 }
 
                 seqRobot++;
@@ -483,6 +524,11 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                             telemetry.update();
                         }
                         sleep(200);
+                    } else {
+                        telemetry.addData("In case ", seqRobot);
+                        telemetry.addData("Turn successful - moving to next step", "");
+                        telemetry.update();
+                        sleep(SLEEP_TIME);
                     }
 
                     seqRobot++;
@@ -497,6 +543,11 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                             telemetry.update();
                         }
                         sleep(200);
+                    } else {
+                        telemetry.addData("In case ", seqRobot);
+                        telemetry.addData("Turn unsuccessful - going back to turn", "");
+                        telemetry.update();
+                        sleep(SLEEP_TIME);
                     }
 
                     seqRobot--;
@@ -509,7 +560,7 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
 
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = 7f; // Set target distance
-                targetPower = 0.2d;  // Set power
+                targetPower = 0.2f;  // Set power
 
                 targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                 targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -524,7 +575,10 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                     }
                     sleep(200);
                 } else {
-                    sleep(500);
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                    sleep(SLEEP_TIME*2);
                 }
 
                 seqRobot++;
@@ -545,7 +599,10 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                     }
                     sleep(200);
                 } else {
-                    sleep(250);
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.addData("Please press B to continue", "");
+                    telemetry.update();
+                    sleep(SLEEP_TIME);
                 }
 
                 seqRobot+=2;
@@ -556,7 +613,7 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
             {
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = -7f; // Set target distance
-                targetPower = 0.2d;  // Set power
+                targetPower = 0.2f;  // Set power
 
                 targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                 targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -571,7 +628,9 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                     }
                     sleep(200);
                 } else {
-                    sleep(500);
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.update();
+                    sleep(SLEEP_TIME*2);
                 }
 
                 seqRobot++;
@@ -598,7 +657,9 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                     }
                     sleep(200);
                 } else {
-                    sleep(1200);
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.update();
+                    sleep(SLEEP_TIME*3);
                 }
 
                 seqRobot++;
@@ -610,7 +671,7 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
 
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = -5f; // Set target distance
-                targetPower = 0.3d;  // Set power
+                targetPower = 0.3f;  // Set power
 
                 targetPosLeftA = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                 targetPosLeftB = cmdMoveA(targetDrDistInch, (float)ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
@@ -625,7 +686,9 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                     }
                     sleep(200);
                 } else {
-                    sleep(500);
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.update();
+                    sleep(SLEEP_TIME);
                 }
 
                 seqRobot++;
@@ -642,9 +705,13 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                         telemetry.update();
                     }
                     sleep(400);
+                } else {
+                    telemetry.addData("In case ", seqRobot);
+                    telemetry.update();
+                    sleep(SLEEP_TIME/2);
                 }
                 break;
-            }
+            } //end case 99
 
             default:
             {
@@ -655,28 +722,24 @@ public class DMRelicBlueFrontV3 extends DMRelicAbstract{
                         telemetry.update();
                     }
                     sleep(400);
+                }  else {
+                    telemetry.addData("In case default - # ", seqRobot);
+                    telemetry.update();
+                    sleep(SLEEP_TIME/2);
                 }
                 break;
-            }
+            } //end default
 
 
 
 
-        }
+        } //end switch
+
+
         telemetry.update();
 
 
-
-
-
-
-
-
-
-
-
-
-        }
+        } // End OpMode Loop Method
 
 
 
