@@ -73,7 +73,7 @@ public class TestMecanumEncoder extends DMRelicAbstract {
         motorLeftA.setPower(powerLeftA);
         motorLeftB.setPower(powerLeftB);
 */
-        targetPower = 0.5d;     // Set power
+        targetPower = 0.5f;     // Set power
         targetDrRotateDeg = 0f;// Set rotation
 
         if (gamepad1.a) {
