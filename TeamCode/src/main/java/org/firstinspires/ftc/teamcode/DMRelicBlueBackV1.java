@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -24,6 +25,7 @@ import static android.os.SystemClock.sleep;
  */
 
 @Autonomous(name = "DMRelicBlueBackV1", group = "RiderModes")
+@Disabled
 public class DMRelicBlueBackV1 extends DMRelicAbstract{
 
     //------------------------------------------------------------------
@@ -447,19 +449,19 @@ public class DMRelicBlueBackV1 extends DMRelicAbstract{
 
                 targetDrRotateDeg = 0f; //not used
                 targetPower = 0.4f;  // Set power
-                targetDrDistInch = 12.5f; //default to center
+                targetDrDistInch = 25f; //default to center
 
                 if (leftCol)
                 {
-                    targetDrDistInch = 5f; // Set target distance - left column
+                    targetDrDistInch = 10f; // Set target distance - left column - 5
 
                 } else if (centerCol)
                 {
-                    targetDrDistInch = 12.5f; // Set target distance - center column
+                    targetDrDistInch = 25f; // Set target distance - center column - 12.5
 
                 } else if (rightCol)
                 {
-                    targetDrDistInch = 20f; // Set target distance - right column
+                    targetDrDistInch = 40f; // Set target distance - right column - 20
 
                 } else {
                     casenoteItem.setValue(" - no column info... going with default");
@@ -471,10 +473,10 @@ public class DMRelicBlueBackV1 extends DMRelicAbstract{
 
                 //For strafe we need to change power direction for each wheel
 
-                targetPosLeftA = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, -targetPower, motorLeftA);
+                targetPosLeftA = cmdMoveA(-targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
                 targetPosLeftB = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
                 targetPosRightA = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
-                targetPosRightB = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, -targetPower, motorRightB);
+                targetPosRightB = cmdMoveA(-targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
 
                 if (debug) {
                     while (!gamepad1.b) {

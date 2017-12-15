@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -24,9 +23,8 @@ import static android.os.SystemClock.sleep;
  * ------------------------------------------------------------------
  */
 
-@Autonomous(name = "DMRelicRedFrontV1", group = "RiderModes")
-@Disabled
-public class DMRelicRedFrontV1 extends DMRelicAbstract{
+@Autonomous(name = "DMRelicRedFrontV3", group = "RiderModes")
+public class DMRelicRedFrontV3 extends DMRelicAbstract{
 
     //------------------------------------------------------------------
     // Robot OpMode Loop Method
@@ -377,12 +375,12 @@ public class DMRelicRedFrontV1 extends DMRelicAbstract{
                     sleep(SLEEP_TIME);
                 }
 
-                seqRobot+=2;
+                seqRobot+=4;
                 break;
             }
 
 
-            case 16:    //Turn 180 deg
+            //case 16:    //Turn 180 deg
             case 36:
             {
                 //Update telemetry data
@@ -434,19 +432,19 @@ public class DMRelicRedFrontV1 extends DMRelicAbstract{
 
                 targetDrRotateDeg = 0f; //not used
                 targetPower = 0.4f;  // Set power
-                targetDrDistInch = 36f; //default to center
+                targetDrDistInch = -35.6f; //default to center
 
                 if (leftCol)
                 {
-                    targetDrDistInch = 27f; // Set target distance - left column
+                    targetDrDistInch = -43.3f; // Set target distance - left column
 
                 } else if (centerCol)
                 {
-                    targetDrDistInch = 36f; // Set target distance - center column
+                    targetDrDistInch = -35.6f; // Set target distance - center column
 
                 } else if (rightCol)
                 {
-                    targetDrDistInch = 43f; // Set target distance - right column
+                    targetDrDistInch = -27.5f; // Set target distance - right column
 
                 } else {
                     casenoteItem.setValue(" - no column info... going with default");
@@ -534,17 +532,17 @@ public class DMRelicRedFrontV1 extends DMRelicAbstract{
             }
 */
 
-            case 24:  // Rotate Right - to place Glyph
+            case 24:  // Rotate Left - to place Glyph
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
                 caseItem.setValue("Rotate Left - to place Glyph");
                 telemetry.update();
 
-                motorLeftA.setTargetPosition(GLYPH_ROTATE);
-                motorLeftB.setTargetPosition(GLYPH_ROTATE);
-                motorRightA.setTargetPosition(-GLYPH_ROTATE);
-                motorRightB.setTargetPosition(-GLYPH_ROTATE);
+                motorLeftA.setTargetPosition(-GLYPH_ROTATE);
+                motorLeftB.setTargetPosition(-GLYPH_ROTATE);
+                motorRightA.setTargetPosition(GLYPH_ROTATE);
+                motorRightB.setTargetPosition(GLYPH_ROTATE);
 
                 targetPower = 0.4f;
 
@@ -689,7 +687,7 @@ public class DMRelicRedFrontV1 extends DMRelicAbstract{
                     sleep(SLEEP_TIME);
                 }
 
-                seqRobot+=2;
+                seqRobot+=20;  // skip remaining steps
                 break;
             }
 

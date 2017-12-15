@@ -315,13 +315,13 @@ public abstract class DMRelicAbstract extends OpMode {
     //Test Back Arm
     public void barmUp ()
     {
-        sBArm.setPower(0.9);
+        sBArm.setPower(0.5);
 
     }
 
     public void barmDown()
     {
-        sBArm.setPower(0.1);
+        sBArm.setPower(-0.5);
 
     }
 

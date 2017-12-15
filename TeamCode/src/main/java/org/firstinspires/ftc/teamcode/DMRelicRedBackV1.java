@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -24,6 +25,7 @@ import static android.os.SystemClock.sleep;
  */
 
 @Autonomous(name = "DMRelicRedBackV1", group = "RiderModes")
+@Disabled
 public class DMRelicRedBackV1 extends DMRelicAbstract{
 
     //------------------------------------------------------------------
@@ -447,19 +449,19 @@ public class DMRelicRedBackV1 extends DMRelicAbstract{
 
                 targetDrRotateDeg = 0f; //not used
                 targetPower = 0.4f;  // Set power
-                targetDrDistInch = 12.5f; //default to center
+                targetDrDistInch = 25f; //default to center - 12.5
 
                 if (leftCol)
                 {
-                    targetDrDistInch = 20f; // Set target distance - left column
+                    targetDrDistInch = 40f; // Set target distance - left column - 40
 
                 } else if (centerCol)
                 {
-                    targetDrDistInch = 12.5f; // Set target distance - center column
+                    targetDrDistInch = 25f; // Set target distance - center column - 12.5
 
                 } else if (rightCol)
                 {
-                    targetDrDistInch = 5f; // Set target distance - right column
+                    targetDrDistInch = 10f; // Set target distance - right column - 5
 
                 } else {
                     casenoteItem.setValue(" - no column info... going with default");
@@ -471,10 +473,10 @@ public class DMRelicRedBackV1 extends DMRelicAbstract{
 
                 //For strafe we need to change power direction for each wheel
 
-                targetPosLeftA = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
-                targetPosLeftB = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, -targetPower, motorLeftB);
-                targetPosRightA = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, -targetPower, motorRightA);
-                targetPosRightB = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
+                targetPosLeftA = cmdMoveA(-targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftA);
+                targetPosLeftB = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorLeftB);
+                targetPosRightA = cmdMoveA(targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightA);
+                targetPosRightB = cmdMoveA(-targetDrDistInch, ENCODER_CNT_PER_IN_DRIVE, targetPower, motorRightB);
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -775,19 +777,19 @@ public class DMRelicRedBackV1 extends DMRelicAbstract{
                     sleep(SLEEP_TIME);
                 }
 
-                seqRobot +=2;
+                seqRobot ++;
                 break;
             }
-/*
-            case 34:  // move back
+
+            case 33:  // move 2"
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
-                caseItem.setValue("Move back 7 \"");
+                caseItem.setValue("Move 2 \"");
                 telemetry.update();
 
                 targetDrRotateDeg = 0f;
-                targetDrDistInch = -7f; // Set target distance
+                targetDrDistInch = 2f; // Set target distance
                 targetPower = 0.2f;  // Set power
 
                 targetdistItem.setValue(targetDrDistInch);
@@ -807,24 +809,24 @@ public class DMRelicRedBackV1 extends DMRelicAbstract{
                 } else {
                     debugnoteItem.setValue("  -----  ");
                     telemetry.update();
-                    sleep(SLEEP_TIME*2);
+                    sleep(SLEEP_TIME);
                 }
 
                 seqRobot++;
                 break;
             }
-*/
 
 
-            case 40: // move back 3 "
+
+            case 40: // move back 5 "
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
-                caseItem.setValue("Move back 3 \"");
+                caseItem.setValue("Move back 5 \"");
                 telemetry.update();
 
                 targetDrRotateDeg = 0f;
-                targetDrDistInch = -3f; // Set target distance
+                targetDrDistInch = -5f; // Set target distance
                 targetPower = 0.3f;  // Set power
 
                 targetdistItem.setValue(targetDrDistInch);
