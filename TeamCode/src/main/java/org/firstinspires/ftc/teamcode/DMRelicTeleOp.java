@@ -167,12 +167,16 @@ public class DMRelicTeleOp extends DMRelicAbstract {
 
             if (gamepad1.right_bumper)
             {
-                drivepower = PowerRatio;
-                telemetry.addData("Driving at half speed - bumper pushed - override: ", drivepower);
+                drivepower = SLOW_POWER;
+                telemetry.addData("Driving at slow speed - right bumper pushed - override: ", drivepower);
+            } else if (gamepad1.left_bumper)
+            {
+                drivepower = FULL_POWER;
+                telemetry.addData("Driving at slow speed - right bumper pushed - override: ", drivepower);
             } else
             {
-                drivepower = 1.0f;
-                telemetry.addData("Driving at full speed - bumper released: ", drivepower);
+                drivepower = REG_POWER;
+                telemetry.addData("Driving at regular speed - no bumper used: ", drivepower);
             }
 
             powerRightA = Range.clip(powerRightA, -drivepower, drivepower);
