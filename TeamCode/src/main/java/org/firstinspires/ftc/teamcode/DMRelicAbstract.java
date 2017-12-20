@@ -60,6 +60,7 @@ public abstract class DMRelicAbstract extends OpMode {
             targetDrDistInch,                   // Targets for motor moves in sequence (engineering units)
             targetDrRotateDeg,
             drivepower,
+            temp_x_stick, temp_y_stick,          // Temporary x and y stick value
             targetPower,                        // General motor power variable (%, -1.0 to 1.0)
             hsvValues[] = {0F, 0F, 0F};
     // Auto: Values used to determine current color detected
@@ -93,7 +94,10 @@ public abstract class DMRelicAbstract extends OpMode {
             END_ROTATE = 4080;                     // final position - left facing cypher
     // Establish Float Constants
     final static float
-            PowerRatio = 0.3f,
+            PowerRatio = 0.7f,
+            SLOW_POWER = 0.4f,
+            REG_POWER = 0.7f,
+            FULL_POWER = 1.0f,
             GEM_DISTANCE = 3.0f,                        //Set distance to 3 inches
             ENCODER_CNT_PER_IN_DRIVE = 89.12677f;       //59.41979167d; // (28 count/motor rev x 40 motor rev / shaft rev) / (6" dia. wheel x pi)
                                                         //Ticks per rev - 1120 (AndyMark)
