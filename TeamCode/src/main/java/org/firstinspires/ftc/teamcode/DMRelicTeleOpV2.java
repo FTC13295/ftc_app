@@ -31,21 +31,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 import static android.os.SystemClock.sleep;
 
-@TeleOp(name = "DMRelicTeleOp")
-public class DMRelicTeleOp extends DMRelicAbstract {
-    public DMRelicTeleOp() {
+@TeleOp(name = "DMRelicTeleOpV2")
+public class DMRelicTeleOpV2 extends DMRelicAbstract {
+    public DMRelicTeleOpV2() {
     }
 
     @Override
@@ -104,125 +98,63 @@ public class DMRelicTeleOp extends DMRelicAbstract {
         strafeDrive = -gamepad1.left_stick_x;  //change to -
         rotationDrive = -gamepad1.right_stick_x;  //change to -
 
-       // Scale drive motor power for better control at low power
+        // Scale drive motor power for better control at low power
         powerRightA = (float) scaleInput(powerRightA);
         powerRightB = (float) scaleInput(powerRightB);
         powerLeftA = (float) scaleInput(powerLeftA);
         powerLeftB = (float) scaleInput(powerLeftB);
 
         //Create dead-zone for drive train controls
-        if (gamepad1.left_stick_x <= 0.05 && gamepad1.left_stick_x >= -0.05) {
+        if (gamepad1.left_stick_x <= 0.1 && gamepad1.left_stick_x >= -0.1) {
             gamepad1.left_stick_x = 0;
+            strafeDrive = 0;
         }
 
-        if (gamepad1.left_stick_y <= 0.05 && gamepad1.left_stick_y >= -0.05) {
+        if (gamepad1.left_stick_y <= 0.1 && gamepad1.left_stick_y >= -0.1) {
             gamepad1.left_stick_y = 0;
+            velocityDrive = 0;
         }
 
-        if (gamepad1.right_stick_x <= 0.05 && gamepad1.right_stick_x >= -0.05) {
+        if (gamepad1.right_stick_x <= 0.1 && gamepad1.right_stick_x >= -0.1) {
             gamepad1.right_stick_x = 0;
+            rotationDrive = 0;
         }
 
-        // If the left stick and the right stick is used it halves the power  of the motors for better accuracy
-        if (gamepad1.left_stick_y > 0 || gamepad1.left_stick_y < 0 && gamepad1.right_stick_x > 0 || gamepad1.right_stick_x < 0) {
+        // If the left stick is used choose direction with most force
+        temp_x_stick = gamepad1.left_stick_x;
+        temp_y_stick = gamepad1.left_stick_y;
+        if (temp_x_stick <0) {
+            temp_x_stick *= -1;
+        }
+        if (temp_y_stick <0) {
+            temp_y_stick *= -1;
+        }
+        if (temp_x_stick > temp_y_stick) {  // Strafing
+            velocityDrive = 0;
+            rotationDrive = 0;
+        } else {  //  driving (no strafe)
+            strafeDrive = 0;
+        }
 
-
-            powerRightA = Range.clip(powerRightA, -0.5f, 0.5f);
-            powerRightB = Range.clip(powerRightB, -0.5f, 0.5f);
-            powerLeftA = Range.clip(powerLeftA, -0.5f, 0.5f);
-            powerLeftB = Range.clip(powerLeftB, -0.5f, 0.5f);
-
-        } else if (gamepad1.left_stick_x > 0 || gamepad1.left_stick_x < 0 && gamepad1.right_stick_x > 0 || gamepad1.right_stick_x < 0) {
-
-            powerRightA = Range.clip(powerRightA, -0.5f, 0.5f);
-            powerRightB = Range.clip(powerRightB, -0.5f, 0.5f);
-            powerLeftA = Range.clip(powerLeftA, -0.5f, 0.5f);
-            powerLeftB = Range.clip(powerLeftB, -0.5f, 0.5f);
-
+        if (gamepad1.right_bumper) {
+            drivepower = SLOW_POWER;
+            telemetry.addData("Driving at slow speed - right bumper pushed - override: ", drivepower);
+        } else if (gamepad1.left_bumper) {
+            drivepower = FULL_POWER;
+            telemetry.addData("Driving at slow speed - right bumper pushed - override: ", drivepower);
         } else {
-
-/*
-            if (gamepad1.x ) {
-                if (slowdown) {
-                    slowdown = false;
-                    drivepower = 1.0f;
-                    telemetry.addData("Changed to ", "Regular speed");
-                } else {
-                    slowdown = true;
-                    drivepower = PowerRatio;
-                    telemetry.addData("Changed to ", "Half speed");
-                }
-                sleep(200);
-            } else {
-                if (slowdown) {
-                    drivepower = PowerRatio;
-                    telemetry.addData("Driving at ", "half speed");
-                } else {
-                    slowdown = true;
-                    drivepower = 1.0f;
-                    telemetry.addData("Driving at ", "full speed");
-                }
-            }
-*/
-
-            if (gamepad1.right_bumper)
-            {
-                drivepower = SLOW_POWER;
-                telemetry.addData("Driving at slow speed - right bumper pushed - override: ", drivepower);
-            } else if (gamepad1.left_bumper)
-            {
-                drivepower = FULL_POWER;
-                telemetry.addData("Driving at slow speed - right bumper pushed - override: ", drivepower);
-            } else
-            {
-                drivepower = REG_POWER;
-                telemetry.addData("Driving at regular speed - no bumper used: ", drivepower);
-            }
-
-            powerRightA = Range.clip(powerRightA, -drivepower, drivepower);
-            powerRightB = Range.clip(powerRightB, -drivepower, drivepower);
-            powerLeftA = Range.clip(powerLeftA, -drivepower, drivepower);
-            powerLeftB = Range.clip(powerLeftB, -drivepower, drivepower);
-
-
+            drivepower = REG_POWER;
+            telemetry.addData("Driving at regular speed - no bumper used: ", drivepower);
         }
-
 
         powerRightA = (velocityDrive + rotationDrive + strafeDrive) * drivepower;
         powerRightB = (velocityDrive + rotationDrive - strafeDrive) * drivepower;
         powerLeftA = (velocityDrive - rotationDrive - strafeDrive) * drivepower;
         powerLeftB = (velocityDrive - rotationDrive + strafeDrive) * drivepower;
-        /*
-        //Change direction that is front for the robot
 
-            if (gamepad1.dpad_left) {
-                bDirection = true; // Arm is front.
-            }
-            if (gamepad1.dpad_right) {
-                bDirection = false; // Collection is front
-            }
-
-            if (fieldOrient) {
-                bDirection = true;
-            }
-
-            if (bDirection) // Glyph is front
-            {
-                powerRightA = velocityDrive + rotationDrive + strafeDrive;
-                powerRightB = velocityDrive + rotationDrive - strafeDrive;
-                powerLeftA = velocityDrive - rotationDrive - strafeDrive;
-                powerLeftB = velocityDrive - rotationDrive + strafeDrive;
-            } else  // Relic is front
-            {
-                powerRightA = velocityDrive - rotationDrive - strafeDrive;
-                powerRightB = velocityDrive - rotationDrive + strafeDrive;
-                powerLeftA = velocityDrive + rotationDrive + strafeDrive;
-                powerLeftB = velocityDrive + rotationDrive - strafeDrive;
-            }
-*/
 
         //Control Gem arm
-
+/*
             if (gamepad2.b) {
                 if (!Gdown) {
                     spos=135/180;
@@ -236,23 +168,7 @@ public class DMRelicTeleOp extends DMRelicAbstract {
                     Gdown = false;
                 }
             }
-        //Test Color/Distance sensor
-        /*
-            if (Gdown) {
-                telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
-                telemetry.addData("Alpha", sensorColor.alpha());
-                telemetry.addData("Red  ", sensorColor.red());
-                telemetry.addData("Green", sensorColor.green());
-                telemetry.addData("Blue ", sensorColor.blue());
-                if (sensorColor.red() > sensorColor.blue()) {
-                    telemetry.addData("Gem ", "RED");
-                }
-                else {
-                    telemetry.addData("Gem ", "BLUE");
-                }
-            }
-         */
-
+*/
         //Controls for grabbing the glyph
         if (gamepad2.a) {
             if (Gopen) {
@@ -274,6 +190,12 @@ public class DMRelicTeleOp extends DMRelicAbstract {
 
         }
 
+        if (gamepad2.b){
+            sGlyphL.setPosition(0.4);
+            sGlyphR.setPosition(0.5);
+        }
+
+/*
         // lower the back arm
         if (gamepad2.y && !bArmDown)
         {
@@ -281,6 +203,7 @@ public class DMRelicTeleOp extends DMRelicAbstract {
             lowerbarm(20);
             sleep(250);
         }
+*/
 
         //Back Arm testing...
         if(gamepad2.right_bumper)
@@ -314,112 +237,6 @@ public class DMRelicTeleOp extends DMRelicAbstract {
             telemetry.addData("Glyph Lift ", "stop");
         }
 
-        //testing Glyph Lift.....
-        /*
-        if(gamepad2.x)
-        {
-            //sGLift2.setDirection(Servo.Direction.REVERSE);
-            //sGLift2.setPosition(1);
-            sGLift2.setPosition(1.0);
-        }
-        else if(gamepad2.y)
-        {
-            //sGLift2.setDirection(Servo.Direction.FORWARD);
-            //sGLift2.setPosition(1);
-            sGLift2.setPosition(0.0);
-        }
-        else {
-            sGLift2.setPosition(0.5);
-        }
-        */
-
-        //testing with dpad for position of servos
-/*
-            if (gamepad2.dpad_right)
-            {
-                glyphL = glyphL + IncVal;
-                sGlyphL.setPosition(glyphL/180);
-                sleep(100);
-
-            }
-
-            if (gamepad2.dpad_left)
-            {
-                if (glyphL > 0)
-                {
-                    glyphL = glyphL - IncVal;
-                }
-                else
-                {
-                    glyphL = 0;
-                }
-                sGlyphL.setPosition(glyphL/180);
-                sleep(100);
-
-            }
-            if (gamepad2.dpad_up)
-            {
-                if (glyphR < 180)
-                {
-                    glyphR = glyphR + IncVal;
-                }
-                else
-                {
-                    glyphR = 180;
-                }
-                sGlyphR.setPosition(glyphR/180);
-                sleep(100);
-
-            }
-
-            if (gamepad2.dpad_down)
-            {
-                glyphR = glyphR - IncVal;
-                sGlyphR.setPosition(glyphR/180);
-                sleep(100);
-
-            }
-*/
-        /*
-
-
-            if (gamepad2.x && !grabbed)
-            {
-                grabbed = true;
-            }
-            if (gamepad2.x && grabbed)
-            {
-                grabbed = false;
-            }
-
-            if (grabbed) {
-                servoGlyph1.setPosition(90);
-                servoGlyph2.setPosition(90);
-            }
-            if (!grabbed) {
-                servoGlyph1.setPosition(45);
-                servoGlyph2.setPosition(45);
-            }
-
-*/
-
-        //Controls for lifting the glyph
-        /*
-
-            //Set controls for lift
-            throttleLift = gamepad2.left_stick_y;
-
-            // Clip and scale the throttle, and then set motor power.
-            throttleLift = Range.clip(throttleLift, -1, 1);
-            throttleLift = (float) scaleInput(throttleLift);
-            motorGlyphLift.setPower(throttleLift);
-
-            //Create dead-zone for lift control
-            if (gamepad2.left_stick_y <= 0.05 && gamepad2.left_stick_y >= -0.05) {
-                gamepad2.left_stick_y = 0;
-            }
-
-        */
 
         telemetry.addData("Driving at full speed: ", slowdown);
         telemetry.update();
