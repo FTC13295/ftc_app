@@ -105,8 +105,10 @@ public class DMRelicRedFrontV4 extends DMRelicAbstract{
             case 18:
             case 22:
             case 26:
-            case 38:
+            case 30:
+            case 36:
             case 42:
+            case 46:
                 {  //Reset encoder
                     resetME(0);  //function to reset encoders to 0
 
@@ -259,7 +261,7 @@ public class DMRelicRedFrontV4 extends DMRelicAbstract{
                 } else {
                     debugnoteItem.setValue("  -----  ");
                     telemetry.update();
-                    sleep(SLEEP_TIME);
+                    sleep(SLEEP_TIME/2);
                 }
 
                 seqRobot+=2;
@@ -379,47 +381,7 @@ public class DMRelicRedFrontV4 extends DMRelicAbstract{
             }
 
 
-            //case 16:    //Turn 180 deg
-/*            case 36:
-            {
-                //Update telemetry data
-                seqItem.setValue(seqRobot);
-                caseItem.setValue("Rotate 180 deg");
-                telemetry.update();
 
-                motorLeftA.setTargetPosition(END_ROTATE);
-                motorLeftB.setTargetPosition(END_ROTATE);
-                motorRightA.setTargetPosition(-END_ROTATE);
-                motorRightB.setTargetPosition(-END_ROTATE);
-
-                targetPower = 0.5f;
-
-                targetdistItem.setValue("encoders = " + END_ROTATE);
-                targetpowerItem.setValue(targetPower);
-                telemetry.update();
-
-                motorLeftA.setPower(targetPower);
-                motorLeftB.setPower(targetPower);
-                motorRightA.setPower(targetPower);
-                motorRightB.setPower(targetPower);
-
-                if (debug) {
-                    while (!gamepad1.b) {
-                        debugnoteItem.setValue("Please press B to continue");
-                        telemetry.update();
-                    }
-                    sleep(200);
-                } else {
-                    debugnoteItem.setValue("  -----  ");
-                    telemetry.update();
-                    sleep(SLEEP_TIME*3);
-                }
-
-                //seqRobot++;
-                seqRobot +=2;
-                break;
-            }
-*/
             case 20:  // Move robot to correct column
                         //27", 36", 43" - 9"
             {
@@ -556,7 +518,7 @@ public class DMRelicRedFrontV4 extends DMRelicAbstract{
             }
 
 
-            case 30:  // open Glyph
+            case 32:  // open Glyph
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
@@ -582,7 +544,7 @@ public class DMRelicRedFrontV4 extends DMRelicAbstract{
                 break;
             }
 
-            case 32: {  // Move robot back 6"
+            case 34: {  // Move robot back 6"
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
                 caseItem.setValue("Move robot back 6 \"");
@@ -617,7 +579,7 @@ public class DMRelicRedFrontV4 extends DMRelicAbstract{
                 break;
             }
 
-            case 34:  // Close glyph
+            case 38:  // Close glyph
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
@@ -643,15 +605,15 @@ public class DMRelicRedFrontV4 extends DMRelicAbstract{
                 break;
             }
 
-            case 36:  // move forward 6"
+            case 40:  // move forward 7"
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
-                caseItem.setValue("Move froward 6 \"");
+                caseItem.setValue("Move froward 7\"");
                 telemetry.update();
 
                 targetDrRotateDeg = 0f;
-                targetDrDistInch = 6f; // Set target distance
+                targetDrDistInch = 7f; // Set target distance
                 targetPower = 0.3f;  // Set power
 
                 targetdistItem.setValue(targetDrDistInch);
@@ -679,7 +641,7 @@ public class DMRelicRedFrontV4 extends DMRelicAbstract{
                 break;
             }
 
-            case 40: // move back 1 "
+            case 44: // move back 1 "
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);

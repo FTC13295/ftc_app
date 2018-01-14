@@ -23,8 +23,8 @@ import static android.os.SystemClock.sleep;
  * ------------------------------------------------------------------
  */
 
-@Autonomous(name = "DMRelicBlueBackV3", group = "RiderModes")
-public class DMRelicBlueBackV3 extends DMRelicAbstract{
+@Autonomous(name = "DMRelicBlueBackV4", group = "RiderModes")
+public class DMRelicBlueBackV4 extends DMRelicAbstract{
 
     //------------------------------------------------------------------
     // Robot OpMode Loop Method
@@ -125,7 +125,7 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 } else {
                     debugnoteItem.setValue("  -----  ");
                     telemetry.update();
-                    sleep(SLEEP_TIME/2);
+                    sleep(SLEEP_TIME/4);
                 }
 
                 //if (seqRobot == 1) {
@@ -158,7 +158,7 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 } else {
                     debugnoteItem.setValue("  -----  ");
                     telemetry.update();
-                    sleep(SLEEP_TIME);
+                    sleep(SLEEP_TIME/2);
                 }
 
                 seqRobot ++;
@@ -182,7 +182,7 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 } else {
                     debugnoteItem.setValue("  -----  ");
                     telemetry.update();
-                    sleep(SLEEP_TIME);
+                    sleep(SLEEP_TIME/2);
                 }
 
                 seqRobot+=2;
@@ -211,7 +211,7 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 }
 
                 targetDrRotateDeg = 0f;  // Not used for this
-                targetPower = 0.3f;  // Set power
+                targetPower = DEFAULT_MOVE_SPEED/2;  // Set power
 
                 targetdistItem.setValue(targetDrDistInch);
                 targetpowerItem.setValue(targetPower);
@@ -234,7 +234,7 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 } else {
                     debugnoteItem.setValue("  -----  ");
                     telemetry.update();
-                    sleep(SLEEP_TIME);
+                    sleep(SLEEP_TIME/2);
                 }
 
                 seqRobot+=2;
@@ -250,7 +250,7 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 sGem.setPosition(0); //move gem arm to start position
                 snColor.enableLed(false); //turn off color sensor LED - does not seem to work
 
-                movebackME(0,0.3f);  //use movebacME function to move motors back to provided position using given power (position,power)
+                movebackME(0,DEFAULT_MOVE_SPEED/2);  //use movebacME function to move motors back to provided position using given power (position,power)
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -353,17 +353,17 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                             vuforiamarkItem.setValue("RIGHT");
                         }
 
-                    }
-                    else
-                    {
-                        vuforiaItem.setValue("VuMark not visible");
-                        leftCol = false;
-                        centerCol = true;
-                        rightCol = false;
-                        vuforiamarkItem.setValue("Defaulting to center column");
-                    }
+                }
+                else
+                {
+                    vuforiaItem.setValue("VuMark not visible");
+                    leftCol = false;
+                    centerCol = true;
+                    rightCol = false;
+                    vuforiamarkItem.setValue("Defaulting to center column");
+                }
 
-                    telemetry.update();
+                //telemetry.update();
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -374,7 +374,7 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 } else {
                     debugnoteItem.setValue("  -----  ");
                     telemetry.update();
-                    sleep(SLEEP_TIME);
+                    sleep(SLEEP_TIME/2);
                 }
 
                 seqRobot++;
@@ -389,7 +389,7 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 telemetry.update();
 
                 targetDrRotateDeg = 0f; //not used
-                targetPower = 0.4f;  // Set power
+                targetPower = DEFAULT_MOVE_SPEED;  // Set power
                 targetDrDistInch = 23f;
 
                 targetdistItem.setValue(targetDrDistInch);
@@ -428,7 +428,7 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 telemetry.update();
 
                 targetDrRotateDeg = 0f; //not used
-                targetPower = 0.4f;  // Set power
+                targetPower = DEFAULT_MOVE_SPEED;  // Set power
                 targetDrDistInch = 20f; //default to center
 
                 if (leftCol)
@@ -485,7 +485,7 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
 
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = 9f; // Set target distance
-                targetPower = 0.2f;  // Set power
+                targetPower = DEFAULT_MOVE_SPEED;  // Set power
 
                 targetdistItem.setValue(targetDrDistInch);
                 targetpowerItem.setValue(targetPower);
@@ -548,7 +548,7 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
 
                 targetDrRotateDeg = 0f;
                 targetDrDistInch = -6f; // Set target distance
-                targetPower = 0.3f;  // Set power
+                targetPower = DEFAULT_MOVE_SPEED;  // Set power
 
                 targetdistItem.setValue(targetDrDistInch);
                 targetpowerItem.setValue(targetPower);
@@ -601,16 +601,16 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 break;
             }
 
-            case 38:  // move forward 7"
+            case 38:  // move forward 6.5"
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
-                caseItem.setValue("Move froward 7\"");
+                caseItem.setValue("Move froward 6.5\"");
                 telemetry.update();
 
                 targetDrRotateDeg = 0f;
-                targetDrDistInch = 7f; // Set target distance
-                targetPower = 0.3f;  // Set power
+                targetDrDistInch = 6.5f; // Set target distance
+                targetPower = DEFAULT_MOVE_SPEED;  // Set power
 
                 targetdistItem.setValue(targetDrDistInch);
                 targetpowerItem.setValue(targetPower);
@@ -637,16 +637,16 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 break;
         }
 
-        case 42: // move back 1 "
+        case 42: // move back 2.5 "
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
-                caseItem.setValue("Move back 1 \"");
+                caseItem.setValue("Move back 2.5\"");
                 telemetry.update();
 
                 targetDrRotateDeg = 0f;
-                targetDrDistInch = -1f; // Set target distance
-                targetPower = 0.3f;  // Set power
+                targetDrDistInch = -2.5f; // Set target distance
+                targetPower = DEFAULT_MOVE_SPEED;  // Set power
 
                 targetdistItem.setValue(targetDrDistInch);
                 targetpowerItem.setValue(targetPower);

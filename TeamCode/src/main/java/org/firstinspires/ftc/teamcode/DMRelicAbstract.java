@@ -86,7 +86,7 @@ public abstract class DMRelicAbstract extends OpMode {
     // Establish Integer Constants
     final static int
             DECRIPT_ROTATE = 0,
-            SLEEP_TIME = 1000,                   // Default wait time = 0.7 sec
+            SLEEP_TIME = 1000,                   // Default wait time = 1 sec
             ERROR_DRV_POS = 20,                 // Allowed error in encoder counts following drive train position move
             GLYPH_ROTATE = 2040,                // need to confirm # of encoder rotations for 90 deg
                                                 // full rotation of the wheel = 1120
@@ -95,6 +95,7 @@ public abstract class DMRelicAbstract extends OpMode {
     // Establish Float Constants
     final static float
             PowerRatio = 0.7f,
+            DEFAULT_MOVE_SPEED = 0.5f,                   //Default move speed for autonomous
             SLOW_POWER = 0.4f,
             REG_POWER = 0.7f,
             FULL_POWER = 1.0f,

@@ -23,8 +23,8 @@ import static android.os.SystemClock.sleep;
  * ------------------------------------------------------------------
  */
 
-@Autonomous(name = "DMRelicRedBackV3", group = "RiderModes")
-public class DMRelicRedBackV3 extends DMRelicAbstract{
+@Autonomous(name = "DMRelicRedBackV4", group = "RiderModes")
+public class DMRelicRedBackV4 extends DMRelicAbstract{
 
     //------------------------------------------------------------------
     // Robot OpMode Loop Method
@@ -363,7 +363,7 @@ public class DMRelicRedBackV3 extends DMRelicAbstract{
                         vuforiamarkItem.setValue("Defaulting to center column");
                     }
 
-                    telemetry.update();
+                    //telemetry.update();
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -644,15 +644,15 @@ public class DMRelicRedBackV3 extends DMRelicAbstract{
                 break;
             }
 
-            case 40:  // move forward 7"
+            case 40:  // move forward 6.5"
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
-                caseItem.setValue("Move froward 7\"");
+                caseItem.setValue("Move froward 6.5\"");
                 telemetry.update();
 
                 targetDrRotateDeg = 0f;
-                targetDrDistInch = 7f; // Set target distance
+                targetDrDistInch = 6.5f; // Set target distance
                 targetPower = DEFAULT_MOVE_SPEED;  // Set power
 
                 targetdistItem.setValue(targetDrDistInch);
@@ -680,15 +680,15 @@ public class DMRelicRedBackV3 extends DMRelicAbstract{
                 break;
             }
 
-            case 44: // move back 1 "
+            case 44: // move back 2.5 "
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
-                caseItem.setValue("Move back 1 \"");
+                caseItem.setValue("Move back 2.5\"");
                 telemetry.update();
 
                 targetDrRotateDeg = 0f;
-                targetDrDistInch = -1f; // Set target distance
+                targetDrDistInch = -2.5f; // Set target distance
                 targetPower = DEFAULT_MOVE_SPEED;  // Set power
 
                 targetdistItem.setValue(targetDrDistInch);

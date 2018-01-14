@@ -173,9 +173,9 @@ public class DMRelicTeleOpV2 extends DMRelicAbstract {
         if (gamepad2.a) {
             if (Gopen) {
                 spos = 27/180;
-                sGlyphL.setPosition(0.2);  //Used to be 0.16
+                sGlyphL.setPosition(0.25);  //Used to be 0.16, 0.2
                 spos=133/180;
-                sGlyphR.setPosition(0.8);  //Used to be 0.72 - added 0.15 to 0.65
+                sGlyphR.setPosition(0.7);  //Used to be 0.72 - added 0.15 to 0.65, 0.8
                 sleep(150);
                 Gopen = false;
             }

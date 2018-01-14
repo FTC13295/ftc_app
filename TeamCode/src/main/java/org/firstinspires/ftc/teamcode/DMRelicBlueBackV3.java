@@ -105,9 +105,10 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
             case 15:
             case 18:
             case 22:
-            case 26:
-            case 38:
-            case 42:
+            case 28:
+            case 34:
+            case 40:
+            case 44:
                 {  //Reset encoder
                     resetME(0);  //function to reset encoders to 0
 
@@ -260,7 +261,7 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 } else {
                     debugnoteItem.setValue("  -----  ");
                     telemetry.update();
-                    sleep(SLEEP_TIME);
+                    sleep(SLEEP_TIME/2);
                 }
 
                 seqRobot+=2;
@@ -508,7 +509,7 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 }
 
                 //seqRobot++;
-                seqRobot +=6;  //skip to step 30
+                seqRobot +=4;  //skip to step 30
                 break;
             }
 
@@ -574,7 +575,7 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 break;
             }
 
-            case 34:  // Close glyph
+            case 36:  // Close glyph
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
@@ -600,15 +601,15 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 break;
             }
 
-            case 36:  // move forward 6"
+            case 38:  // move forward 7"
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
-                caseItem.setValue("Move froward 6 \"");
+                caseItem.setValue("Move froward 7\"");
                 telemetry.update();
 
                 targetDrRotateDeg = 0f;
-                targetDrDistInch = 6f; // Set target distance
+                targetDrDistInch = 7f; // Set target distance
                 targetPower = 0.3f;  // Set power
 
                 targetdistItem.setValue(targetDrDistInch);
@@ -636,7 +637,7 @@ public class DMRelicBlueBackV3 extends DMRelicAbstract{
                 break;
         }
 
-        case 40: // move back 1 "
+        case 42: // move back 1 "
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
