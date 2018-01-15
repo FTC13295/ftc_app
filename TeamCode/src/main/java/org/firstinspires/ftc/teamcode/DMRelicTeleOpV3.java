@@ -33,13 +33,12 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
 
 import static android.os.SystemClock.sleep;
 
-@TeleOp(name = "DMRelicTeleOpV2")
-public class DMRelicTeleOpV2 extends DMRelicAbstract {
-    public DMRelicTeleOpV2() {
+@TeleOp(name = "DMRelicTeleOpV3")
+public class DMRelicTeleOpV3 extends DMRelicAbstract {
+    public DMRelicTeleOpV3() {
     }
 
     @Override
@@ -52,7 +51,9 @@ public class DMRelicTeleOpV2 extends DMRelicAbstract {
         motorRightB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftA.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        motorGlyphLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //fieldOrient = false;
         //bDirection = true;
@@ -222,6 +223,37 @@ public class DMRelicTeleOpV2 extends DMRelicAbstract {
         }
 
         // Glyph Lift operations
+        if ((motorGlyphLift.getCurrentPosition() > -8500) && (gamepad2.left_stick_y < 0))
+        {
+            if (gamepad2.left_stick_y <= 0.1 && gamepad2.left_stick_y >= -0.1) {
+                gamepad1.left_stick_y = 0;
+            } else
+            {
+                throttleLift=gamepad2.left_stick_y;
+                throttleLift = (float) scaleInput(throttleLift);
+                motorGlyphLift.setPower(throttleLift);
+                telemetry.addData("MGL move: ", throttleLift);
+            }
+            telemetry.addData("MGL power: ", throttleLift);
+
+        } else if ((motorGlyphLift.getCurrentPosition() < -250) && (gamepad2.left_stick_y > 0))
+        {
+            if (gamepad2.left_stick_y <= 0.1 && gamepad2.left_stick_y >= -0.1) {
+                gamepad1.left_stick_y = 0;
+            } else
+            {
+                throttleLift=gamepad2.left_stick_y;
+                throttleLift = (float) scaleInput(throttleLift);
+                motorGlyphLift.setPower(throttleLift);
+                telemetry.addData("MGL move: ", throttleLift);
+            }
+            telemetry.addData("MGL power: ", throttleLift);
+        } else
+        {
+            motorGlyphLift.setPower(0);
+        }
+
+/*      // Using the servo
         if(gamepad2.dpad_down)
         {
             gliftDown();
@@ -236,8 +268,9 @@ public class DMRelicTeleOpV2 extends DMRelicAbstract {
             gliftStop();
             telemetry.addData("Glyph Lift ", "stop");
         }
-
-
+*/
+        telemetry.addData("MGL position: ", motorGlyphLift.getCurrentPosition());
+        telemetry.addData("GP2-LY: ", gamepad2.left_stick_y);
         telemetry.addData("Driving at full speed: ", slowdown);
         telemetry.update();
 // End OpMode Loop Method
