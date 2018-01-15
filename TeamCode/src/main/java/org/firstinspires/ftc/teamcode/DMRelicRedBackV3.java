@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -24,6 +25,7 @@ import static android.os.SystemClock.sleep;
  */
 
 @Autonomous(name = "DMRelicRedBackV3", group = "RiderModes")
+@Disabled
 public class DMRelicRedBackV3 extends DMRelicAbstract{
 
     //------------------------------------------------------------------
