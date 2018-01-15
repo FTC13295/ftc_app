@@ -253,6 +253,15 @@ public class DMRelicTeleOpV3 extends DMRelicAbstract {
             motorGlyphLift.setPower(0);
         }
 
+        //set positions for Glyph Lift
+        if (gamepad2.dpad_down) {//Position 1 - bottom
+            movebackMEG(0,1);
+        } else if (gamepad2.dpad_left) {  //Position 2 - 1 cube high
+            movebackMEG(-3800, 1);
+        } else if (gamepad2.dpad_up){  //Position 3 - 2 cubes high - max
+            movebackMEG(-8000, 1);
+        }
+
 /*      // Using the servo
         if(gamepad2.dpad_down)
         {
