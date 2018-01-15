@@ -492,6 +492,13 @@ public abstract class DMRelicAbstract extends OpMode {
         motorRightB.setTargetPosition(position);
     }
 
+    //Reset glyphlift motor encoder and set target position
+    void resetMEG(int position) {
+        motorGlyphLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorGlyphLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorGlyphLift.setTargetPosition(position);
+    }
+
     // move motors back to target position using provided power
     void movebackME(int position, float power) {
         motorLeftA.setTargetPosition(position);
@@ -502,5 +509,11 @@ public abstract class DMRelicAbstract extends OpMode {
         motorLeftB.setPower(power);
         motorRightA.setPower(power);
         motorRightB.setPower(power);
+    }
+
+    // move Glyphlift motor back to target position using provided power
+    void movebackMEG(int position, float power) {
+        motorGlyphLift.setTargetPosition(position);
+        motorGlyphLift.setPower(power);
     }
 }
