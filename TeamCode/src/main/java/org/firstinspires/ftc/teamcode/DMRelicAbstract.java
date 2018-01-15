@@ -117,6 +117,7 @@ public abstract class DMRelicAbstract extends OpMode {
             MOTOR_DRIVE_LEFT_B = "leftB",
             MOTOR_DRIVE_RIGHT_A = "rightA",
             MOTOR_DRIVE_RIGHT_B = "rightB",
+            MOTOR_GLYPH_LIFT = "mGL",
             SENSOR_GYRO = "gyro",
             //SENSOR_RANGE = "range",
             GLYPH_LEFT = "sGlyphL",
@@ -153,9 +154,9 @@ public abstract class DMRelicAbstract extends OpMode {
         motorRightB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRightB.setDirection(DcMotor.Direction.REVERSE);
 
-        //motorGlyphLift = hardwareMap.dcMotor.get(GLYPH_LIFT);
-        //motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //motorGlyphLift.setDirection(DcMotor.Direction.FORWARD);
+        motorGlyphLift = hardwareMap.dcMotor.get(MOTOR_GLYPH_LIFT);
+        motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorGlyphLift.setDirection(DcMotor.Direction.FORWARD);
 
         sGlyphL = hardwareMap.servo.get(GLYPH_LEFT);
         //sGlyphL.scaleRange(0,180);
@@ -281,7 +282,7 @@ public abstract class DMRelicAbstract extends OpMode {
         return target;
     }
 
-    // control glyph lift
+    // control glyph lift (servo)
     public void gliftUp ()
     {
         sGLift.setPower(0.9);
@@ -299,6 +300,9 @@ public abstract class DMRelicAbstract extends OpMode {
         sGLift.setPower(0);
 
     }
+
+    // control glyph lift (motor)
+
 
     // control back arm
     public void lowerbarm(int climit)
