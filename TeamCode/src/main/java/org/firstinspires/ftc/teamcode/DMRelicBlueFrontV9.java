@@ -23,7 +23,7 @@ import static android.os.SystemClock.sleep;
  * ------------------------------------------------------------------
  */
 
-@Autonomous(name = "DMRelicBlueFrontV8", group = "RiderModes")
+@Autonomous(name = "DMRelicBlueFrontV9", group = "RiderModes")
 public class DMRelicBlueFrontV9 extends DMRelicAbstract{
 
     //------------------------------------------------------------------
