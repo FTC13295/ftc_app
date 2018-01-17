@@ -52,8 +52,11 @@ public class DMRelicTeleOpV3 extends DMRelicAbstract {
         motorLeftA.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        motorGlyphLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorGlyphLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //Not using encoders for glyph lift
+        //motorGlyphLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //fieldOrient = false;
         //bDirection = true;
@@ -76,7 +79,7 @@ public class DMRelicTeleOpV3 extends DMRelicAbstract {
 
         //init glyph position
         sGlyphL.setPosition(0.1);
-        sGlyphR.setPosition(0.9); //changed from 0.8 - changed from 0.75
+        sGlyphR.setPosition(0.97); //changed from 0.9
 
         //init back arm
         initbarm();
@@ -174,17 +177,17 @@ public class DMRelicTeleOpV3 extends DMRelicAbstract {
         if (gamepad2.a) {
             if (Gopen) {
                 spos = 27/180;
-                sGlyphL.setPosition(0.25);  //Used to be 0.16, 0.2
+                sGlyphL.setPosition(0.28);  //Used to be 0.25
                 spos=133/180;
-                sGlyphR.setPosition(0.7);  //Used to be 0.72 - added 0.15 to 0.65, 0.8
+                sGlyphR.setPosition(0.79);  //Used to be 0.7
                 sleep(150);
                 Gopen = false;
             }
             else {
                 spos=10/180;
-                sGlyphL.setPosition(0.09);  //changed from 0.05
+                sGlyphL.setPosition(0.09);  //changed from 0.09
                 spos=145/180;
-                sGlyphR.setPosition(0.9);  //changed from 0.83 - added 0.15 to 0.75
+                sGlyphR.setPosition(0.97);  //changed from 0.9
                 sleep(150);
                 Gopen = true;
             }
@@ -193,7 +196,7 @@ public class DMRelicTeleOpV3 extends DMRelicAbstract {
 
         if (gamepad2.b){
             sGlyphL.setPosition(0.4);
-            sGlyphR.setPosition(0.5);
+            sGlyphR.setPosition(0.65);
         }
 
 /*
@@ -223,7 +226,7 @@ public class DMRelicTeleOpV3 extends DMRelicAbstract {
         }
 
         // Glyph Lift operations
-        if ((motorGlyphLift.getCurrentPosition() > -8500) && (gamepad2.left_stick_y < 0))
+        if (gamepad2.left_stick_y < 0)  //((motorGlyphLift.getCurrentPosition() > -8500) && (gamepad2.left_stick_y < 0))
         {
             if (gamepad2.left_stick_y <= 0.1 && gamepad2.left_stick_y >= -0.1) {
                 gamepad1.left_stick_y = 0;
@@ -236,7 +239,7 @@ public class DMRelicTeleOpV3 extends DMRelicAbstract {
             }
             telemetry.addData("MGL power: ", throttleLift);
 
-        } else if ((motorGlyphLift.getCurrentPosition() < -250) && (gamepad2.left_stick_y > 0))
+        } else if (gamepad2.left_stick_y > 0)  //((motorGlyphLift.getCurrentPosition() < -250) && (gamepad2.left_stick_y > 0))
         {
             if (gamepad2.left_stick_y <= 0.1 && gamepad2.left_stick_y >= -0.1) {
                 gamepad1.left_stick_y = 0;
@@ -253,14 +256,19 @@ public class DMRelicTeleOpV3 extends DMRelicAbstract {
             motorGlyphLift.setPower(0);
         }
 
-        //set positions for Glyph Lift
+        //set positions for Glyph Lift... not used (since we disabled encoders)
+/*
         if (gamepad2.dpad_down) {//Position 1 - bottom
             movebackMEG(0,1);
+            sleep(1000);
         } else if (gamepad2.dpad_left) {  //Position 2 - 1 cube high
             movebackMEG(-3800, 1);
+            sleep(1000);
         } else if (gamepad2.dpad_up){  //Position 3 - 2 cubes high - max
             movebackMEG(-8000, 1);
+            sleep(1000);
         }
+*/
 
 /*      // Using the servo
         if(gamepad2.dpad_down)
