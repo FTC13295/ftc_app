@@ -23,8 +23,8 @@ import static android.os.SystemClock.sleep;
  * ------------------------------------------------------------------
  */
 
-@Autonomous(name = "DMRelicRedFrontV5", group = "RiderModes")
-public class DMRelicRedFrontV5 extends DMRelicAbstract{
+@Autonomous(name = "DMRelicRedFrontV6", group = "RiderModes")
+public class DMRelicRedFrontV6 extends DMRelicAbstract{
 
     //------------------------------------------------------------------
     // Robot OpMode Loop Method
@@ -146,9 +146,12 @@ public class DMRelicRedFrontV5 extends DMRelicAbstract{
                 //Gem arm up
                 sGem.setPosition(0);
                 //Grab glyph
-                sGlyphL.setPosition(0.2);
-                sGlyphR.setPosition(0.8);
+                sGlyphL.setPosition(0.28);  //from .2
+                sGlyphR.setPosition(0.79);  //from .79
 
+                //lift glyph
+                movebackMEG(-1500,-1);
+                
                 if (debug) {
                     while (!gamepad1.b) {
                         debugnoteItem.setValue("Please press B to continue");
@@ -526,7 +529,7 @@ public class DMRelicRedFrontV5 extends DMRelicAbstract{
                 telemetry.update();
 
                 sGlyphL.setPosition(0.09);
-                sGlyphR.setPosition(0.9);
+                sGlyphR.setPosition(0.97);  //from .9
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -587,7 +590,7 @@ public class DMRelicRedFrontV5 extends DMRelicAbstract{
                 telemetry.update();
 
                 sGlyphL.setPosition(0.4);
-                sGlyphR.setPosition(0.5);
+                sGlyphR.setPosition(0.65);  //from .5
 
                 if (debug) {
                     while (!gamepad1.b) {
