@@ -31,12 +31,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import static android.os.SystemClock.sleep;
 
 @TeleOp(name = "DMRelicTeleOpV3")
+@Disabled
 public class DMRelicTeleOpV3 extends DMRelicAbstract {
     public DMRelicTeleOpV3() {
     }
