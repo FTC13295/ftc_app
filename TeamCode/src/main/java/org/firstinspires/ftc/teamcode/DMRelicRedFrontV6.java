@@ -52,6 +52,9 @@ public class DMRelicRedFrontV6 extends DMRelicAbstract{
         motorLeftB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRightB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        resetMEG(0);
+
         //turn off auto clear for telemetry
         telemetry.setAutoClear(false);
 
@@ -151,7 +154,7 @@ public class DMRelicRedFrontV6 extends DMRelicAbstract{
 
                 //lift glyph
                 movebackMEG(-1500,-1);
-                
+
                 if (debug) {
                     while (!gamepad1.b) {
                         debugnoteItem.setValue("Please press B to continue");
@@ -582,15 +585,18 @@ public class DMRelicRedFrontV6 extends DMRelicAbstract{
                 break;
             }
 
-            case 38:  // Close glyph
+            case 38:  // Close glyph and lower it
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
-                caseItem.setValue("Close Glyph arm");
+                caseItem.setValue("Close Glyph arm and lower it");
                 telemetry.update();
 
                 sGlyphL.setPosition(0.4);
                 sGlyphR.setPosition(0.65);  //from .5
+
+                //lower lift glyph
+                movebackMEG(0,1);
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -644,15 +650,15 @@ public class DMRelicRedFrontV6 extends DMRelicAbstract{
                 break;
             }
 
-            case 44: // move back 2.5 "
+            case 44: // move back 3 "
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
-                caseItem.setValue("Move back 2.5\"");
+                caseItem.setValue("Move back 3\"");
                 telemetry.update();
 
                 targetDrRotateDeg = 0f;
-                targetDrDistInch = -2.5f; // Set target distance
+                targetDrDistInch = -3f; // Set target distance
                 targetPower = DEFAULT_MOVE_SPEED;  // Set power
 
                 targetdistItem.setValue(targetDrDistInch);
