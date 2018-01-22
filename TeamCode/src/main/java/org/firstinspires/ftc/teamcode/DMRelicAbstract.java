@@ -76,7 +76,8 @@ public abstract class DMRelicAbstract extends OpMode {
             powerLeftA, powerLeftB,
             powerRightA, powerRightB,
             velocityDrive, strafeDrive, rotationDrive,
-            throttleLift;
+            throttleLift,
+            relicEp, relicLp;
 
 
     // Establish Integer Variables
