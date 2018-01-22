@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -21,7 +22,7 @@ public abstract class DMRelicAbstract extends OpMode {
             rangeSensor;
     // Set Servos
     protected Servo
-            sGlyphL, sGlyphR, sGem, sGLift2;
+            sGlyphL, sGlyphR, sGem, sRelic;
 
     protected ColorSensor
             snColor;
@@ -41,7 +42,8 @@ public abstract class DMRelicAbstract extends OpMode {
     protected DcMotor
             motorLeftA, motorLeftB,
             motorRightA, motorRightB,
-            motorGlyphLift;
+            motorGlyphLift,
+            motorRelicExtend, motorRelicLift;
 
     protected boolean                  // Used to detect initial press of "A" button on gamepad 1
             pulseCaseMoveDone,                          // Case move complete pulse
@@ -54,7 +56,8 @@ public abstract class DMRelicAbstract extends OpMode {
             Gdown, Gopen,               // Flag for Glyph lift down and Glygh open or closed
             bArmDown = false,           // Flag for Back Arm
             slowdown = false,
-            leftCol, rightCol, centerCol;
+            leftCol, rightCol, centerCol,
+            relicopen = false;          // Flg for Relic jaw
 
     protected float
             targetDrDistInch,                   // Targets for motor moves in sequence (engineering units)
@@ -126,7 +129,10 @@ public abstract class DMRelicAbstract extends OpMode {
             Servo_GlyphLift = "sGLift",
             Servo_BackArm = "sBArm",
             //GLYPH_LIFT = "gLift";
-            Sensor_Color_Distance = "snCD";
+            Sensor_Color_Distance = "snCD",
+            Servo_Relic = "sRelic",
+            MOTOR_RELIC_EXTEND = "mRE",
+            MOTOR_RELIC_LIFT = "mRL";
 
 
 
@@ -158,18 +164,23 @@ public abstract class DMRelicAbstract extends OpMode {
         motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorGlyphLift.setDirection(DcMotor.Direction.FORWARD);
 
-        sGlyphL = hardwareMap.servo.get(GLYPH_LEFT);
-        //sGlyphL.scaleRange(0,180);
 
+        motorRelicExtend = hardwareMap.dcMotor.get(MOTOR_RELIC_EXTEND);
+        motorRelicExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRelicExtend.setDirection(DcMotor.Direction.FORWARD);
+
+        motorRelicLift = hardwareMap.dcMotor.get(MOTOR_RELIC_LIFT);
+        motorRelicLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRelicLift.setDirection(DcMotor.Direction.FORWARD);
+
+        sGlyphL = hardwareMap.servo.get(GLYPH_LEFT);
         sGlyphR = hardwareMap.servo.get(GLYPH_RIGHT);
         sGem = hardwareMap.servo.get(Gem);
 
         sGLift = hardwareMap.crservo.get(Servo_GlyphLift);
         sBArm = hardwareMap.crservo.get(Servo_BackArm);
 
-        //sGLift.setPower(0);
-
-        //sGLift2 = hardwareMap.servo.get(Servo_GlyphLift);
+        sRelic = hardwareMap.servo.get(Servo_Relic);
 
         /*
         BNO055IMU.Parameters iparameters = new BNO055IMU.Parameters();
@@ -196,27 +207,7 @@ public abstract class DMRelicAbstract extends OpMode {
         //set starting case #
         seqRobot = 1;
 
-         /*
-         * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
-         * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
-         */
 
-         /*
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters vparameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-
-        // OR...  Do Not Activate the Camera Monitor View, to save power
-        // VuforiaLocalizer.Parameters vparameters = new VuforiaLocalizer.Parameters();
-
-        vparameters.vuforiaLicenseKey = "AaRImwv/////AAAAGUjFLy92WE8UlmWKUSNcUNYpTptTmSX6QFQYt5PR6Far3tcNpmDCqgAxQDXowjTxfxTraIFnoWUUuHv5BfINsEyM88rx4xY6G8yuq/ys88jHy+m7sKtzKHYVlMSpjQaPUx47BOFSaC97HlAXFBZ0a/gs4IE7q6TQFxUJxhsl4UEaJp0T79um2REaDI9N1Zd33XrUJMfM52gWFgLqny4pAQcXEAaORowMlFYMx2GjlhWFTlo17bCwGnLr8cEHwFpthWYHgIL8Be/bsNR4kdHz6KajNuNzP7U0dj0xG/yxJSlzuRzxjgKwxlHHMl2yWXks6kON/AUVyQRF6bxDGWkW/Y+WsO0XlQlpypXeRbjscV/H";
-
-        vparameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        this.vuforia = ClassFactory.createVuforiaLocalizer(vparameters);
-
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
-        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
-        */
 
     } // End OpMode Initialization Method
 
@@ -240,6 +231,9 @@ public abstract class DMRelicAbstract extends OpMode {
         motorRightB.setPower(0);
         motorLeftA.setPower(0);
         motorLeftB.setPower(0);
+        motorGlyphLift.setPower(0);
+        motorRelicExtend.setPower(0);
+        motorRelicLift.setPower(0);
     } // End OpMode Stop Method
 
 
