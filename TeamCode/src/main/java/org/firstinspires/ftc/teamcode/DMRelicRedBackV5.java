@@ -53,6 +53,7 @@ public class DMRelicRedBackV5 extends DMRelicAbstract{
         motorRightB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        resetMEG(0);
 
         //turn off auto clear for telemetry
         telemetry.setAutoClear(false);
