@@ -637,15 +637,15 @@ public class DMRelicBlueBackV5 extends DMRelicAbstract{
                 break;
         }
 
-        case 42: // move back 2.5 "
+        case 42: // move back 3 "
             {
                 //Update telemetry data
                 seqItem.setValue(seqRobot);
-                caseItem.setValue("Move back 2.5\"");
+                caseItem.setValue("Move back 3\"");
                 telemetry.update();
 
                 targetDrRotateDeg = 0f;
-                targetDrDistInch = -2.5f; // Set target distance
+                targetDrDistInch = -3f; // Set target distance
                 targetPower = DEFAULT_MOVE_SPEED;  // Set power
 
                 targetdistItem.setValue(targetDrDistInch);
