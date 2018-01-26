@@ -89,6 +89,8 @@ public class DMRelicTeleOpV4 extends DMRelicAbstract {
         //init back arm
         initbarm();
 
+        //init relic jaw
+        sRelic.setPosition(0.47);
     }
 
     @Override
@@ -236,14 +238,17 @@ public class DMRelicTeleOpV4 extends DMRelicAbstract {
         }
 
          //Open and close relic jaw
-        if (gamepad2.y) {
+        if (gamepad2.x) {
+            telemetry.addData("X Pressed, relicopen = ", relicopen);
             if (relicopen) {
-                sRelic.setPosition(1);  //Need to confirm position for close jaw
+                sRelic.setPosition(0.56);  //Need to confirm position for close jaw - 100/180 = 0.62, changed to .56
+                telemetry.addData("Close relic arm, relicopen = ", relicopen);
                 sleep(150);
                 relicopen = false;
             }
             else {
-                sRelic.setPosition(15);  //Need to confirm position for open jaw
+                sRelic.setPosition(0.85);  //Need to confirm position for open jaw - 150/180 = 0.85
+                telemetry.addData("Open relic arm, relicopen = ", relicopen);
                 sleep(150);
                 relicopen = true;
             }
@@ -254,13 +259,13 @@ public class DMRelicTeleOpV4 extends DMRelicAbstract {
         if (gamepad2.dpad_right)  //((motorGlyphLift.getCurrentPosition() > -8500) && (gamepad2.left_stick_y < 0))
         {
 
-            relicEp=0.3;
+            relicEp=0.5;
             motorRelicExtend.setPower(relicEp);
             telemetry.addData("MRE power: ", relicEp);
 
         } else if (gamepad2.dpad_left)  //((motorGlyphLift.getCurrentPosition() < -250) && (gamepad2.left_stick_y > 0))
         {
-            relicEp=-0.3;
+            relicEp=-0.5;
             motorRelicExtend.setPower(relicEp);
             telemetry.addData("MRE power: ", relicEp);
         } else
@@ -272,13 +277,13 @@ public class DMRelicTeleOpV4 extends DMRelicAbstract {
         if (gamepad2.dpad_up)  //((motorGlyphLift.getCurrentPosition() > -8500) && (gamepad2.left_stick_y < 0))
         {
 
-            relicLp=0.6;
+            relicLp=0.9;
             motorRelicLift.setPower(relicLp);
             telemetry.addData("MRL power: ", relicLp);
 
         } else if (gamepad2.dpad_down)  //((motorGlyphLift.getCurrentPosition() < -250) && (gamepad2.left_stick_y > 0))
         {
-            relicLp=-0.6;
+            relicLp=-0.9;
             motorRelicLift.setPower(relicLp);
             telemetry.addData("MRL power: ", relicLp);
         } else
