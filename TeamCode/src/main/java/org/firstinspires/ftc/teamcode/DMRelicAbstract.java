@@ -168,11 +168,11 @@ public abstract class DMRelicAbstract extends OpMode {
 
         motorRelicExtend = hardwareMap.dcMotor.get(MOTOR_RELIC_EXTEND);
         motorRelicExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorRelicExtend.setDirection(DcMotor.Direction.FORWARD);
+        motorRelicExtend.setDirection(DcMotor.Direction.REVERSE);
 
         motorRelicLift = hardwareMap.dcMotor.get(MOTOR_RELIC_LIFT);
         motorRelicLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorRelicLift.setDirection(DcMotor.Direction.FORWARD);
+        motorRelicLift.setDirection(DcMotor.Direction.REVERSE);
 
         sGlyphL = hardwareMap.servo.get(GLYPH_LEFT);
         sGlyphR = hardwareMap.servo.get(GLYPH_RIGHT);
@@ -235,6 +235,8 @@ public abstract class DMRelicAbstract extends OpMode {
         motorGlyphLift.setPower(0);
         motorRelicExtend.setPower(0);
         motorRelicLift.setPower(0);
+
+        //sRelic.setPosition(100);
     } // End OpMode Stop Method
 
 
