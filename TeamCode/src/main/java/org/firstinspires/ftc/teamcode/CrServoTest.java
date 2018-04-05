@@ -31,16 +31,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
 
 import static android.os.SystemClock.sleep;
 
-@TeleOp(name = "ServoTest")
-public class ServoTest extends DMRelicAbstract {
-    public ServoTest() {
+@TeleOp(name = "CrServoTest")
+public class CrServoTest extends DMRelicAbstract {
+    public CrServoTest() {
     }
 
     @Override
@@ -48,11 +45,13 @@ public class ServoTest extends DMRelicAbstract {
 
         super.init();
 
+        initrarm();
         glyphL = 0;
         IncVal = 5;
         glyphR = 180;
-        telemetry.addData("use dpad left and right to change servo position by 5, ", "use dpad up and down to change servo position by 1 (pad2)");
-        telemetry.addData("Change mode from % to number by pressing x", "");
+        telemetry.addData("Use right and left bumpers to lower and raise the relic arm", "");
+        //telemetry.addData("use dpad left and right to change servo position by 5, ", "use dpad up and down to change servo position by 1 (pad2)");
+        //telemetry.addData("Change mode from % to number by pressing x", "");
         telemetry.update();
     }
 
@@ -61,6 +60,23 @@ public class ServoTest extends DMRelicAbstract {
 
         super.loop();
 
+        //Back Arm testing...
+        if(gamepad2.right_bumper)
+        {
+            rarmDown();
+            telemetry.addData("Relic Arm down: ", rarmTime);
+        }
+        else if (gamepad2.left_bumper)
+        {
+            rarmUp();
+            telemetry.addData("Relic Arm up: ", rarmTime);
+        }
+        else {
+            rarmStop();
+            telemetry.addData("Relic Arm stop: ", rarmTime);
+        }
+
+        /*
         //use x to change mode
         if (gamepad2.x)
         {
@@ -125,6 +141,7 @@ public class ServoTest extends DMRelicAbstract {
         }
         telemetry.addData("Relic servo position: ", glyphL);
         telemetry.addData("Relic servo position used in program (press x to change mode): ", glyphL/glyphR);
+        */
         telemetry.update();
 // End OpMode Loop Method
     }

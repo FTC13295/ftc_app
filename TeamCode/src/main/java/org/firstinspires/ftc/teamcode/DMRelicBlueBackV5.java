@@ -146,8 +146,8 @@ public class DMRelicBlueBackV5 extends DMRelicAbstract{
                 //Gem arm up
                 sGem.setPosition(0);
                 //Grab glyph
-                sGlyphL.setPosition(0.28);  //from .2
-                sGlyphR.setPosition(0.79);  //from .8
+                sGlyphL.setPosition(0.4);  //from .2
+                sGlyphR.setPosition(0.14);  //from .8
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -522,7 +522,7 @@ public class DMRelicBlueBackV5 extends DMRelicAbstract{
                 telemetry.update();
 
                 sGlyphL.setPosition(0.09);
-                sGlyphR.setPosition(0.97);  //from .9
+                sGlyphR.setPosition(0.28);  //from .9
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -583,7 +583,7 @@ public class DMRelicBlueBackV5 extends DMRelicAbstract{
                 telemetry.update();
 
                 sGlyphL.setPosition(0.4);
-                sGlyphR.setPosition(0.65);  //from .5
+                sGlyphR.setPosition(0.14);  //from .5
 
                 if (debug) {
                     while (!gamepad1.b) {

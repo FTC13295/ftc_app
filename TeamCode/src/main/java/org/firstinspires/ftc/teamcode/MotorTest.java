@@ -31,16 +31,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import static android.os.SystemClock.sleep;
 
-@TeleOp(name = "ServoTest")
-public class ServoTest extends DMRelicAbstract {
-    public ServoTest() {
+@TeleOp(name = "MotorTest")
+public class MotorTest extends DMRelicAbstract {
+    public MotorTest() {
     }
 
     @Override
@@ -48,11 +47,12 @@ public class ServoTest extends DMRelicAbstract {
 
         super.init();
 
-        glyphL = 0;
-        IncVal = 5;
-        glyphR = 180;
-        telemetry.addData("use dpad left and right to change servo position by 5, ", "use dpad up and down to change servo position by 1 (pad2)");
-        telemetry.addData("Change mode from % to number by pressing x", "");
+        motorRelicArm.setDirection(DcMotor.Direction.FORWARD);
+        motorRelicArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        drivepower = 0.1f;
+        telemetry.addData("use dpad left to go back and right to go forward", ", dpad up to increase power and dpad down to decrease");
         telemetry.update();
     }
 
@@ -61,70 +61,46 @@ public class ServoTest extends DMRelicAbstract {
 
         super.loop();
 
-        //use x to change mode
-        if (gamepad2.x)
-        {
-            if (glyphR == 180)
-            {
-                glyphR = 1;
-            } else
-            {
-                glyphR = 180;
-            }
-        }
 
         //testing with dpad for position of servos
-        telemetry.addData("use dpad left and right to change servo position by 5, ", "use dpad up and down to change servo position by 1, ");
+        telemetry.addData("use dpad left to go back and right to", " go forward");
+
+        if (gamepad2.dpad_up)
+        {
+            drivepower+=0.05;
+            if (drivepower > 1)
+            {
+                drivepower = 1;
+            }
+            sleep(100);
+        } else if (gamepad2.dpad_down)
+        {
+            drivepower-=0.05;
+            if (drivepower < 0)
+            {
+                drivepower = 0;
+            }
+            sleep(100);
+        }
 
         if (gamepad2.dpad_right)
         {
-            glyphL = glyphL + IncVal;
-            if (glyphL >180)
-            {
-                glyphL = 180;
-            }
-            sRelicGrab.setPosition(glyphL/glyphR);
-            sleep(150);
-        }
-        if (gamepad2.dpad_left)
+            motorRelicArm.setPower(drivepower);
+            //sleep(50);
+            telemetry.addData("Forward at: ", drivepower);
+            //motorRelicArm.setPower(0);
+            //sleep(150);
+        } else if (gamepad2.dpad_left)
         {
-             if (glyphL > 0)
-             {
-                glyphL = glyphL - IncVal;
-             }
-             else
-             {
-                glyphL = 0;
-             }
-             sRelicGrab.setPosition(glyphL/glyphR);
-             sleep(150);
+            motorRelicArm.setPower(-drivepower);
+            //sleep(50);
+            telemetry.addData("Backward at: ", drivepower);
+            //motorRelicArm.setPower(0);
+            //sleep(150);
+        } else {
+            motorRelicArm.setPower(0);
         }
-        if (gamepad2.dpad_up)
-        {
-            glyphL = glyphL + 1;
-            if (glyphL >180)
-            {
-                glyphL = 180;
-            }
-            sRelicGrab.setPosition(glyphL/glyphR);
-            sleep(150);
-        }
-        if (gamepad2.dpad_down)
-        {
-            if (glyphL > 0)
-            {
-                glyphL = glyphL - 1;
-            }
-            else
-            {
-                glyphL = 0;
-            }
-            sRelicGrab.setPosition(glyphL/glyphR);
-            sleep(150);
-
-        }
-        telemetry.addData("Relic servo position: ", glyphL);
-        telemetry.addData("Relic servo position used in program (press x to change mode): ", glyphL/glyphR);
+        telemetry.addData("RelicArm: ", motorRelicArm.getCurrentPosition());
         telemetry.update();
 // End OpMode Loop Method
     }

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -24,9 +23,8 @@ import static android.os.SystemClock.sleep;
  * ------------------------------------------------------------------
  */
 
-@Autonomous(name = "DMRelicRedFrontV6", group = "RiderModes")
-@Disabled
-public class DMRelicRedFrontV6 extends DMRelicAbstract{
+@Autonomous(name = "DMRelicRedFrontV6Lift", group = "RiderModes")
+public class DMRelicRedFrontV6L extends DMRelicAbstract{
 
     //------------------------------------------------------------------
     // Robot OpMode Loop Method
@@ -54,7 +52,7 @@ public class DMRelicRedFrontV6 extends DMRelicAbstract{
         motorLeftB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRightB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorGlyphLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //resetMEG(0);
 
         //turn off auto clear for telemetry
@@ -151,11 +149,14 @@ public class DMRelicRedFrontV6 extends DMRelicAbstract{
                 //Gem arm up
                 sGem.setPosition(0);
                 //Grab glyph
-                sGlyphL.setPosition(0.28);  //from .2
-                sGlyphR.setPosition(0.79);  //from .79
+                sGlyphL.setPosition(0.4);  //from .2
+                sGlyphR.setPosition(0.14);  //from .79
 
                 //lift glyph
                 //movebackMEG(-1500,-1);
+                motorGlyphLift.setPower(-0.6);
+                sleep(400);
+                motorGlyphLift.setPower(0);
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -534,7 +535,7 @@ public class DMRelicRedFrontV6 extends DMRelicAbstract{
                 telemetry.update();
 
                 sGlyphL.setPosition(0.09);
-                sGlyphR.setPosition(0.97);  //from .9
+                sGlyphR.setPosition(0.28);  //from .9
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -595,10 +596,13 @@ public class DMRelicRedFrontV6 extends DMRelicAbstract{
                 telemetry.update();
 
                 sGlyphL.setPosition(0.4);
-                sGlyphR.setPosition(0.65);  //from .5
+                sGlyphR.setPosition(0.14);  //from .5
 
                 //lower lift glyph
                 //movebackMEG(0,1);
+                motorGlyphLift.setPower(0.6);
+                sleep(400);
+                motorGlyphLift.setPower(0);
 
                 if (debug) {
                     while (!gamepad1.b) {

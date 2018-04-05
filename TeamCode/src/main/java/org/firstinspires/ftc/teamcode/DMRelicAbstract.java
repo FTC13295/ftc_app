@@ -22,7 +22,8 @@ public abstract class DMRelicAbstract extends OpMode {
             rangeSensor;
     // Set Servos
     protected Servo
-            sGlyphL, sGlyphR, sGem, sRelic;
+            //sRelicArm,
+            sGlyphL, sGlyphR, sGem, sRelicGrab;
 
     protected ColorSensor
             snColor;
@@ -36,14 +37,16 @@ public abstract class DMRelicAbstract extends OpMode {
     //BNO055IMU imu;
 
     protected CRServo
-            sGLift, sBArm;
+            //sGLift,
+            sRelicArm,
+            sBArm;
 
 
     protected DcMotor
             motorLeftA, motorLeftB,
             motorRightA, motorRightB,
             motorGlyphLift,
-            motorRelicExtend, motorRelicLift;
+            motorRelicArm;
 
     protected boolean                  // Used to detect initial press of "A" button on gamepad 1
             pulseCaseMoveDone,                          // Case move complete pulse
@@ -64,6 +67,7 @@ public abstract class DMRelicAbstract extends OpMode {
             targetDrRotateDeg,
             drivepower,
             temp_x_stick, temp_y_stick,          // Temporary x and y stick value
+            temp_x, temp_y,          // Temporary x and y stick value
             targetPower,                        // General motor power variable (%, -1.0 to 1.0)
             hsvValues[] = {0F, 0F, 0F};
     // Auto: Values used to determine current color detected
@@ -85,6 +89,10 @@ public abstract class DMRelicAbstract extends OpMode {
             seqRobot, target,                               // Switch operation integer used to identify sequence step.
             targetPosLeftA, targetPosLeftB,
             targetPosRightA, targetPosRightB,      // Drive train motor target variables (encoder counts)
+            targetRelicArmX, targetRelicArmY,
+            rArm,
+            tempposition,
+            rarmTime,
             IncVal;
 
     // Establish Integer Constants
@@ -95,7 +103,8 @@ public abstract class DMRelicAbstract extends OpMode {
             GLYPH_ROTATE = 2040,                // need to confirm # of encoder rotations for 90 deg
                                                 // full rotation of the wheel = 1120
                                                 // 2240 = 95 deg
-            END_ROTATE = 4080;                     // final position - left facing cypher
+            END_ROTATE = 4080,                     // final position - left facing cypher
+            RELIC_ARM_LIMIT = 520;              // 180 degrees = 1/2 * 1120 = 560
     // Establish Float Constants
     final static float
             PowerRatio = 0.7f,
@@ -131,9 +140,11 @@ public abstract class DMRelicAbstract extends OpMode {
             Servo_BackArm = "sBArm",
             //GLYPH_LIFT = "gLift";
             Sensor_Color_Distance = "snCD",
-            Servo_Relic = "sRelic",
-            MOTOR_RELIC_EXTEND = "mRE",
-            MOTOR_RELIC_LIFT = "mRL";
+            Servo_Relic_Arm = "sRelicArm",
+            Servo_Relic_Grab = "sRelicGrab",
+            MOTOR_RELIC_Arm = "mRA";
+            //MOTOR_RELIC_EXTEND = "mRE",
+            //MOTOR_RELIC_LIFT = "mRL";
 
 
 
@@ -165,39 +176,22 @@ public abstract class DMRelicAbstract extends OpMode {
         motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorGlyphLift.setDirection(DcMotor.Direction.FORWARD);
 
-
-        motorRelicExtend = hardwareMap.dcMotor.get(MOTOR_RELIC_EXTEND);
-        motorRelicExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorRelicExtend.setDirection(DcMotor.Direction.REVERSE);
-
-        motorRelicLift = hardwareMap.dcMotor.get(MOTOR_RELIC_LIFT);
-        motorRelicLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorRelicLift.setDirection(DcMotor.Direction.REVERSE);
+        motorRelicArm = hardwareMap.dcMotor.get(MOTOR_RELIC_Arm);
+        motorRelicArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRelicArm.setDirection(DcMotor.Direction.FORWARD);
 
         sGlyphL = hardwareMap.servo.get(GLYPH_LEFT);
         sGlyphR = hardwareMap.servo.get(GLYPH_RIGHT);
         sGem = hardwareMap.servo.get(Gem);
 
-        sGLift = hardwareMap.crservo.get(Servo_GlyphLift);
+        //sGLift = hardwareMap.crservo.get(Servo_GlyphLift);
         sBArm = hardwareMap.crservo.get(Servo_BackArm);
 
-        sRelic = hardwareMap.servo.get(Servo_Relic);
+        //sRelicArm = hardwareMap.servo.get(Servo_Relic_Arm);
+        sRelicArm = hardwareMap.crservo.get(Servo_Relic_Arm);
 
-        /*
-        BNO055IMU.Parameters iparameters = new BNO055IMU.Parameters();
-        iparameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        sRelicGrab = hardwareMap.servo.get(Servo_Relic_Grab);
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(iparameters);
-
-        imu = hardwareMap.get(BNO055IMU.class,"imu");
-        imu.initialize(iparameters);
-*/
-
-        //servoGlyph1.setPosition(180);
-        //servoGlyph2.setPosition(180);
-
-        //bDirection = true;
 
         // get a reference to the color sensor.
         snColor = hardwareMap.get(ColorSensor.class, Sensor_Color_Distance);
@@ -233,8 +227,7 @@ public abstract class DMRelicAbstract extends OpMode {
         motorLeftA.setPower(0);
         motorLeftB.setPower(0);
         motorGlyphLift.setPower(0);
-        motorRelicExtend.setPower(0);
-        motorRelicLift.setPower(0);
+        motorRelicArm.setPower(0);
 
         //sRelic.setPosition(100);
     } // End OpMode Stop Method
@@ -280,6 +273,7 @@ public abstract class DMRelicAbstract extends OpMode {
     }
 
     // control glyph lift (servo)
+    /*
     public void gliftUp ()
     {
         sGLift.setPower(0.9);
@@ -297,6 +291,7 @@ public abstract class DMRelicAbstract extends OpMode {
         sGLift.setPower(0);
 
     }
+*/
 
     // control glyph lift (motor)
 
@@ -336,6 +331,64 @@ public abstract class DMRelicAbstract extends OpMode {
         sBArm.setPower(0);
 
     }
+
+    // control crservo relic arm
+    public void initrarm()
+    {
+        sRelicArm.setPower(0.9);
+        sRelicArm.setPower(0);
+        //sRelicArm.setPosition(.5);
+        rarmTime=0;
+    }
+
+
+    public void rarmUp ()
+    {
+        /*
+        //Set the amount of time we need the servo to run out for to the current time.
+        long inTime = System.currentTimeMillis() + 300;
+
+        //While the timer hasn't reached outTime, have the servo run forward.
+        while (System.currentTimeMillis() < inTime)
+        {
+            //sRelicArm.setDirection(Servo.Direction.FORWARD);
+            //sRelicArm.setPosition(0); //Keep in mind that this is a vex motor, so this command is equivalent to setting a motors power to 1.
+            sRelicArm.setPower(0.9);
+        }
+        rarmTime += 300;
+        //sRelicArm.setPosition(.5);
+        */
+        sRelicArm.setPower(0.9);
+
+    }
+
+    public void rarmDown()
+    {
+        /*
+        //Set the amount of time we need the servo to run out for to the current time.
+        long inTime = System.currentTimeMillis() + 300;
+
+        //While the timer hasn't reached outTime, have the servo run forward.
+        while (System.currentTimeMillis() < inTime)
+        {
+            //sRelicArm.setDirection(Servo.Direction.REVERSE);
+            //sRelicArm.setPosition(0); //Keep in mind that this is a vex motor, so this command is equivalent to setting a motors power to 1.
+            sRelicArm.setPower(-0.9);
+        }
+        rarmTime -= 300;
+        //sRelicArm.setPosition(.5);
+        */
+        sRelicArm.setPower(-0.9);
+
+    }
+
+    public void rarmStop()
+    {
+        //sRelicArm.setPosition(.5);
+        sRelicArm.setPower(0);
+
+    }
+
     /*
     public void MvFrwdDist(double power, int distance)
     {
@@ -513,4 +566,73 @@ public abstract class DMRelicAbstract extends OpMode {
         motorGlyphLift.setTargetPosition(position);
         motorGlyphLift.setPower(power);
     }
+
+    // operation commands for relic arm
+    void relicarmforward(int position, float power) {
+        int cposition = motorRelicArm.getCurrentPosition();
+
+        if (cposition < RELIC_ARM_LIMIT)
+        {
+            int tposition = cposition + position;
+            if (RELIC_ARM_LIMIT < tposition)
+            {
+                tposition = RELIC_ARM_LIMIT;
+            }
+            motorRelicArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorRelicArm.setTargetPosition(tposition);
+            motorRelicArm.setPower(power);
+        }
+
+    }
+
+    void relicarmback(int position, float power) {
+        int cposition = motorRelicArm.getCurrentPosition();
+
+        if (cposition > 0)
+        {
+            int tposition = cposition - position;
+            if (tposition < 0)
+            {
+                tposition = 0;
+            }
+            motorRelicArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorRelicArm.setTargetPosition(tposition);
+            motorRelicArm.setPower(power);
+        }
+
+    }
+
+    /*
+    void srelicarmforward(float position) {
+        double cposition = sRelicArm.getPosition();
+
+        if (cposition < 1)
+        {
+            double tposition = cposition +  (position / 10);
+            if (tposition > 1)
+            {
+                tposition = 1;
+            }
+            sRelicArm.setPosition(tposition);
+
+        }
+
+    }
+
+    void srelicarmback(float position) {
+        double cposition = sRelicArm.getPosition();
+
+        if (cposition > 0)
+        {
+            double tposition = cposition -  (position / 10);
+            if (tposition < 0)
+            {
+                tposition = 0;
+            }
+            sRelicArm.setPosition(tposition);
+
+        }
+
+    }
+  */
 }

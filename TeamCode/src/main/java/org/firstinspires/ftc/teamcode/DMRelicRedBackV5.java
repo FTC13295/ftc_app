@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -24,6 +25,7 @@ import static android.os.SystemClock.sleep;
  */
 
 @Autonomous(name = "DMRelicRedBackV5", group = "RiderModes")
+@Disabled
 public class DMRelicRedBackV5 extends DMRelicAbstract{
 
     //------------------------------------------------------------------
@@ -53,7 +55,7 @@ public class DMRelicRedBackV5 extends DMRelicAbstract{
         motorRightB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        resetMEG(0);
+        //resetMEG(0);
 
         //turn off auto clear for telemetry
         telemetry.setAutoClear(false);
@@ -154,7 +156,7 @@ public class DMRelicRedBackV5 extends DMRelicAbstract{
                 sGlyphR.setPosition(0.79);  //from .8
 
                 //lift glyph
-                movebackMEG(-1500,-1);
+               // movebackMEG(-1500,-1);
 
                 if (debug) {
                     while (!gamepad1.b) {
@@ -635,7 +637,7 @@ public class DMRelicRedBackV5 extends DMRelicAbstract{
                 sGlyphR.setPosition(0.65);  //from .5
 
                 //lower lift glyph
-                movebackMEG(0,1);
+                //movebackMEG(0,1);
 
                 if (debug) {
                     while (!gamepad1.b) {

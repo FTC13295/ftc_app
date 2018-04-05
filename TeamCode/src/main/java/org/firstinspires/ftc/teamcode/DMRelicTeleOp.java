@@ -301,6 +301,7 @@ public class DMRelicTeleOp extends DMRelicAbstract {
         }
 
         // Glyph Lift operations
+        /*
         if(gamepad2.dpad_down)
         {
             gliftDown();
@@ -315,7 +316,7 @@ public class DMRelicTeleOp extends DMRelicAbstract {
             gliftStop();
             telemetry.addData("Glyph Lift ", "stop");
         }
-
+*/
         //testing Glyph Lift.....
         /*
         if(gamepad2.x)

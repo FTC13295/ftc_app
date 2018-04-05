@@ -31,12 +31,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import static android.os.SystemClock.sleep;
 
 @TeleOp(name = "DMRelicTeleOpV4")
+@Disabled
 public class DMRelicTeleOpV4 extends DMRelicAbstract {
     public DMRelicTeleOpV4() {
     }
@@ -54,11 +56,11 @@ public class DMRelicTeleOpV4 extends DMRelicAbstract {
 
         motorGlyphLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        motorRelicExtend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorRelicExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //motorRelicExtend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //motorRelicExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        motorRelicLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorRelicLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //motorRelicLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //motorRelicLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //Not using encoders for glyph lift
         //motorGlyphLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -90,7 +92,7 @@ public class DMRelicTeleOpV4 extends DMRelicAbstract {
         initbarm();
 
         //init relic jaw
-        sRelic.setPosition(0.47);
+        //sRelic.setPosition(0.47);
     }
 
     @Override
@@ -241,13 +243,13 @@ public class DMRelicTeleOpV4 extends DMRelicAbstract {
         if (gamepad2.x) {
             telemetry.addData("X Pressed, relicopen = ", relicopen);
             if (relicopen) {
-                sRelic.setPosition(0.56);  //Need to confirm position for close jaw - 100/180 = 0.62, changed to .56
+                //sRelic.setPosition(0.56);  //Need to confirm position for close jaw - 100/180 = 0.62, changed to .56
                 telemetry.addData("Close relic arm, relicopen = ", relicopen);
                 sleep(150);
                 relicopen = false;
             }
             else {
-                sRelic.setPosition(0.85);  //Need to confirm position for open jaw - 150/180 = 0.85
+                //sRelic.setPosition(0.85);  //Need to confirm position for open jaw - 150/180 = 0.85
                 telemetry.addData("Open relic arm, relicopen = ", relicopen);
                 sleep(150);
                 relicopen = true;
@@ -260,17 +262,17 @@ public class DMRelicTeleOpV4 extends DMRelicAbstract {
         {
 
             relicEp=0.5;
-            motorRelicExtend.setPower(relicEp);
+            //motorRelicExtend.setPower(relicEp);
             telemetry.addData("MRE power: ", relicEp);
 
         } else if (gamepad2.dpad_left)  //((motorGlyphLift.getCurrentPosition() < -250) && (gamepad2.left_stick_y > 0))
         {
             relicEp=-0.5;
-            motorRelicExtend.setPower(relicEp);
+            //motorRelicExtend.setPower(relicEp);
             telemetry.addData("MRE power: ", relicEp);
         } else
         {
-            motorRelicExtend.setPower(0);
+           // motorRelicExtend.setPower(0);
         }
 
         //Lower and raise relic arm
@@ -278,22 +280,22 @@ public class DMRelicTeleOpV4 extends DMRelicAbstract {
         {
 
             relicLp=0.9;
-            motorRelicLift.setPower(relicLp);
+            //motorRelicLift.setPower(relicLp);
             telemetry.addData("MRL power: ", relicLp);
 
         } else if (gamepad2.dpad_down)  //((motorGlyphLift.getCurrentPosition() < -250) && (gamepad2.left_stick_y > 0))
         {
             relicLp=-0.9;
-            motorRelicLift.setPower(relicLp);
+            //motorRelicLift.setPower(relicLp);
             telemetry.addData("MRL power: ", relicLp);
         } else
         {
-            motorRelicLift.setPower(0);
+           // motorRelicLift.setPower(0);
         }
 
 
-        telemetry.addData("MRE position: ", motorRelicExtend.getCurrentPosition());
-        telemetry.addData("MRL position: ", motorRelicLift.getCurrentPosition());
+        //telemetry.addData("MRE position: ", motorRelicExtend.getCurrentPosition());
+        //telemetry.addData("MRL position: ", motorRelicLift.getCurrentPosition());
         telemetry.addData("GP2-LY: ", gamepad2.left_stick_y);
         telemetry.addData("Driving at full speed: ", slowdown);
         telemetry.update();

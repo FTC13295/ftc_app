@@ -31,17 +31,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
 
 import static android.os.SystemClock.sleep;
 
-@TeleOp(name = "DMRelicTeleOpV2")
-@Disabled
-public class DMRelicTeleOpV2 extends DMRelicAbstract {
-    public DMRelicTeleOpV2() {
+@TeleOp(name = "DMRelicTeleOpV5")
+public class DMRelicTeleOpV5 extends DMRelicAbstract {
+    public DMRelicTeleOpV5() {
     }
 
     @Override
@@ -54,6 +51,14 @@ public class DMRelicTeleOpV2 extends DMRelicAbstract {
         motorRightB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftA.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        motorGlyphLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        motorRelicArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRelicArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //Not using encoders for glyph lift
+        //motorGlyphLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //fieldOrient = false;
@@ -70,6 +75,8 @@ public class DMRelicTeleOpV2 extends DMRelicAbstract {
         Gdown = false;
         Gopen = true;
 
+        tempposition = 0;
+
         snColor.enableLed(false);
 
         slowdown = false;
@@ -77,11 +84,13 @@ public class DMRelicTeleOpV2 extends DMRelicAbstract {
 
         //init glyph position
         sGlyphL.setPosition(0.1);
-        sGlyphR.setPosition(0.9); //changed from 0.8 - changed from 0.75
+        sGlyphR.setPosition(0.28); //changed from 0.3
 
         //init back arm
         initbarm();
 
+        //init relic jaw
+        //sRelic.setPosition(0.47);
     }
 
     @Override
@@ -155,57 +164,33 @@ public class DMRelicTeleOpV2 extends DMRelicAbstract {
         powerLeftB = (velocityDrive - rotationDrive + strafeDrive) * drivepower;
 
 
-        //Control Gem arm
-/*
-            if (gamepad2.b) {
-                if (!Gdown) {
-                    spos=135/180;
-                    sGem.setPosition(0.8);
-                    sleep(150);
-                    Gdown = true;
-                }
-                else {
-                    sGem.setPosition(0);
-                    sleep(150);
-                    Gdown = false;
-                }
-            }
-*/
         //Controls for grabbing the glyph
         if (gamepad2.a) {
             if (Gopen) {
                 spos = 27/180;
-                sGlyphL.setPosition(0.25);  //Used to be 0.16, 0.2
+                sGlyphL.setPosition(0.4);  //Used to be 0.25. 0.28
                 spos=133/180;
-                sGlyphR.setPosition(0.7);  //Used to be 0.72 - added 0.15 to 0.65, 0.8
+                sGlyphR.setPosition(0.14);  //Used to be 0.7.  0.18
                 sleep(150);
                 Gopen = false;
             }
             else {
                 spos=10/180;
-                sGlyphL.setPosition(0.09);  //changed from 0.05
+                sGlyphL.setPosition(0.09);  //changed from 0.09
                 spos=145/180;
-                sGlyphR.setPosition(0.9);  //changed from 0.83 - added 0.15 to 0.75
+                sGlyphR.setPosition(0.28);  //changed from 0.3
                 sleep(150);
                 Gopen = true;
             }
 
         }
 
+        /*
         if (gamepad2.b){
             sGlyphL.setPosition(0.4);
-            sGlyphR.setPosition(0.5);
+            sGlyphR.setPosition(0.14);
         }
-
-/*
-        // lower the back arm
-        if (gamepad2.y && !bArmDown)
-        {
-            bArmDown = true;
-            lowerbarm(20);
-            sleep(250);
-        }
-*/
+        */
 
         //Back Arm testing...
         if(gamepad2.right_bumper)
@@ -222,24 +207,128 @@ public class DMRelicTeleOpV2 extends DMRelicAbstract {
             barmStop();
             telemetry.addData("Back Arm  ", "stop");
         }
-/*
+
         // Glyph Lift operations
-        if(gamepad2.dpad_down)
+        if (gamepad2.left_stick_y < 0)  //((motorGlyphLift.getCurrentPosition() > -8500) && (gamepad2.left_stick_y < 0))
         {
-            gliftDown();
-            telemetry.addData("Glyph Lift ", "down");
-        }
-        else if (gamepad2.dpad_up)
+            if (gamepad2.left_stick_y <= 0.1 && gamepad2.left_stick_y >= -0.1) {
+                gamepad1.left_stick_y = 0;
+            } else
+            {
+                throttleLift=gamepad2.left_stick_y;
+                throttleLift = (float) scaleInput(throttleLift);
+                motorGlyphLift.setPower(throttleLift);
+                telemetry.addData("MGL move: ", throttleLift);
+            }
+            telemetry.addData("MGL power: ", throttleLift);
+
+        } else if (gamepad2.left_stick_y > 0)  //((motorGlyphLift.getCurrentPosition() < -250) && (gamepad2.left_stick_y > 0))
         {
-            gliftUp();
-            telemetry.addData("Glyph Lift ", "up");
-        }
-        else {
-            gliftStop();
-            telemetry.addData("Glyph Lift ", "stop");
+            if (gamepad2.left_stick_y <= 0.1 && gamepad2.left_stick_y >= -0.1) {
+                gamepad1.left_stick_y = 0;
+            } else
+            {
+                throttleLift=gamepad2.left_stick_y;
+                throttleLift = (float) scaleInput(throttleLift);
+                motorGlyphLift.setPower(throttleLift);
+                telemetry.addData("MGL move: ", throttleLift);
+            }
+            telemetry.addData("MGL power: ", throttleLift);
+        } else
+        {
+            motorGlyphLift.setPower(0);
         }
 
-*/
+         //Open and close relic jaw
+        if (gamepad2.x) {
+            telemetry.addData("X Pressed, relicopen = ", relicopen);
+            if (relicopen) {
+                sRelicGrab.setPosition(0.56);  //Need to confirm position for close jaw - 100/180 = 0.62, changed to .56
+                telemetry.addData("Close relic arm, relicopen = ", relicopen);
+                sleep(150);
+                relicopen = false;
+            }
+            else {
+                sRelicGrab.setPosition(0.85);  //Need to confirm position for open jaw - 150/180 = 0.85
+                telemetry.addData("Open relic arm, relicopen = ", relicopen);
+                sleep(150);
+                relicopen = true;
+            }
+
+        }
+
+        //Extend and retrieve relic arm
+
+        //temp_x = gamepad2.right_stick_x * -1;
+        //temp_y = gamepad2.right_stick_y;
+        targetRelicArmX = 30; //(int)(temp_x *5);
+        //targetRelicArmY = (int)(temp_y *10);
+        if (gamepad2.dpad_right)//(temp_x > 0)
+        {
+
+            motorRelicArm.setPower(1.0);
+            tempposition = motorRelicArm.getCurrentPosition();
+            telemetry.addData("relic arm up: ", tempposition);
+            /*
+            //relicarmforward(targetRelicArmX,(float) 1.0);
+            telemetry.addData("mRA: ", targetRelicArmX);
+            sleep(120);
+            */
+
+        } else if (gamepad2.dpad_left)//(temp_x < 0)
+        {
+            motorRelicArm.setPower(-1.0);
+            tempposition = motorRelicArm.getCurrentPosition();
+            telemetry.addData("relic arm down: ", tempposition);
+            /*
+            relicarmback(targetRelicArmX,(float) 1.0);
+            telemetry.addData("mRA: ", -targetRelicArmX);
+            sleep(120);
+            */
+        } else
+        {
+            motorRelicArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorRelicArm.setTargetPosition(tempposition);
+            motorRelicArm.setPower(1.0);
+            telemetry.addData("relic arm stop: ", tempposition);
+        }
+
+        //lower and raise the relic arm extension
+        if(gamepad2.dpad_up)
+        {
+            rarmDown();
+            telemetry.addData("Relic Arm up: ", rarmTime);
+        }
+        else if (gamepad2.dpad_down)
+        {
+            rarmUp();
+            telemetry.addData("Relic Arm down: ", rarmTime);
+        }
+        else {
+            rarmStop();
+            telemetry.addData("Relic Arm stop: ", rarmTime);
+        }
+        /*
+        //Lower and raise relic arm
+        if (temp_y > 0)
+        {
+
+
+            srelicarmforward(temp_y);
+            telemetry.addData("SRA: ", temp_y);
+
+        } else if (temp_y < 0)  //((motorGlyphLift.getCurrentPosition() < -250) && (gamepad2.left_stick_y > 0))
+        {
+            srelicarmback(temp_y);
+            telemetry.addData("SRA: ", temp_y);
+        }
+        */
+
+
+       // telemetry.addData("MRE position: ", motorRelicExtend.getCurrentPosition());
+        telemetry.addData("MRA position: ", motorRelicArm.getCurrentPosition());
+        telemetry.addData("Target Relic Arm: ", targetRelicArmX);
+        telemetry.addData("GP2-LX: ", gamepad2.right_stick_x);
         telemetry.addData("Driving at full speed: ", slowdown);
         telemetry.update();
 // End OpMode Loop Method
