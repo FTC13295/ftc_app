@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.util.Range;
 import static android.os.SystemClock.sleep;
 
 @TeleOp(name = "ServoTest")
+@Disabled
 public class ServoTest extends DMRelicAbstract {
     public ServoTest() {
     }

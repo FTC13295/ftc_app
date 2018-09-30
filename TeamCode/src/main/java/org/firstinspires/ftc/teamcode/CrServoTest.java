@@ -31,11 +31,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import static android.os.SystemClock.sleep;
 
 @TeleOp(name = "CrServoTest")
+@Disabled
 public class CrServoTest extends DMRelicAbstract {
     public CrServoTest() {
     }

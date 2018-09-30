@@ -31,12 +31,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import static android.os.SystemClock.sleep;
 
 @TeleOp(name = "DMRelicTeleOpV5")
+@Disabled
 public class DMRelicTeleOpV5 extends DMRelicAbstract {
     public DMRelicTeleOpV5() {
     }
@@ -185,12 +187,12 @@ public class DMRelicTeleOpV5 extends DMRelicAbstract {
 
         }
 
-        /*
+
         if (gamepad2.b){
             sGlyphL.setPosition(0.4);
             sGlyphR.setPosition(0.14);
         }
-        */
+
 
         //Back Arm testing...
         if(gamepad2.right_bumper)

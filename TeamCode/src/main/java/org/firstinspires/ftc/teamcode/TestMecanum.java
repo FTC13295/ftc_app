@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
@@ -39,6 +40,7 @@ import com.qualcomm.robotcore.util.Range;
 import static android.os.SystemClock.sleep;
 
 @TeleOp(name = "TestMecanumReg")
+@Disabled
 public class TestMecanum extends DMRelicAbstract {
     public TestMecanum() {
     }

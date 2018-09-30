@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
@@ -45,6 +46,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import static android.os.SystemClock.sleep;
 
 @TeleOp(name = "DMRelicBFTest")
+@Disabled
 public class DMRelicBFTest extends DMRelicAbstract {
     public DMRelicBFTest() {
     }
