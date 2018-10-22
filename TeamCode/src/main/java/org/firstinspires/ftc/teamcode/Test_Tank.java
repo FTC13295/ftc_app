@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
+
 @TeleOp(name = "Test_Tank")
 //@Disabled
 public class Test_Tank extends DMRokus_Abstract {
@@ -52,6 +53,7 @@ public class Test_Tank extends DMRokus_Abstract {
         motorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         scaledrive = false;
+        single = false;
 
 
     }
@@ -75,9 +77,44 @@ public class Test_Tank extends DMRokus_Abstract {
             }
         }
 
-        // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
-        left = -gamepad1.left_stick_y;
-        right = -gamepad1.right_stick_y;
+        if (gamepad1.b)
+        {
+            if (single)
+            {
+                single = false;
+            } else
+            {
+                single = true;
+            }
+        }
+
+
+        if(!single)
+        {
+            // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
+            left = -gamepad1.left_stick_y;
+            right = -gamepad1.right_stick_y;
+        }
+        else
+        {
+            left = -gamepad1.right_stick_y + gamepad1.right_stick_x;
+            right = -gamepad1.right_stick_y - gamepad1.right_stick_x;
+
+            if (left  > 1)
+            {
+                left = 1;
+            } else if (left < -1)
+            {
+                left = -1;
+            }
+            if (right  > 1)
+            {
+                right = 1;
+            } else if (right < -1)
+            {
+                right = -1;
+            }
+        }
 
         if (scaledrive)
         {
@@ -85,17 +122,21 @@ public class Test_Tank extends DMRokus_Abstract {
             left = (float) scaleInput(left);
             right = (float) scaleInput(right);
 
-            //Create dead-zone for drive train controls
-            if (gamepad1.left_stick_y <= 0.1 && gamepad1.left_stick_y >= -0.1) {
-                gamepad1.left_stick_y = 0;
-                left = 0;
-            }
+            if (!single) {
+                //Create dead-zone for drive train controls
+                if (gamepad1.left_stick_y <= 0.1 && gamepad1.left_stick_y >= -0.1) {
+                    gamepad1.left_stick_y = 0;
+                    left = 0;
+                }
 
-            if (gamepad1.right_stick_y <= 0.1 && gamepad1.right_stick_y >= -0.1) {
-                gamepad1.right_stick_y = 0;
-                right = 0;
+                if (gamepad1.right_stick_y <= 0.1 && gamepad1.right_stick_y >= -0.1) {
+                    gamepad1.right_stick_y = 0;
+                    right = 0;
+                }
             }
         }
+
+
 
         motorLeft.setPower(left);
         motorRight.setPower(right);
@@ -104,6 +145,7 @@ public class Test_Tank extends DMRokus_Abstract {
         telemetry.addData("left",  "%.2f", left);
         telemetry.addData("right", "%.2f", right);
         telemetry.addData("scaledrive is: ", scaledrive);
+        telemetry.addData("Single is: ", single);
         //telemetry.update();
 
 // End OpMode Loop Method

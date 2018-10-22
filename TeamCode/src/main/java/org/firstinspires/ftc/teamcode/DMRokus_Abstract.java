@@ -51,6 +51,7 @@ public abstract class DMRokus_Abstract extends OpMode {
             bDirection,
             grabbed,
             scaledrive,                 // Test for scale drive
+            single,
             debug,                      // Flag for debugging
             Gdown, Gopen,               // Flag for Glyph lift down and Glygh open or closed
             bArmDown = false,           // Flag for Back Arm
