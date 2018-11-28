@@ -35,10 +35,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 
-@TeleOp(name = "Test_Motors")
+@TeleOp(name = "Test_Motors v2")
 //@Disabled
-public class Test_Motors extends DMRokus_Abstract {
-    public Test_Motors() {
+public class Test_Motors_v2 extends DMRokus_Abstract {
+    public Test_Motors_v2() {
     }
 
     @Override

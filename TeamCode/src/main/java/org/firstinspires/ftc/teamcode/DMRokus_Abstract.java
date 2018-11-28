@@ -92,7 +92,7 @@ public abstract class DMRokus_Abstract extends OpMode {
             targetRelicArmX, targetRelicArmY,
             rArm,
             tempposition,
-            rarmTime,
+            targetpos,
             IncVal;
 
     // Establish Integer Constants
@@ -103,6 +103,7 @@ public abstract class DMRokus_Abstract extends OpMode {
             GLYPH_ROTATE = 2040,                // need to confirm # of encoder rotations for 90 deg
                                                 // full rotation of the wheel = 1120
                                                 // 2240 = 95 deg
+            HD_MOTOR_ENC = 2240,                // full rotation of the motor
             END_ROTATE = 4080,                     // final position - left facing cypher
             RELIC_ARM_LIMIT = 520;              // 180 degrees = 1/2 * 1120 = 560
     // Establish Float Constants
