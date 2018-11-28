@@ -54,8 +54,8 @@ public class Test_Motors_v2 extends DMRokus_Abstract {
         single = true;
 
         //set encoders on for arm
-        motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         targetpos = HD_MOTOR_ENC * 65/360;
     }
 
@@ -79,7 +79,7 @@ public class Test_Motors_v2 extends DMRokus_Abstract {
 
         if(gamepad1.b) {
             motorArm.setTargetPosition(targetpos);
-            motorArm.setPower(1);
+            motorArm.setPower(1.0);
         }
 
         if (gamepad1.x){
@@ -88,6 +88,11 @@ public class Test_Motors_v2 extends DMRokus_Abstract {
             } else {
                 targetpos = 140;
             }
+            try {
+                wait(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         if (gamepad1.y){
@@ -95,6 +100,11 @@ public class Test_Motors_v2 extends DMRokus_Abstract {
                 targetpos = targetpos - 10;
             } else {
                 targetpos = 0;
+            }
+            try {
+                wait(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 
