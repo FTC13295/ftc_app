@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -40,8 +41,10 @@ public abstract class DMRokus_Abstract extends OpMode {
     protected DcMotor
             motorLeft,          //Left motor
             motorRight,         //Right motor
-            motorGlyphLift,
-            motorRelicArm;
+            motorLift,          //Lift motor
+            motorBox,           //Collector motor
+            motorExtend,        //Extend arm motor
+            motorArm;           //Angle arm motor
 
     protected boolean                  // Used to detect initial press of "A" button on gamepad 1
             pulseCaseMoveDone,                          // Case move complete pulse
@@ -124,7 +127,11 @@ public abstract class DMRokus_Abstract extends OpMode {
     final static String
 
             MOTOR_DRIVE_LEFT = "mleft",
-            MOTOR_DRIVE_RIGHT = "mright"; //,
+            MOTOR_DRIVE_RIGHT = "mright",
+            MOTOR_ARM = "mArm",
+            MOTOR_BOX = "mBox",
+            MOTOR_LIFT = "mLift",
+            MOTOR_EXTENDER = "mExtend"; //,
     /*
             MOTOR_GLYPH_LIFT = "mGL",
             SENSOR_GYRO = "gyro",
@@ -160,28 +167,22 @@ public abstract class DMRokus_Abstract extends OpMode {
         motorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRight.setDirection(DcMotor.Direction.REVERSE);
 
-        /*
-        motorGlyphLift = hardwareMap.dcMotor.get(MOTOR_GLYPH_LIFT);
-        motorGlyphLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorGlyphLift.setDirection(DcMotor.Direction.FORWARD);
+        motorArm = hardwareMap.dcMotor.get(MOTOR_ARM);
+        motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorArm.setDirection(DcMotor.Direction.FORWARD);
 
-        motorRelicArm = hardwareMap.dcMotor.get(MOTOR_RELIC_Arm);
-        motorRelicArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorRelicArm.setDirection(DcMotor.Direction.FORWARD);
+        motorBox = hardwareMap.dcMotor.get(MOTOR_BOX);
+        motorBox.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBox.setDirection(DcMotor.Direction.REVERSE);
 
-        sGlyphL = hardwareMap.servo.get(GLYPH_LEFT);
-        sGlyphR = hardwareMap.servo.get(GLYPH_RIGHT);
-        sGem = hardwareMap.servo.get(Gem);
+        motorLift = hardwareMap.dcMotor.get(MOTOR_LIFT);
+        motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLift.setDirection(DcMotor.Direction.REVERSE);
 
-        //sGLift = hardwareMap.crservo.get(Servo_GlyphLift);
-        sBArm = hardwareMap.crservo.get(Servo_BackArm);
-
-        //sRelicArm = hardwareMap.servo.get(Servo_Relic_Arm);
-        sRelicArm = hardwareMap.crservo.get(Servo_Relic_Arm);
-
-        sRelicGrab = hardwareMap.servo.get(Servo_Relic_Grab);
-
-
+        motorExtend = hardwareMap.dcMotor.get(MOTOR_EXTENDER);
+        motorExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorExtend.setDirection(DcMotor.Direction.REVERSE);
+/*
         // get a reference to the color sensor.
         snColor = hardwareMap.get(ColorSensor.class, Sensor_Color_Distance);
 
@@ -213,8 +214,10 @@ public abstract class DMRokus_Abstract extends OpMode {
     {    // stop all the motors when the program is stopped
         motorRight.setPower(0);
         motorLeft.setPower(0);
-//        motorGlyphLift.setPower(0);
-//        motorRelicArm.setPower(0);
+        motorArm.setPower(0);
+        motorBox.setPower(0);
+        motorExtend.setPower(0);
+        motorLift.setPower(0);
 
         //sRelic.setPosition(100);
     } // End OpMode Stop Method
