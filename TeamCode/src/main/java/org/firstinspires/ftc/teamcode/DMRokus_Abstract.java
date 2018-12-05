@@ -60,6 +60,7 @@ public abstract class DMRokus_Abstract extends OpMode {
             bArmDown = false,           // Flag for Back Arm
             slowdown = false,
             leftCol, rightCol, centerCol,
+            SetPos = false,             // Flag for set possition
             relicopen = false;          // Flg for Relic jaw
 
     protected float

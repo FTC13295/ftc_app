@@ -37,10 +37,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import static android.os.SystemClock.sleep;
 
 
-@TeleOp(name = "Test_Motors v2")
+@TeleOp(name = "DM Rokus TeleOp")
 //@Disabled
-public class Test_Motors_v2 extends DMRokus_Abstract {
-    public Test_Motors_v2() {
+public class DMRokusTeleOp extends DMRokus_Abstract {
+    public DMRokusTeleOp() {
     }
 
     @Override
@@ -81,40 +81,6 @@ public class Test_Motors_v2 extends DMRokus_Abstract {
             sleep(300);
         }
 
-        if(SetPos) {
-            //motorArm.setTargetPosition(targetpos);
-            motorArm.setPower(1.0);
-        }
-
-        if(gamepad1.b) {
-            if(SetPos){
-                SetPos = false;
-            } else {
-                motorArm.setTargetPosition(targetpos);
-                SetPos = true;
-            }
-            sleep(300);
-        }
-
-        if (gamepad1.x){
-            if (targetpos < 800) {
-                targetpos = targetpos + 10;
-            } else {
-                targetpos = 140;
-            }
-            sleep(200);
-        }
-
-        if (gamepad1.y){
-            if (targetpos > 10) {
-                targetpos = targetpos - 10;
-            } else {
-                targetpos = 0;
-            }
-            sleep(200);
-        }
-
-  /*
         if (gamepad1.b)
         {
             if (single)
@@ -124,8 +90,44 @@ public class Test_Motors_v2 extends DMRokus_Abstract {
             {
                 single = true;
             }
+            sleep(300);
         }
-*/
+
+        // Controler 1 - driving (and hook arm)
+        // Controler 2 - operator
+
+        if(SetPos) {
+            //motorArm.setTargetPosition(targetpos);
+            motorArm.setPower(1.0);
+        }
+
+        if(gamepad2.b) {
+            if(SetPos){
+                SetPos = false;
+            } else {
+                motorArm.setTargetPosition(targetpos);
+                SetPos = true;
+            }
+            sleep(300);
+        }
+
+        if (gamepad2.x){
+            if (targetpos < 800) {
+                targetpos = targetpos + 10;
+            } else {
+                targetpos = 140;
+            }
+            sleep(200);
+        }
+
+        if (gamepad2.y){
+            if (targetpos > 10) {
+                targetpos = targetpos - 10;
+            } else {
+                targetpos = 0;
+            }
+            sleep(200);
+        }
 
         if(!single)
         {
@@ -179,9 +181,9 @@ public class Test_Motors_v2 extends DMRokus_Abstract {
         motorLeft.setPower(left);
         motorRight.setPower(right);
 
-        if (gamepad1.right_trigger > 0.2){
+        if (gamepad2.right_trigger > 0.2){
             motorBox.setPower(1.0);
-        }else if (gamepad1.left_trigger > 0.2){
+        }else if (gamepad2.left_trigger > 0.2){
             motorBox.setPower(-1.0);
         }else {
             motorBox.setPower(0);
@@ -195,16 +197,16 @@ public class Test_Motors_v2 extends DMRokus_Abstract {
             motorLift.setPower(0);
         }
 
-        extend = gamepad1.left_stick_x;
-        arm = gamepad1.left_stick_y;
+        extend = gamepad2.left_stick_y;
+        arm = gamepad2.right_stick_y;
         //Create dead-zonef
-        if (gamepad1.left_stick_x <= 0.2 && gamepad1.left_stick_x >= -0.2) {
-            gamepad1.left_stick_x = 0;
+        if (gamepad2.left_stick_y <= 0.2 && gamepad2.left_stick_y >= -0.2) {
+            gamepad2.left_stick_y = 0;
             extend = 0;
         }
 
-        if (gamepad1.left_stick_y <= 0.2 && gamepad1.left_stick_y >= -0.2) {
-            gamepad1.left_stick_y = 0;
+        if (gamepad2.right_stick_y <= 0.2 && gamepad2.right_stick_y >= -0.2) {
+            gamepad2.right_stick_y = 0;
             arm = 0;
         }
         if (arm >0){
@@ -219,8 +221,8 @@ public class Test_Motors_v2 extends DMRokus_Abstract {
 
         // Send telemetry message to signify robot running;
         //telemetry.addData("Press a to switch scaledrive, press b to switch single mode","");
-        telemetry.addData("Left stick drive, right stick v - arm rotation, h - extend","");
-        telemetry.addData("Right Trigger for collector, pad v - lift","");
+        telemetry.addData("Pad1 - Left stick (s) drive, a-scale, b-single/dual, pad v - lift","");
+        telemetry.addData("Pad2 - right stick - arm, left - extend , triger for collector","");
         //telemetry.addData("left",  "%.2f", left);
         //telemetry.addData("right", "%.2f", right);
         telemetry.addData("targetpos", targetpos);
