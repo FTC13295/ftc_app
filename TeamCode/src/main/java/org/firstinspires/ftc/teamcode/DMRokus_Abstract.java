@@ -59,7 +59,7 @@ public abstract class DMRokus_Abstract extends OpMode {
             Gdown, Gopen,               // Flag for Glyph lift down and Glygh open or closed
             bArmDown = false,           // Flag for Back Arm
             slowdown = false,
-            leftCol, rightCol, centerCol,
+            leftPos, rightPos, centerPos,
             SetPos = false,             // Flag for set possition
             relicopen = false;          // Flg for Relic jaw
 
@@ -88,8 +88,8 @@ public abstract class DMRokus_Abstract extends OpMode {
     // Establish Integer Variables
     protected int
             seqRobot, target,                               // Switch operation integer used to identify sequence step.
-            targetPosLeftA, targetPosLeftB,
-            targetPosRightA, targetPosRightB,      // Drive train motor target variables (encoder counts)
+            targetPosLeft,
+            targetPosRight,      // Drive train motor target variables (encoder counts)
             targetRelicArmX, targetRelicArmY,
             rArm,
             tempposition,
@@ -105,7 +105,7 @@ public abstract class DMRokus_Abstract extends OpMode {
                                                 // full rotation of the wheel = 1120
                                                 // 2240 = 95 deg
             HD_MOTOR_ENC = 2240,                // full rotation of the motor
-            END_ROTATE = 4080,                     // final position - left facing cypher
+            END_ROTATE = 4080,                     // final position
             RELIC_ARM_LIMIT = 520;              // 180 degrees = 1/2 * 1120 = 560
     // Establish Float Constants
     final static float
@@ -115,9 +115,10 @@ public abstract class DMRokus_Abstract extends OpMode {
             REG_POWER = 0.7f,
             FULL_POWER = 1.0f,
             GEM_DISTANCE = 3.0f,                        //Set distance to 3 inches
-            ENCODER_CNT_PER_IN_DRIVE = 89.12677f;       //59.41979167d; // (28 count/motor rev x 40 motor rev / shaft rev) / (6" dia. wheel x pi)
+            ENCODER_CNT_PER_IN_DRIVE = 26.205641f;       //59.41979167d; // (28 count/motor rev x 40 motor rev / shaft rev) / (6" dia. wheel x pi)
                                                         //Ticks per rev - 1120 (AndyMark)
                                                         //1120 / Diam * PI = 1120 / 4 * 3.1415 = 89.12677
+                                                        //288 / Diam * PI = 288/ 3.5 *3.1415 = 26.205641
 
     // Establish Double Constants
     final static double
@@ -190,11 +191,10 @@ public abstract class DMRokus_Abstract extends OpMode {
 
         // get a reference to the distance sensor that shares the same name.
         snDistance = hardwareMap.get(DistanceSensor.class, Sensor_Color_Distance);
-
+*/
         //set starting case #
         seqRobot = 1;
 
-*/
 
     } // End OpMode Initialization Method
 
