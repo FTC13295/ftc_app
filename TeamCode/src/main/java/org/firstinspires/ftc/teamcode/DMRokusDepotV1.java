@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.detectors.roverrukus.SamplingOrderDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -26,9 +25,9 @@ import static android.os.SystemClock.sleep;
  * ------------------------------------------------------------------
  */
 
-@Autonomous(name = "DM Rokus Left v1", group = "Auto")
-@Disabled
-public class DMRokusLeftV1 extends DMRokus_Abstract{
+@Autonomous(name = "DM Rokus Depot v1", group = "Auto")
+//@Disabled
+public class DMRokusDepotV1 extends DMRokus_Abstract{
 
     //------------------------------------------------------------------
     // Robot OpMode Loop Method
@@ -121,6 +120,8 @@ public class DMRokusLeftV1 extends DMRokus_Abstract{
             case 14:
             case 20:
             case 24:
+            case 28:
+            case 32:
 
                 {  //Reset encoder
                     resetME(0);  //function to reset encoders to 0
@@ -308,7 +309,7 @@ public class DMRokusLeftV1 extends DMRokus_Abstract{
 
                 detector.enable();
 
-                sleep(SLEEP_TIME); //pause after reading
+                sleep(1500); //pause after reading
 
                 if (detector.isFound())
                 {
@@ -509,7 +510,42 @@ public class DMRokusLeftV1 extends DMRokus_Abstract{
                 break;
             }
 
-            case 28:  //deposit marker
+            case 30: {  // rotate ~180 deg
+
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Rotate ~180");
+                telemetry.update();
+
+                motorLeft.setTargetPosition(END_ROTATE);
+                motorRight.setTargetPosition(-END_ROTATE);
+
+                targetPower = DEFAULT_MOVE_SPEED*1.3f;
+
+                targetdistItem.setValue("encoders = " + END_ROTATE);
+                targetpowerItem.setValue(targetPower);
+                telemetry.update();
+
+                motorLeft.setPower(targetPower);
+                motorRight.setPower(targetPower);
+
+                if (debug) {
+                    while (!gamepad1.b) {
+                        debugnoteItem.setValue("Please press B to continue");
+                        telemetry.update();
+                    }
+                    sleep(200);
+                } else {
+                    debugnoteItem.setValue("  -----  ");
+                    telemetry.update();
+                    sleep(SLEEP_TIME+200);
+                }
+
+                seqRobot+=2;
+                break;
+            }
+
+            case 34:  //deposit marker
 
             {
 
@@ -520,7 +556,7 @@ public class DMRokusLeftV1 extends DMRokus_Abstract{
 
                 motorArm.setPower(1);
 
-                sleep(800);
+                sleep(1300);
 
                 motorArm.setPower(-1);
 
@@ -533,7 +569,7 @@ public class DMRokusLeftV1 extends DMRokus_Abstract{
                 } else {
                     debugnoteItem.setValue("  -----  ");
                     telemetry.update();
-                    sleep(SLEEP_TIME);
+                    sleep(1500);
                 }
 
                 seqRobot =99; //+=2;

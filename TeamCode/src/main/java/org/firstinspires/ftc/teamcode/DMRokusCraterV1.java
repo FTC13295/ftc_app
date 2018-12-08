@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.detectors.roverrukus.SamplingOrderDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -26,9 +25,9 @@ import static android.os.SystemClock.sleep;
  * ------------------------------------------------------------------
  */
 
-@Autonomous(name = "DM Rokus Left v1", group = "Auto")
-@Disabled
-public class DMRokusLeftV1 extends DMRokus_Abstract{
+@Autonomous(name = "DM Rokus Crater v1", group = "Auto")
+//@Disabled
+public class DMRokusCraterV1 extends DMRokus_Abstract{
 
     //------------------------------------------------------------------
     // Robot OpMode Loop Method
@@ -451,8 +450,8 @@ public class DMRokusLeftV1 extends DMRokus_Abstract{
                 break;
             }
 
-            case 26:  // move to depot
-                //~ 18"
+            case 26:  // Park
+                //~ 6"
             {
 
                 //Update telemetry data
@@ -462,7 +461,7 @@ public class DMRokusLeftV1 extends DMRokus_Abstract{
 
                 targetDrRotateDeg = 0f; //center
                 targetPower = DEFAULT_MOVE_SPEED;  // Set power
-                targetDrDistInch = -18f; //default to center
+                targetDrDistInch = -5f; //default to center
 
                 if (leftPos)
                 {
@@ -501,45 +500,15 @@ public class DMRokusLeftV1 extends DMRokus_Abstract{
                 } else {
                     debugnoteItem.setValue("  -----  ");
                     telemetry.update();
-                    sleep(SLEEP_TIME*3);  //Sleep for 4x the normal sleep length
-                }
-
-                seqRobot +=2;
-                casenoteItem.setValue("");
-                break;
-            }
-
-            case 28:  //deposit marker
-
-            {
-
-                //Update telemetry data
-                seqItem.setValue(seqRobot);
-                caseItem.setValue("Deposit marker");
-                telemetry.update();
-
-                motorArm.setPower(1);
-
-                sleep(800);
-
-                motorArm.setPower(-1);
-
-                if (debug) {
-                    while (!gamepad1.b) {
-                        debugnoteItem.setValue("Please press B to continue");
-                        telemetry.update();
-                    }
-                    sleep(200);
-                } else {
-                    debugnoteItem.setValue("  -----  ");
-                    telemetry.update();
-                    sleep(SLEEP_TIME);
+                    sleep(SLEEP_TIME);  //Sleep for 4x the normal sleep length
                 }
 
                 seqRobot =99; //+=2;
                 casenoteItem.setValue("");
                 break;
             }
+
+
             /*
             case 17:  // Move forward 23"
             {
