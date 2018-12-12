@@ -25,9 +25,9 @@ import static android.os.SystemClock.sleep;
  * ------------------------------------------------------------------
  */
 
-@Autonomous(name = "DM Rokus Crater v1", group = "Auto")
+@Autonomous(name = "DM Rokus Depot v2", group = "Auto")
 //@Disabled
-public class DMRokusCraterV1 extends DMRokus_Abstract{
+public class DMRokusDepotV2 extends DMRokus_Abstract{
 
     //------------------------------------------------------------------
     // Robot OpMode Loop Method
@@ -120,6 +120,8 @@ public class DMRokusCraterV1 extends DMRokus_Abstract{
             case 14:
             case 20:
             case 24:
+            case 28:
+            case 32:
 
                 {  //Reset encoder
                     resetME(0);  //function to reset encoders to 0
@@ -153,7 +155,7 @@ public class DMRokusCraterV1 extends DMRokus_Abstract{
 
                 //Lower the robot
                 motorLift.setPower(1.0);
-                sleep(3100);  //pause for 3.1 sec
+                sleep(3300);  //pause for 3.3 sec
                 motorLift.setPower(0);
 
                 if (debug) {
@@ -180,7 +182,7 @@ public class DMRokusCraterV1 extends DMRokus_Abstract{
 
                 //Lower the robot
                 motorLift.setPower(1.0);
-                sleep(3200);  //pause for 3.2 sec
+                sleep(3300);  //pause for 3.3 sec
                 motorLift.setPower(0);
 
                 if (debug) {
@@ -307,7 +309,7 @@ public class DMRokusCraterV1 extends DMRokus_Abstract{
 
                 detector.enable();
 
-                sleep(SLEEP_TIME); //pause after reading
+                sleep(1500); //pause after reading
 
                 if (detector.isFound())
                 {
@@ -450,8 +452,8 @@ public class DMRokusCraterV1 extends DMRokus_Abstract{
                 break;
             }
 
-            case 26:  // Park
-                //~ 6"
+            case 26:  // move to depot
+                //~ 18"
             {
 
                 //Update telemetry data
@@ -461,7 +463,7 @@ public class DMRokusCraterV1 extends DMRokus_Abstract{
 
                 targetDrRotateDeg = 0f; //center
                 targetPower = DEFAULT_MOVE_SPEED;  // Set power
-                targetDrDistInch = -5f; //default to center
+                targetDrDistInch = -18f; //default to center
 
                 if (leftPos)
                 {
@@ -500,15 +502,80 @@ public class DMRokusCraterV1 extends DMRokus_Abstract{
                 } else {
                     debugnoteItem.setValue("  -----  ");
                     telemetry.update();
-                    sleep(SLEEP_TIME);  //Sleep for 4x the normal sleep length
+                    sleep(SLEEP_TIME*3);  //Sleep for 4x the normal sleep length
+                }
+
+                seqRobot +=2;
+                casenoteItem.setValue("");
+                break;
+            }
+
+            case 30: {  // rotate ~180 deg
+
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Rotate ~180");
+                telemetry.update();
+
+                motorLeft.setTargetPosition((END_ROTATE+50));
+                motorRight.setTargetPosition(-(END_ROTATE+50));
+
+                targetPower = DEFAULT_MOVE_SPEED*1.5f;
+
+                targetdistItem.setValue("encoders = " + END_ROTATE);
+                targetpowerItem.setValue(targetPower);
+                telemetry.update();
+
+                motorLeft.setPower(targetPower);
+                motorRight.setPower(targetPower);
+
+                if (debug) {
+                    while (!gamepad1.b) {
+                        debugnoteItem.setValue("Please press B to continue");
+                        telemetry.update();
+                    }
+                    sleep(200);
+                } else {
+                    debugnoteItem.setValue("  -----  ");
+                    telemetry.update();
+                    sleep(SLEEP_TIME+200);
+                }
+
+                seqRobot+=2;
+                break;
+            }
+
+            case 34:  //deposit marker
+
+            {
+
+                //Update telemetry data
+                seqItem.setValue(seqRobot);
+                caseItem.setValue("Deposit marker");
+                telemetry.update();
+
+                motorArm.setPower(1);
+
+                sleep(1350);
+
+                motorArm.setPower(-1);
+
+                if (debug) {
+                    while (!gamepad1.b) {
+                        debugnoteItem.setValue("Please press B to continue");
+                        telemetry.update();
+                    }
+                    sleep(200);
+                } else {
+                    debugnoteItem.setValue("  -----  ");
+                    telemetry.update();
+                    sleep(1800);
                 }
 
                 seqRobot =99; //+=2;
                 casenoteItem.setValue("");
                 break;
             }
-
-
             /*
             case 17:  // Move forward 23"
             {
@@ -856,4 +923,8 @@ public class DMRokusCraterV1 extends DMRokus_Abstract{
         } // End OpMode Loop Method
 
 
-}
+
+
+
+
+    }

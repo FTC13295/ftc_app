@@ -2,17 +2,17 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
-public abstract class DMRokus_Abstract extends OpMode {
+public abstract class DMRokus_AbstractLin extends LinearOpMode {
 
     protected ModernRoboticsI2cRangeSensor
             rangeSensor;
@@ -65,16 +65,16 @@ public abstract class DMRokus_Abstract extends OpMode {
 
     protected float
             targetDrDistInch,                   // Targets for motor moves in sequence (engineering units)
-            targetDrRotateDeg,
+            targetPower,                        // General motor power variable (%, -1.0 to 1.0)
+            //targetDrRotateDeg,
             drivepower,
             temp_x_stick, temp_y_stick,          // Temporary x and y stick value
             temp_x, temp_y,          // Temporary x and y stick value
-            targetPower,                        // General motor power variable (%, -1.0 to 1.0)
+            //targetPower,                        // General motor power variable (%, -1.0 to 1.0)
             hsvValues[] = {0F, 0F, 0F};
     // Auto: Values used to determine current color detected
 
     protected double
-            temp, gyro,
             x,y,
             glyphL, glyphR,
             spos,
@@ -152,78 +152,6 @@ public abstract class DMRokus_Abstract extends OpMode {
             //MOTOR_RELIC_EXTEND = "mRE",
             //MOTOR_RELIC_LIFT = "mRL";
 */
-
-
-    //------------------------------------------------------------------
-    // Robot Initialization Method
-    //------------------------------------------------------------------
-    @Override
-    public void init() {
-        // Get references to dc motors and set initial mode and direction
-        // It appears all encoders are reset upon robot startup, but just in case, set all motor
-        // modes to Stop-And-Reset-Encoders during initialization.
-        motorLeft = hardwareMap.dcMotor.get(MOTOR_DRIVE_LEFT);
-        motorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorLeft.setDirection(DcMotor.Direction.FORWARD);
-
-        motorRight = hardwareMap.dcMotor.get(MOTOR_DRIVE_RIGHT);
-        motorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorRight.setDirection(DcMotor.Direction.REVERSE);
-
-        motorArm = hardwareMap.dcMotor.get(MOTOR_ARM);
-        motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorArm.setDirection(DcMotor.Direction.FORWARD);
-
-        motorBox = hardwareMap.dcMotor.get(MOTOR_BOX);
-        motorBox.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBox.setDirection(DcMotor.Direction.REVERSE);
-
-        motorLift = hardwareMap.dcMotor.get(MOTOR_LIFT);
-        motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorLift.setDirection(DcMotor.Direction.REVERSE);
-
-        motorExtend = hardwareMap.dcMotor.get(MOTOR_EXTENDER);
-        motorExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorExtend.setDirection(DcMotor.Direction.REVERSE);
-/*
-        // get a reference to the color sensor.
-        snColor = hardwareMap.get(ColorSensor.class, Sensor_Color_Distance);
-
-        // get a reference to the distance sensor that shares the same name.
-        snDistance = hardwareMap.get(DistanceSensor.class, Sensor_Color_Distance);
-*/
-        //set starting case #
-        seqRobot = 1;
-
-
-    } // End OpMode Initialization Method
-
-    //------------------------------------------------------------------
-    // Loop Method
-    //------------------------------------------------------------------
-    @Override
-    public void loop()
-    {
-    }
-
-
-
-    //------------------------------------------------------------------
-    // Stop Method
-    //------------------------------------------------------------------
-    @Override
-    public void stop()
-    {    // stop all the motors when the program is stopped
-        motorRight.setPower(0);
-        motorLeft.setPower(0);
-        motorArm.setPower(0);
-        motorBox.setPower(0);
-        motorExtend.setPower(0);
-        motorLift.setPower(0);
-
-        //sRelic.setPosition(100);
-    } // End OpMode Stop Method
-
 
     //------------------------------------------------------------------
     // Miscellaneous Methods
@@ -406,5 +334,7 @@ public abstract class DMRokus_Abstract extends OpMode {
         motorLeft.setPower(power);
         motorRight.setPower(power);
     }
+
+
 
 }
