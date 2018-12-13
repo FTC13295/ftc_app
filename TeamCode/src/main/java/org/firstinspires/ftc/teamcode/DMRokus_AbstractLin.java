@@ -50,6 +50,7 @@ public abstract class DMRokus_AbstractLin extends LinearOpMode {
             pulseCaseMoveDone,                          // Case move complete pulse
             red,
             blue,
+            overrotate,
             fieldOrient,
             bDirection,
             grabbed,

@@ -138,8 +138,11 @@ public class DMRokusDepotLin1 extends DMRokus_AbstractLin {
 
         detector.enable();
 
+        // reset the timeout time before starting
+        runtime.reset();
         while (opModeIsActive() &&
                 (runtime.seconds() < 400) && !detector.getAligned()) {
+            Thread.yield();
         }
 
         if (detector.getAligned()) {
@@ -155,8 +158,11 @@ public class DMRokusDepotLin1 extends DMRokus_AbstractLin {
             telemetry.update();
             eDrive(targetPower, -1.0, 0.0, 500.0);
 
+            // reset the timeout time before starting
+            runtime.reset();
             while (opModeIsActive() &&
                     (runtime.seconds() < 400) && !detector.getAligned()) {
+                Thread.yield();
             }
 
             if (detector.getAligned()) {
@@ -174,8 +180,11 @@ public class DMRokusDepotLin1 extends DMRokus_AbstractLin {
                 telemetry.update();
                 eDrive(targetPower, 0, -1.0, 500);
 
+                // reset the timeout time before starting
+                runtime.reset();
                 while (opModeIsActive() &&
                         (runtime.seconds() < 400) && !detector.getAligned()) {
+                    Thread.yield();
                 }
 
                 if (detector.getAligned()) {
@@ -330,11 +339,11 @@ public class DMRokusDepotLin1 extends DMRokus_AbstractLin {
                     (motorLeft.isBusy() && motorRight.isBusy())) {
 
                 // Display it for the driver.
-                telemetry.addData("Target - ",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Current Position - ",  "Running at %7d :%7d",
-                        motorLeft.getCurrentPosition(),
-                        motorRight.getCurrentPosition());
-                telemetry.update();
+                //telemetry.addData("Target - ",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
+                //telemetry.addData("Current Position - ",  "Running at %7d :%7d",
+                //        motorLeft.getCurrentPosition(),
+                //        motorRight.getCurrentPosition());
+                //telemetry.update();
             }
 
             // Stop all motion;
@@ -378,10 +387,10 @@ public class DMRokusDepotLin1 extends DMRokus_AbstractLin {
                     (motorLift.isBusy())) {
 
                 // Display it for the driver.
-                telemetry.addData("Target - ",  "Running to %7d", newTarget);
-                telemetry.addData("Current Position - ",  "Running at %7d",
-                        motorLift.getCurrentPosition());
-                telemetry.update();
+                //telemetry.addData("Target - ",  "Running to %7d", newTarget);
+                //telemetry.addData("Current Position - ",  "Running at %7d",
+                //        motorLift.getCurrentPosition());
+                //telemetry.update();
             }
 
             // Stop all motion;

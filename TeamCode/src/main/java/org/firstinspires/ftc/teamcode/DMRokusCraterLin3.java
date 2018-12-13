@@ -32,15 +32,16 @@ package org.firstinspires.ftc.teamcode;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
-import com.disnodeteam.dogecv.detectors.roverrukus.SamplingOrderDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import static java.lang.Math.abs;
 
-@Autonomous(name="DM Rokus Crater Linear v2", group="AutoLin")
+
+@Autonomous(name="DM Rokus Crater Linear v3", group="AutoLin")
 //@Disabled
-public class DMRokusCraterLin2 extends DMRokus_AbstractLin {
+public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
@@ -73,6 +74,8 @@ public class DMRokusCraterLin2 extends DMRokus_AbstractLin {
         detector.ratioScorer.perfectRatio = 1.0;
 
         //detector.enable();
+
+        overrotate = false;
 
         //set motors to use encoders
         motorLeft = hardwareMap.dcMotor.get(MOTOR_DRIVE_LEFT);
@@ -131,7 +134,7 @@ public class DMRokusCraterLin2 extends DMRokus_AbstractLin {
         // rotate ~180 deg
         telemetry.addData("Step2", "Rotate ~180");    //
         telemetry.update();
-        eDrive(0.5, (650/ENCODER_CNT_PER_IN_DRIVE),(-650/ENCODER_CNT_PER_IN_DRIVE),2000);
+        eDrive(0.5, (650/ENCODER_CNT_PER_IN_DRIVE),(-650/ENCODER_CNT_PER_IN_DRIVE),1000);
 
         // Use DogeCV to get sampling order
         telemetry.addData("Step3", "Use DogeCV to get sampling order");    //
@@ -139,10 +142,21 @@ public class DMRokusCraterLin2 extends DMRokus_AbstractLin {
 
         detector.enable();
 
+        // reset the timeout time before starting
+        runtime.reset();
         while (opModeIsActive() &&
-                (runtime.seconds() < 400) && !detector.getAligned()) {
+                (runtime.seconds() < 400) && !detector.isFound()) {
+            Thread.yield();
         }
 
+        if (!detector.isFound()) {
+            eDrive(0.5, (-180/ENCODER_CNT_PER_IN_DRIVE),(180/ENCODER_CNT_PER_IN_DRIVE),500);
+            overrotate = true;
+            while (opModeIsActive() &&
+                    (runtime.seconds() < 400) && !detector.isFound()) {
+                Thread.yield();
+            }
+        }
         if (detector.getAligned()) {
             telemetry.addData("Step3b", "Use DogeCV locate - found it");
 
@@ -152,50 +166,43 @@ public class DMRokusCraterLin2 extends DMRokus_AbstractLin {
             telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
             telemetry.update();
         } else {
-            telemetry.addData("Step3b", "Use DogeCV locate - trying left");
-            telemetry.update();
-            eDrive(targetPower, -1.0, 0.0, 500.0);
 
-            while (opModeIsActive() &&
-                    (runtime.seconds() < 400) && !detector.getAligned()) {
-            }
-
-            if (detector.getAligned()) {
-                telemetry.addData("Step3c", " - found it");
-
-                leftPos = true;
-                centerPos = false;
-                rightPos = false;
-                telemetry.addData("Step3d", "Use DogeCV to get sampling order - found it -> LEFT");
-                telemetry.update();
-            } else {
-                eDrive(targetPower, 1.0, 0, 500);
-
-                telemetry.addData("Step3e", "Use DogeCV locate - trying right");
-                telemetry.update();
-                eDrive(targetPower, 0, -1.0, 500);
-
-                while (opModeIsActive() &&
-                        (runtime.seconds() < 400) && !detector.getAligned()) {
-                }
-
-                if (detector.getAligned()) {
-                    telemetry.addData("Step3f", " - found it");
-
-                    leftPos = false;
+            if (!overrotate) {
+                if ((detector.getXPosition() - detector.getAlignedx()) > 100) {
+                    leftPos = true;
                     centerPos = false;
-                    rightPos = true;
-                    telemetry.addData("Step3g", "Use DogeCV to get sampling order - found it -> RIGHT");
+                    rightPos = false;
+                    telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> LEFT");
                     telemetry.update();
-                } else {
-                    eDrive(targetPower, 0, 1.0, 500);
-
-                    telemetry.addData("Step3h", "Use DogeCV to get sampling order - cant find it");
+                }
+            } else {
+                if ((detector.getXPosition() - detector.getAlignedx()) > 100) {
                     leftPos = false;
                     centerPos = true;
                     rightPos = false;
-                    telemetry.addData("Step3i", "Use DogeCV to get sampling order - cant find it -> default CENTER");
+                    telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
+                    telemetry.update();
                 }
+            }
+                if ((detector.getXPosition() - detector.getAlignedx()) < -100) {
+                    leftPos = false;
+                    centerPos = false;
+                    rightPos = true;
+                    telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> RIGHT");
+                    telemetry.update();
+                }
+            while (abs(detector.getXPosition() - detector.getAlignedx()) > 100) {
+                if ((detector.getXPosition() - detector.getAlignedx()) >100){
+                    motorLeft.setPower(-0.3);
+                } else {
+                    motorLeft.setPower(0);
+                }
+                if ((detector.getXPosition() - detector.getAlignedx()) < -100){
+                    motorRight.setPower(-0.3);
+                } else {
+                    motorRight.setPower(0);
+                }
+                sleep(100);
             }
         }
 
@@ -240,7 +247,7 @@ public class DMRokusCraterLin2 extends DMRokus_AbstractLin {
         telemetry.update();
 
         targetPower = DEFAULT_MOVE_SPEED;  // Set power
-        targetDrDistInch = -5f; //default to center
+        targetDrDistInch = -3.5f; //default to center
 
         if (leftPos)
         {

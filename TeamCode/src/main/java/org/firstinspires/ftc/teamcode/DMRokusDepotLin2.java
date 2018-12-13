@@ -36,10 +36,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import static java.lang.Math.abs;
 
-@Autonomous(name="DM Rokus Depot Linear v1", group="AutoLin")
+
+@Autonomous(name="DM Rokus Depot Linear v2", group="AutoLin")
 //@Disabled
-public class DMRokusDepotLin1 extends DMRokus_AbstractLin {
+public class DMRokusDepotLin2 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
@@ -141,10 +143,18 @@ public class DMRokusDepotLin1 extends DMRokus_AbstractLin {
         // reset the timeout time before starting
         runtime.reset();
         while (opModeIsActive() &&
-                (runtime.seconds() < 400) && !detector.getAligned()) {
+                (runtime.seconds() < 400) && !detector.isFound()) {
             Thread.yield();
         }
 
+        if (!detector.isFound()) {
+            eDrive(0.5, (-160/ENCODER_CNT_PER_IN_DRIVE),(160/ENCODER_CNT_PER_IN_DRIVE),500);
+            overrotate = true;
+            while (opModeIsActive() &&
+                    (runtime.seconds() < 400) && !detector.isFound()) {
+                Thread.yield();
+            }
+        }
         if (detector.getAligned()) {
             telemetry.addData("Step3b", "Use DogeCV locate - found it");
 
@@ -154,55 +164,41 @@ public class DMRokusDepotLin1 extends DMRokus_AbstractLin {
             telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
             telemetry.update();
         } else {
-            telemetry.addData("Step3b", "Use DogeCV locate - trying left");
-            telemetry.update();
-            eDrive(targetPower, -1.0, 0.0, 500.0);
 
-            // reset the timeout time before starting
-            runtime.reset();
-            while (opModeIsActive() &&
-                    (runtime.seconds() < 400) && !detector.getAligned()) {
-                Thread.yield();
-            }
-
-            if (detector.getAligned()) {
-                telemetry.addData("Step3c", " - found it");
-
-                leftPos = true;
-                centerPos = false;
-                rightPos = false;
-                telemetry.addData("Step3d", "Use DogeCV to get sampling order - found it -> LEFT");
-                telemetry.update();
-            } else {
-                eDrive(targetPower, 1.0, 0, 500);
-
-                telemetry.addData("Step3e", "Use DogeCV locate - trying right");
-                telemetry.update();
-                eDrive(targetPower, 0, -1.0, 500);
-
-                // reset the timeout time before starting
-                runtime.reset();
-                while (opModeIsActive() &&
-                        (runtime.seconds() < 400) && !detector.getAligned()) {
-                    Thread.yield();
-                }
-
-                if (detector.getAligned()) {
-                    telemetry.addData("Step3f", " - found it");
-
-                    leftPos = false;
+            if (!overrotate) {
+                if ((detector.getXPosition() - detector.getAlignedx()) > 100) {
+                    leftPos = true;
                     centerPos = false;
-                    rightPos = true;
-                    telemetry.addData("Step3g", "Use DogeCV to get sampling order - found it -> RIGHT");
+                    rightPos = false;
+                    telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> LEFT");
                     telemetry.update();
-                } else {
-                    eDrive(targetPower, 0, 1.0, 500);
-
-                    telemetry.addData("Step3h", "Use DogeCV to get sampling order - cant find it");
+                }
+            } else {
+                if ((detector.getXPosition() - detector.getAlignedx()) > 100) {
                     leftPos = false;
                     centerPos = true;
                     rightPos = false;
-                    telemetry.addData("Step3i", "Use DogeCV to get sampling order - cant find it -> default CENTER");
+                    telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
+                    telemetry.update();
+                }
+            }
+            if ((detector.getXPosition() - detector.getAlignedx()) < -100) {
+                leftPos = false;
+                centerPos = false;
+                rightPos = true;
+                telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> RIGHT");
+                telemetry.update();
+            }
+            while (abs(detector.getXPosition() - detector.getAlignedx()) > 100) {
+                if ((detector.getXPosition() - detector.getAlignedx()) >100){
+                    motorLeft.setPower(-0.3);
+                } else {
+                    motorLeft.setPower(0);
+                }
+                if ((detector.getXPosition() - detector.getAlignedx()) < -100){
+                    motorRight.setPower(-0.3);
+                } else {
+                    motorRight.setPower(0);
                 }
             }
         }
@@ -248,7 +244,7 @@ public class DMRokusDepotLin1 extends DMRokus_AbstractLin {
         telemetry.update();
 
         targetPower = DEFAULT_MOVE_SPEED;  // Set power
-        targetDrDistInch = 0f; //default to center
+        targetDrDistInch = -5f; //default to center
 
         if (leftPos)
         {
@@ -269,7 +265,7 @@ public class DMRokusDepotLin1 extends DMRokus_AbstractLin {
             telemetry.update();
         }
 
-        //eDrive(targetPower,targetDrDistInch,targetDrDistInch,500);
+        eDrive(targetPower,targetDrDistInch,targetDrDistInch,500);
 
         // rotate ~180 deg
         telemetry.addData("Step6", "Rotate ~180");    //
@@ -282,11 +278,11 @@ public class DMRokusDepotLin1 extends DMRokus_AbstractLin {
 
         motorArm.setPower(1);
         while (opModeIsActive() &&
-                (runtime.seconds() < 1300)) {
+                (runtime.seconds() < 1000)) {
         }
         motorArm.setPower(-1);
         while (opModeIsActive() &&
-                (runtime.seconds() < 1600)) {
+                (runtime.seconds() < 1200)) {
         }
 
         //Done
@@ -325,8 +321,8 @@ public class DMRokusDepotLin1 extends DMRokus_AbstractLin {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            motorLeft.setPower(Math.abs(speed));
-            motorRight.setPower(Math.abs(speed));
+            motorLeft.setPower(abs(speed));
+            motorRight.setPower(abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -374,7 +370,7 @@ public class DMRokusDepotLin1 extends DMRokus_AbstractLin {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            motorLift.setPower(Math.abs(speed));
+            motorLift.setPower(abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits

@@ -39,9 +39,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static java.lang.Math.abs;
 
 
-@Autonomous(name="DM Rokus Crater Linear v3", group="AutoLin")
+@Autonomous(name="Test Detector", group="AutoLin")
 //@Disabled
-public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
+public class TestDetector extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
@@ -122,7 +122,7 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
+/*
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
 
@@ -135,7 +135,7 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
         telemetry.addData("Step2", "Rotate ~180");    //
         telemetry.update();
         eDrive(0.5, (650/ENCODER_CNT_PER_IN_DRIVE),(-650/ENCODER_CNT_PER_IN_DRIVE),1000);
-
+*/
         // Use DogeCV to get sampling order
         telemetry.addData("Step3", "Use DogeCV to get sampling order");    //
         telemetry.update();
@@ -192,17 +192,16 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
                     telemetry.update();
                 }
             while (abs(detector.getXPosition() - detector.getAlignedx()) > 100) {
+                telemetry.addData("Debug - Position is: ", (detector.getXPosition() - detector.getAlignedx()));
                 if ((detector.getXPosition() - detector.getAlignedx()) >100){
-                    motorLeft.setPower(-0.3);
-                } else {
-                    motorLeft.setPower(0);
+                    telemetry.addData("move left"," wheel" );
+                    eDrive(0.5,-0.5,0,300);
                 }
                 if ((detector.getXPosition() - detector.getAlignedx()) < -100){
-                    motorRight.setPower(-0.3);
-                } else {
-                    motorRight.setPower(0);
+                    telemetry.addData("move right"," wheel" );
+                    eDrive(0.5,0,-0.5,300);
                 }
-                sleep(100);
+                telemetry.update();
             }
         }
 
@@ -241,7 +240,7 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
         }
 
         eDrive(targetPower,targetDrDistInch,targetDrDistInch,3000);
-
+/*
         // Park ~ 6"
         telemetry.addData("Step5", "Move to depot");
         telemetry.update();
@@ -269,7 +268,7 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
         }
 
         eDrive(targetPower,targetDrDistInch,targetDrDistInch,1000);
-
+*/
         //Done
         sleep(1000);     // pause for servos to move
 
