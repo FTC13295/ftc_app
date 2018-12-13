@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.detectors.roverrukus.SamplingOrderDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -26,7 +27,7 @@ import static android.os.SystemClock.sleep;
  */
 
 @Autonomous(name = "DM Rokus Depot v2", group = "Auto")
-//@Disabled
+@Disabled
 public class DMRokusDepotV2 extends DMRokus_Abstract{
 
     //------------------------------------------------------------------
