@@ -39,9 +39,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static java.lang.Math.abs;
 
 
-@Autonomous(name="DM Rokus Depot Linear v2", group="AutoLin")
+@Autonomous(name="DM Rokus Depot Linear v3", group="AutoLin")
 //@Disabled
-public class DMRokusDepotLin2 extends DMRokus_AbstractLin {
+public class DMRokusDepotLin3 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
@@ -108,16 +108,6 @@ public class DMRokusDepotLin2 extends DMRokus_AbstractLin {
 
         telemetry.update();
 
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
-
-        // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Left and Right ",  "Starting at %7d :%7d",
-                          motorLeft.getCurrentPosition(),
-                          motorRight.getCurrentPosition());
-        telemetry.update();
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -127,12 +117,12 @@ public class DMRokusDepotLin2 extends DMRokus_AbstractLin {
         //Land the robot
         telemetry.addData("Step1", "Land the robot");    //
         telemetry.update();
-        eLift(1,(5480/ENCODER_CNT_PER_IN_DRIVE),5000);
+        eLift(1,(5480/ENCODER_CNT_PER_IN_DRIVE),8);
 
         // rotate ~180 deg
         telemetry.addData("Step2", "Rotate ~180");    //
         telemetry.update();
-        eDrive(0.5, (650/ENCODER_CNT_PER_IN_DRIVE),(-650/ENCODER_CNT_PER_IN_DRIVE),2000);
+        eDrive(0.5, (650/ENCODER_CNT_PER_IN_DRIVE),(-650/ENCODER_CNT_PER_IN_DRIVE),2);
 
         // Use DogeCV to get sampling order
         telemetry.addData("Step3", "Use DogeCV to get sampling order");    //
@@ -143,18 +133,24 @@ public class DMRokusDepotLin2 extends DMRokus_AbstractLin {
         // reset the timeout time before starting
         runtime.reset();
         while (opModeIsActive() &&
-                (runtime.seconds() < 400) && !detector.isFound()) {
+                (runtime.seconds() < 0.5) && !detector.isFound()) {
             Thread.yield();
         }
 
+        telemetry.addData("Step3a - is found: ", detector.isFound());    //
+        telemetry.update();
+
         if (!detector.isFound()) {
-            eDrive(0.5, (-160/ENCODER_CNT_PER_IN_DRIVE),(160/ENCODER_CNT_PER_IN_DRIVE),500);
+            eDrive(0.5, (-180/ENCODER_CNT_PER_IN_DRIVE),(180/ENCODER_CNT_PER_IN_DRIVE),1);
             overrotate = true;
             while (opModeIsActive() &&
-                    (runtime.seconds() < 400) && !detector.isFound()) {
+                    (runtime.seconds() < 0.5) && !detector.isFound()) {
                 Thread.yield();
             }
         }
+
+        telemetry.addData("Step3a - over rotated: ", overrotate);
+
         if (detector.getAligned()) {
             telemetry.addData("Step3b", "Use DogeCV locate - found it");
 
@@ -165,41 +161,48 @@ public class DMRokusDepotLin2 extends DMRokus_AbstractLin {
             telemetry.update();
         } else {
 
-            if (!overrotate) {
-                if ((detector.getXPosition() - detector.getAlignedx()) > 100) {
+            temp_align = detector.getXPosition() - detector.getAlignedx();
+            if (temp_align > 100) {
+                rightPos = false;
+                if (!overrotate){
                     leftPos = true;
                     centerPos = false;
-                    rightPos = false;
                     telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> LEFT");
-                    telemetry.update();
-                }
-            } else {
-                if ((detector.getXPosition() - detector.getAlignedx()) > 100) {
+                } else {
                     leftPos = false;
                     centerPos = true;
-                    rightPos = false;
                     telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
-                    telemetry.update();
                 }
+                telemetry.update();
             }
-            if ((detector.getXPosition() - detector.getAlignedx()) < -100) {
+
+            if (temp_align < -100) {
                 leftPos = false;
                 centerPos = false;
                 rightPos = true;
                 telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> RIGHT");
                 telemetry.update();
             }
-            while (abs(detector.getXPosition() - detector.getAlignedx()) > 100) {
-                if ((detector.getXPosition() - detector.getAlignedx()) >100){
-                    motorLeft.setPower(-0.3);
-                } else {
-                    motorLeft.setPower(0);
-                }
-                if ((detector.getXPosition() - detector.getAlignedx()) < -100){
-                    motorRight.setPower(-0.3);
+
+            runtime.reset();
+            while ((abs(temp_align) > 100) &&
+                    (runtime.seconds() < 5)) {
+                //telemetry.addData("Debug - Position is: ", temp_align);
+                targetPower = -5/abs((float)(temp_align));
+                if (temp_align >100){
+                    //telemetry.addData("move left"," wheel" );
+                    motorRight.setPower(targetPower);
                 } else {
                     motorRight.setPower(0);
                 }
+                if (temp_align < -100){
+                    //telemetry.addData("move right"," wheel" );
+                    motorLeft.setPower(targetPower);
+                } else {
+                    motorLeft.setPower(0);
+                }
+                temp_align = detector.getXPosition() - detector.getAlignedx();
+                //telemetry.update();
             }
         }
 
@@ -220,7 +223,7 @@ public class DMRokusDepotLin2 extends DMRokus_AbstractLin {
             targetDrDistInch = -30f; // Set target distance - left element
             telemetry.addData("Step4b", "Gold element at left position");
             telemetry.update();
-            eDrive(targetPower,-1.0,0,500);
+            //eDrive(targetPower,-1.0,0,0.5);
         } else if (centerPos)
         {
             targetDrDistInch = -26f; // Set target distance - center element
@@ -231,13 +234,13 @@ public class DMRokusDepotLin2 extends DMRokus_AbstractLin {
             targetDrDistInch = -30f; // Set target distance - right element
             telemetry.addData("Step4b", "Gold element at right position");
             telemetry.update();
-            eDrive(targetPower,0,-1.0,500);
+            //eDrive(targetPower,0,-1.0,0.5);
         } else {
             telemetry.addData("Step4b", " - no element info... going with default");
             telemetry.update();
         }
 
-        eDrive(targetPower,targetDrDistInch,targetDrDistInch,3000);
+        eDrive(targetPower,targetDrDistInch,targetDrDistInch,4);
 
         // Face depot
         telemetry.addData("Step5", "Face depot");
@@ -250,7 +253,7 @@ public class DMRokusDepotLin2 extends DMRokus_AbstractLin {
         {
             telemetry.addData("Step5b", "Gold element at left position");
             telemetry.update();
-            eDrive(targetPower,0,-1.0,500);
+            eDrive(targetPower,0,-1.0,0.5);
         } else if (centerPos)
         {
             telemetry.addData("Step5b", "Gold element at center position");
@@ -259,13 +262,13 @@ public class DMRokusDepotLin2 extends DMRokus_AbstractLin {
         {
             telemetry.addData("Step5b", "Gold element at right position");
             telemetry.update();
-            eDrive(targetPower,-1.0,0,500);
+            eDrive(targetPower,-1.0,0,0.5);
         } else {
             telemetry.addData("Step5b", " - no element info... going with default");
             telemetry.update();
         }
 
-        eDrive(targetPower,targetDrDistInch,targetDrDistInch,500);
+        eDrive(targetPower,targetDrDistInch,targetDrDistInch,0.5);
 
         // rotate ~180 deg
         telemetry.addData("Step6", "Rotate ~180");    //
@@ -278,11 +281,11 @@ public class DMRokusDepotLin2 extends DMRokus_AbstractLin {
 
         motorArm.setPower(1);
         while (opModeIsActive() &&
-                (runtime.seconds() < 1000)) {
+                (runtime.seconds() < 1.2)) {
         }
         motorArm.setPower(-1);
         while (opModeIsActive() &&
-                (runtime.seconds() < 1200)) {
+                (runtime.seconds() < 1.5)) {
         }
 
         //Done

@@ -129,12 +129,12 @@ public class TestDetector extends DMRokus_AbstractLin {
         //Land the robot
         telemetry.addData("Step1", "Land the robot");    //
         telemetry.update();
-        eLift(1,(5480/ENCODER_CNT_PER_IN_DRIVE),5000);
+        eLift(1,(5480/ENCODER_CNT_PER_IN_DRIVE),7);
 
         // rotate ~180 deg
         telemetry.addData("Step2", "Rotate ~180");    //
         telemetry.update();
-        eDrive(0.5, (650/ENCODER_CNT_PER_IN_DRIVE),(-650/ENCODER_CNT_PER_IN_DRIVE),1000);
+        eDrive(0.5, (650/ENCODER_CNT_PER_IN_DRIVE),(-650/ENCODER_CNT_PER_IN_DRIVE),1);
 */
         // Use DogeCV to get sampling order
         telemetry.addData("Step3", "Use DogeCV to get sampling order");    //
@@ -145,18 +145,30 @@ public class TestDetector extends DMRokus_AbstractLin {
         // reset the timeout time before starting
         runtime.reset();
         while (opModeIsActive() &&
-                (runtime.seconds() < 400) && !detector.isFound()) {
+                (runtime.seconds() < 0.5) && !detector.isFound()) {
             Thread.yield();
         }
 
+        telemetry.addData("Step3a - is found: ", detector.isFound());    //
+        telemetry.update();
+
+        //debug
+        sleep(1000); //pause for debug
+
         if (!detector.isFound()) {
-            eDrive(0.5, (-180/ENCODER_CNT_PER_IN_DRIVE),(180/ENCODER_CNT_PER_IN_DRIVE),500);
+            eDrive(0.5, (-180/ENCODER_CNT_PER_IN_DRIVE),(180/ENCODER_CNT_PER_IN_DRIVE),1);
             overrotate = true;
+            telemetry.addData("Step3.3333 - overturned: ", overrotate);    //
+            telemetry.update();
             while (opModeIsActive() &&
-                    (runtime.seconds() < 400) && !detector.isFound()) {
+                    (runtime.seconds() < 0.5) && !detector.isFound()) {
                 Thread.yield();
             }
         }
+
+        //debug
+        sleep(1000); //pause for debug
+
         if (detector.getAligned()) {
             telemetry.addData("Step3b", "Use DogeCV locate - found it");
 
@@ -167,40 +179,49 @@ public class TestDetector extends DMRokus_AbstractLin {
             telemetry.update();
         } else {
 
-            if (!overrotate) {
-                if ((detector.getXPosition() - detector.getAlignedx()) > 100) {
+            temp_align = detector.getXPosition() - detector.getAlignedx();
+            if (temp_align > 100) {
+                rightPos = false;
+                if (!overrotate){
                     leftPos = true;
                     centerPos = false;
-                    rightPos = false;
                     telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> LEFT");
-                    telemetry.update();
-                }
-            } else {
-                if ((detector.getXPosition() - detector.getAlignedx()) > 100) {
+                } else {
                     leftPos = false;
                     centerPos = true;
-                    rightPos = false;
                     telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
-                    telemetry.update();
                 }
+                telemetry.update();
             }
-                if ((detector.getXPosition() - detector.getAlignedx()) < -100) {
+
+            if (temp_align < -100) {
                     leftPos = false;
                     centerPos = false;
                     rightPos = true;
                     telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> RIGHT");
                     telemetry.update();
-                }
-            while (abs(detector.getXPosition() - detector.getAlignedx()) > 100) {
-                telemetry.addData("Debug - Position is: ", (detector.getXPosition() - detector.getAlignedx()));
-                if ((detector.getXPosition() - detector.getAlignedx()) >100){
+            }
+
+            runtime.reset();
+            while ((abs(temp_align) > 100) &&
+                    (runtime.seconds() < 5)) {
+                telemetry.addData("Debug - Position is: ", temp_align);
+                targetPower = -5/abs((float)(temp_align));
+                if (temp_align >100){
                     telemetry.addData("move left"," wheel" );
-                    eDrive(0.5,-0.5,0,300);
+                    //eDrive(0.5,-3.0,0,1000);
+                    motorRight.setPower(targetPower);
+                } else {
+                    motorRight.setPower(0);
                 }
-                if ((detector.getXPosition() - detector.getAlignedx()) < -100){
+                if (temp_align < -100){
                     telemetry.addData("move right"," wheel" );
-                    eDrive(0.5,0,-0.5,300);
+                    //eDrive(0.5,0,-3.0,1000);
+                    motorLeft.setPower(targetPower);
+                } else {
+                    motorLeft.setPower(0);
                 }
+                temp_align = detector.getXPosition() - detector.getAlignedx();
                 telemetry.update();
             }
         }
@@ -213,6 +234,10 @@ public class TestDetector extends DMRokus_AbstractLin {
         // sample gold element
         telemetry.addData("Step4", "Select gold element");
         telemetry.update();
+
+        //debug
+        sleep(1000); //pause for debug
+
 
         targetDrDistInch = -26f; //default to center
         targetPower = DEFAULT_MOVE_SPEED;  // Set power

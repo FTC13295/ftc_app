@@ -77,13 +77,7 @@ public abstract class DMRokus_AbstractLin extends LinearOpMode {
 
     protected double
             x,y,
-            glyphL, glyphR,
-            spos,
-            powerLeftA, powerLeftB,
-            powerRightA, powerRightB,
-            velocityDrive, strafeDrive, rotationDrive,
-            throttleLift,
-            relicEp, relicLp;
+            temp_align;
 
 
     // Establish Integer Variables
