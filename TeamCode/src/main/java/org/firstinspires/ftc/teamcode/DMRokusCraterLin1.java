@@ -40,7 +40,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous(name="DM Rokus Crater Linear v1", group="AutoLin")
-//@Disabled
+@Disabled
 public class DMRokusCraterLin1 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */

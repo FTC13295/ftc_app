@@ -39,7 +39,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static java.lang.Math.abs;
 
 
-@Autonomous(name="Test Detector", group="AutoLin")
+@Autonomous(name="Test Detector", group="Test")
 //@Disabled
 public class TestDetector extends DMRokus_AbstractLin {
 

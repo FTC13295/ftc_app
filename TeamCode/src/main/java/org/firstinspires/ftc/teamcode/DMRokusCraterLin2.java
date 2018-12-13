@@ -34,12 +34,13 @@ import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.disnodeteam.dogecv.detectors.roverrukus.SamplingOrderDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous(name="DM Rokus Crater Linear v2", group="AutoLin")
-//@Disabled
+@Disabled
 public class DMRokusCraterLin2 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */

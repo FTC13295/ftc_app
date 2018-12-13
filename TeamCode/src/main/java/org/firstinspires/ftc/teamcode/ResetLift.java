@@ -39,9 +39,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static java.lang.Math.abs;
 
 
-@Autonomous(name="DM Rokus Crater Linear v3", group="AutoLin")
+@Autonomous(name="Reset Lift", group="Temp")
 //@Disabled
-public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
+public class ResetLift extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
@@ -55,27 +55,6 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
-
-        //setup for sampling detector
-        detector = new GoldAlignDetector();
-        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
-        detector.useDefaults();
-
-        // Optional Tuning
-        detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
-        detector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
-        detector.downscale = 0.4; // How much to downscale the input frames
-
-        detector.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
-        //detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
-        detector.maxAreaScorer.weight = 0.005;
-
-        detector.ratioScorer.weight = 5;
-        detector.ratioScorer.perfectRatio = 1.0;
-
-        //detector.enable();
-
-        overrotate = false;
 
         //set motors to use encoders
         motorLeft = hardwareMap.dcMotor.get(MOTOR_DRIVE_LEFT);
@@ -106,7 +85,6 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
         telemetry.setAutoClear(false);
 
         telemetry.addData("I am alive - ","init");
-        telemetry.addData("Debug mode: ", debug);
 
         telemetry.update();
 
@@ -117,162 +95,9 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
 
         //Land the robot
-        telemetry.addData("Step1", "Land the robot");    //
+        telemetry.addData("Step1", "reset lift arm");    //
         telemetry.update();
-        eLift(1,(5480/ENCODER_CNT_PER_IN_DRIVE),8);
-
-        // rotate ~180 deg
-        telemetry.addData("Step2", "Rotate ~180");    //
-        telemetry.update();
-        eDrive(0.5, (650/ENCODER_CNT_PER_IN_DRIVE),(-650/ENCODER_CNT_PER_IN_DRIVE),2);
-
-        // Use DogeCV to get sampling order
-        telemetry.addData("Step3", "Use DogeCV to get sampling order");    //
-        telemetry.update();
-
-        detector.enable();
-
-        // reset the timeout time before starting
-        runtime.reset();
-        while (opModeIsActive() &&
-                (runtime.seconds() < 0.5) && !detector.isFound()) {
-            Thread.yield();
-        }
-
-        telemetry.addData("Step3a - is found: ", detector.isFound());    //
-        telemetry.update();
-
-        if (!detector.isFound()) {
-            eDrive(0.5, (-180/ENCODER_CNT_PER_IN_DRIVE),(180/ENCODER_CNT_PER_IN_DRIVE),1);
-            overrotate = true;
-            while (opModeIsActive() &&
-                    (runtime.seconds() < 0.5) && !detector.isFound()) {
-                Thread.yield();
-            }
-        }
-
-        telemetry.addData("Step3a - over rotated: ", overrotate);
-
-        if (detector.getAligned()) {
-            telemetry.addData("Step3b", "Use DogeCV locate - found it");
-
-            leftPos = false;
-            centerPos = true;
-            rightPos = false;
-            telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
-            telemetry.update();
-        } else {
-
-            temp_align = detector.getXPosition() - detector.getAlignedx();
-            if (temp_align > 100) {
-                rightPos = false;
-                if (!overrotate){
-                    leftPos = true;
-                    centerPos = false;
-                    telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> LEFT");
-                } else {
-                    leftPos = false;
-                    centerPos = true;
-                    telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
-                }
-                telemetry.update();
-            }
-
-            if (temp_align < -100) {
-                leftPos = false;
-                centerPos = false;
-                rightPos = true;
-                telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> RIGHT");
-                telemetry.update();
-            }
-
-            runtime.reset();
-            while ((abs(temp_align) > 100) &&
-                    (runtime.seconds() < 5)) {
-                //telemetry.addData("Debug - Position is: ", temp_align);
-                targetPower = -5/abs((float)(temp_align));
-                if (temp_align >100){
-                    //telemetry.addData("move left"," wheel" );
-                    //eDrive(0.5,-3.0,0,1000);
-                    motorRight.setPower(targetPower);
-                } else {
-                    motorRight.setPower(0);
-                }
-                if (temp_align < -100){
-                    //telemetry.addData("move right"," wheel" );
-                    //eDrive(0.5,0,-3.0,1000);
-                    motorLeft.setPower(targetPower);
-                } else {
-                    motorLeft.setPower(0);
-                }
-                temp_align = detector.getXPosition() - detector.getAlignedx();
-                //telemetry.update();
-            }
-        }
-
-        telemetry.update();
-
-        // Turn off DogeCV
-        detector.disable();
-
-        // sample gold element
-        telemetry.addData("Step4", "Select gold element");
-        telemetry.update();
-
-        targetDrDistInch = -26f; //default to center
-        targetPower = DEFAULT_MOVE_SPEED;  // Set power
-
-        if (leftPos)
-        {
-            targetDrDistInch = -30f; // Set target distance - left element
-            telemetry.addData("Step4b", "Gold element at left position");
-            telemetry.update();
-            //eDrive(targetPower,-1.0,0,500);
-        } else if (centerPos)
-        {
-            targetDrDistInch = -26f; // Set target distance - center element
-            telemetry.addData("Step4b", "Gold element at center position");
-            telemetry.update();
-        } else if (rightPos)
-        {
-            targetDrDistInch = -30f; // Set target distance - right element
-            telemetry.addData("Step4b", "Gold element at right position");
-            telemetry.update();
-            //eDrive(targetPower,0,-1.0,500);
-        } else {
-            telemetry.addData("Step4b", " - no element info... going with default");
-            telemetry.update();
-        }
-
-        eDrive(targetPower,targetDrDistInch,targetDrDistInch,4);
-
-        // Park ~ 6"
-        telemetry.addData("Step5", "Park at crater");
-        telemetry.update();
-
-        targetPower = DEFAULT_MOVE_SPEED;  // Set power
-        targetDrDistInch = -3.5f; //default to center
-
-        if (leftPos)
-        {
-            telemetry.addData("Step5b", "Gold element at left position");
-            telemetry.update();
-            eDrive(targetPower,0,-1.0,0.5);
-        } else if (centerPos)
-        {
-            telemetry.addData("Step5b", "Gold element at center position");
-            telemetry.update();
-        } else if (rightPos)
-        {
-            telemetry.addData("Step5b", "Gold element at right position");
-            telemetry.update();
-            eDrive(targetPower,-1.0,0,0.5);
-        } else {
-            telemetry.addData("Step5b", " - no element info... going with default");
-            telemetry.update();
-        }
-
-        eDrive(targetPower,targetDrDistInch,targetDrDistInch,1);
+        eLift(1,(-5500/ENCODER_CNT_PER_IN_DRIVE),8);
 
         //Done
         sleep(1000);     // pause for servos to move
@@ -281,67 +106,6 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
         telemetry.update();
     }
 
-    /*
-     *  Method to perfmorm a relative move, based on encoder counts.
-     *  Encoders are not reset as the move is based on the current position.
-     *  Move will stop if any of three conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Move runs out of time
-     *  3) Driver stops the opmode running.
-     */
-    public void eDrive(double speed,
-                       double leftInches, double rightInches,
-                       double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
-
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            newLeftTarget = motorLeft.getCurrentPosition() + (int)(leftInches * ENCODER_CNT_PER_IN_DRIVE);
-            newRightTarget = motorRight.getCurrentPosition() + (int)(rightInches * ENCODER_CNT_PER_IN_DRIVE);
-            motorLeft.setTargetPosition(newLeftTarget);
-            motorRight.setTargetPosition(newRightTarget);
-
-            // Turn On RUN_TO_POSITION
-            motorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            motorLeft.setPower(Math.abs(speed));
-            motorRight.setPower(Math.abs(speed));
-
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (motorLeft.isBusy() && motorRight.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Target - ",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Current Position - ",  "Running at %7d :%7d",
-                        motorLeft.getCurrentPosition(),
-                        motorRight.getCurrentPosition());
-                telemetry.update();
-            }
-
-            // Stop all motion;
-            motorLeft.setPower(0);
-            motorRight.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            motorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //  sleep(250);   // optional pause after each move
-        }
-    }
 
     public void eLift(double speed,
                        double Inches, double timeoutS) {

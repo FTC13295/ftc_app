@@ -34,7 +34,7 @@ import static android.os.SystemClock.sleep;
  */
 
 @Autonomous(name = "DM Rokus BlueRight v0", group = "Auto")
-//@Disabled
+@Disabled
 public class DMRokusBlueRightv0 extends DMRokus_Abstract{
 
     //------------------------------------------------------------------
