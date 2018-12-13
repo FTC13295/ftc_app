@@ -33,16 +33,15 @@ import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static java.lang.Math.abs;
 
 
-@Autonomous(name="DM Rokus Crater Linear v3", group="AutoLin")
-@Disabled
-public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
+@Autonomous(name="DM Rokus Depot Linear v4", group="AutoLin")
+//@Disabled
+public class DMRokusDepotLin4 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
@@ -75,8 +74,6 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
         detector.ratioScorer.perfectRatio = 1.0;
 
         //detector.enable();
-
-        overrotate = false;
 
         //set motors to use encoders
         motorLeft = hardwareMap.dcMotor.get(MOTOR_DRIVE_LEFT);
@@ -136,7 +133,7 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
         // reset the timeout time before starting
         runtime.reset();
         while (opModeIsActive() &&
-                (runtime.seconds() < 0.5) && !detector.isFound()) {
+                (runtime.seconds() < 1.0) && !detector.isFound()) {
             Thread.yield();
         }
 
@@ -146,8 +143,9 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
         if (!detector.isFound()) {
             eDrive(0.5, (-180/ENCODER_CNT_PER_IN_DRIVE),(180/ENCODER_CNT_PER_IN_DRIVE),1);
             overrotate = true;
+            runtime.reset();
             while (opModeIsActive() &&
-                    (runtime.seconds() < 0.5) && !detector.isFound()) {
+                    (runtime.seconds() < 1.0) && !detector.isFound()) {
                 Thread.yield();
             }
         }
@@ -190,8 +188,13 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
             runtime.reset();
             while ((abs(temp_align) > 100) &&
                     (runtime.seconds() < 5)) {
-                //telemetry.addData("Debug - Position is: ", temp_align);
-                targetPower = -5/abs((float)(temp_align));
+
+                if (temp_align != 0) {
+                    targetPower = (float)(-0.0007*abs(temp_align));
+                } else {
+                    targetPower = -0.12f;
+                }
+
                 if (temp_align >100){
                     //telemetry.addData("move left"," wheel" );
                     //eDrive(0.5,-3.0,0,1000);
@@ -206,8 +209,11 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
                 } else {
                     motorLeft.setPower(0);
                 }
+                sleep(100);
                 temp_align = detector.getXPosition() - detector.getAlignedx();
-                //telemetry.update();
+                telemetry.addData("Debug - Position is: ", temp_align);
+                telemetry.update();
+
             }
         }
 
@@ -247,18 +253,22 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
 
         eDrive(targetPower,targetDrDistInch,targetDrDistInch,4);
 
-        // Park ~ 6"
-        telemetry.addData("Step5", "Park at crater");
+        sleep(500);     // pause for motors to stop move
+
+        // Face depot
+        telemetry.addData("Step5", "Face depot");
         telemetry.update();
 
         targetPower = DEFAULT_MOVE_SPEED;  // Set power
-        targetDrDistInch = -3.5f; //default to center
+        targetDrDistInch = -5f; //default to center
+        targetDrLeft = targetDrDistInch;
+        targetDrRight = targetDrDistInch;
 
         if (leftPos)
         {
             telemetry.addData("Step5b", "Gold element at left position");
             telemetry.update();
-            eDrive(targetPower,0,-1.0,0.5);
+            targetDrRight = targetDrDistInch - 2;
         } else if (centerPos)
         {
             telemetry.addData("Step5b", "Gold element at center position");
@@ -267,18 +277,48 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
         {
             telemetry.addData("Step5b", "Gold element at right position");
             telemetry.update();
-            eDrive(targetPower,-1.0,0,0.5);
+            targetDrLeft = targetDrDistInch -2;
         } else {
             telemetry.addData("Step5b", " - no element info... going with default");
             telemetry.update();
         }
 
-        eDrive(targetPower,targetDrDistInch,targetDrDistInch,1);
+        eDrive(targetPower,targetDrLeft,targetDrRight,2);
+        sleep(250);
+
+        // rotate ~180 deg
+        telemetry.addData("Step6", "Rotate ~180");    //
+
+        targetTurnInch = 650/ENCODER_CNT_PER_IN_DRIVE;
+        if (rightPos) {
+            targetTurnInch = targetTurnInch * 1.1f;
+        } else if (leftPos){
+            targetTurnInch = targetTurnInch * 0.9f;
+        }
+        telemetry.addData("Step6a - turning: ", targetTurnInch);
+        telemetry.update();
+
+        eDrive(0.5, (targetTurnInch),(-targetTurnInch),1500);
+
+        // Deposit marker
+        telemetry.addData("Step7", "Deposit marker");    //
+        telemetry.update();
+
+        runtime.reset();
+        motorArm.setPower(1);
+        while (opModeIsActive() &&
+                (runtime.seconds() < 1.3)) {
+        }
+        motorArm.setPower(-1);
+        runtime.reset();
+        while (opModeIsActive() &&
+                (runtime.seconds() < 1.5)) {
+        }
 
         //Done
-        sleep(1000);     // pause for servos to move
+        sleep(10000);     // pause for servos to move
 
-        telemetry.addData("Step6", "Complete");
+        telemetry.addData("Step8", "Complete");
         telemetry.update();
     }
 
@@ -311,8 +351,8 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            motorLeft.setPower(Math.abs(speed));
-            motorRight.setPower(Math.abs(speed));
+            motorLeft.setPower(abs(speed));
+            motorRight.setPower(abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -325,11 +365,11 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
                     (motorLeft.isBusy() && motorRight.isBusy())) {
 
                 // Display it for the driver.
-                telemetry.addData("Target - ",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Current Position - ",  "Running at %7d :%7d",
-                        motorLeft.getCurrentPosition(),
-                        motorRight.getCurrentPosition());
-                telemetry.update();
+                //telemetry.addData("Target - ",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
+                //telemetry.addData("Current Position - ",  "Running at %7d :%7d",
+                //        motorLeft.getCurrentPosition(),
+                //        motorRight.getCurrentPosition());
+                //telemetry.update();
             }
 
             // Stop all motion;
@@ -360,7 +400,7 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            motorLift.setPower(Math.abs(speed));
+            motorLift.setPower(abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -373,10 +413,10 @@ public class DMRokusCraterLin3 extends DMRokus_AbstractLin {
                     (motorLift.isBusy())) {
 
                 // Display it for the driver.
-                telemetry.addData("Target - ",  "Running to %7d", newTarget);
-                telemetry.addData("Current Position - ",  "Running at %7d",
-                        motorLift.getCurrentPosition());
-                telemetry.update();
+                //telemetry.addData("Target - ",  "Running to %7d", newTarget);
+                //telemetry.addData("Current Position - ",  "Running at %7d",
+                //        motorLift.getCurrentPosition());
+                //telemetry.update();
             }
 
             // Stop all motion;

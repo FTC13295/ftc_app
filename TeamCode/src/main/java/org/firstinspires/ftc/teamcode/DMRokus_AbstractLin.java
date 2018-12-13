@@ -67,11 +67,9 @@ public abstract class DMRokus_AbstractLin extends LinearOpMode {
     protected float
             targetDrDistInch,                   // Targets for motor moves in sequence (engineering units)
             targetPower,                        // General motor power variable (%, -1.0 to 1.0)
-            //targetDrRotateDeg,
-            drivepower,
-            temp_x_stick, temp_y_stick,          // Temporary x and y stick value
-            temp_x, temp_y,          // Temporary x and y stick value
-            //targetPower,                        // General motor power variable (%, -1.0 to 1.0)
+            targetDrLeft,
+            targetDrRight,
+            targetTurnInch,
             hsvValues[] = {0F, 0F, 0F};
     // Auto: Values used to determine current color detected
 
