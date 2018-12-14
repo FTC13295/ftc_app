@@ -39,9 +39,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static java.lang.Math.abs;
 
 
-@Autonomous(name="DM Rokus Crater Linear v4", group="AutoLin")
+@Autonomous(name="DM Rokus Crater Linear v5", group="AutoLin")
 //@Disabled
-public class DMRokusCraterLin4 extends DMRokus_AbstractLin {
+public class DMRokusCraterLin5 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
@@ -119,7 +119,7 @@ public class DMRokusCraterLin4 extends DMRokus_AbstractLin {
         //Land the robot
         telemetry.addData("Step1", "Land the robot");    //
         telemetry.update();
-        eLift(1,(3700/ENCODER_CNT_PER_IN_DRIVE),7);
+        eLift(1,(3650/ENCODER_CNT_PER_IN_DRIVE),7);
         sleep(400);
         eLift(1,(1000/ENCODER_CNT_PER_IN_DRIVE),2);
 
@@ -148,7 +148,7 @@ public class DMRokusCraterLin4 extends DMRokus_AbstractLin {
         telemetry.update();
 
         if (!detector.isFound()) {
-            eDrive(0.5, (-180/ENCODER_CNT_PER_IN_DRIVE),(180/ENCODER_CNT_PER_IN_DRIVE),1);
+            eDrive(0.5, (-155/ENCODER_CNT_PER_IN_DRIVE),(155/ENCODER_CNT_PER_IN_DRIVE),1);  //adjusted from 180
             overrotate = true;
             sleep(250);
             runtime.reset();
@@ -167,7 +167,7 @@ public class DMRokusCraterLin4 extends DMRokus_AbstractLin {
             leftPos = false;
             centerPos = true;
             rightPos = false;
-            telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
+            telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it (aligned) -> CENTER");
             telemetry.update();
         } else {
 
@@ -269,7 +269,7 @@ public class DMRokusCraterLin4 extends DMRokus_AbstractLin {
         telemetry.update();
 
         targetPower = DEFAULT_MOVE_SPEED;  // Set power
-        targetDrDistInch = -3.5f; //default to center
+        targetDrDistInch = -4f; //default to center
         targetDrLeft = targetDrDistInch;
         targetDrRight = targetDrDistInch;
 

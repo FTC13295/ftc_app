@@ -39,9 +39,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static java.lang.Math.abs;
 
 
-@Autonomous(name="DM Rokus Depot Linear v4", group="AutoLin")
+@Autonomous(name="DM Rokus Depot Linear v5", group="AutoLin")
 //@Disabled
-public class DMRokusDepotLin4 extends DMRokus_AbstractLin {
+public class DMRokusDepotLin5 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
@@ -146,7 +146,7 @@ public class DMRokusDepotLin4 extends DMRokus_AbstractLin {
         telemetry.update();
 
         if (!detector.isFound()) {
-            eDrive(0.5, (-180/ENCODER_CNT_PER_IN_DRIVE),(180/ENCODER_CNT_PER_IN_DRIVE),1);
+            eDrive(0.5, (-155/ENCODER_CNT_PER_IN_DRIVE),(155/ENCODER_CNT_PER_IN_DRIVE),1);  //adjusted from 180
             overrotate = true;
             sleep(250);
             runtime.reset();
