@@ -31,17 +31,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import java.util.Locale;
 
 import static android.os.SystemClock.sleep;
 
 
-@TeleOp(name = "DM Rokus TeleOp")
+@TeleOp(name = "DM Rokus TeleOp - Test IMU")
 //@Disabled
-public class DMRokusTeleOp extends DMRokus_Abstract {
-    public DMRokusTeleOp() {
+public class DMRokusTeleOpTest extends DMRokus_Abstract {
+    public DMRokusTeleOpTest() {
     }
+
+    private BNO055IMU imu;
+
+    private Orientation angles;
+    private Acceleration gravity;
+
 
     @Override
     public void init() {
@@ -60,6 +73,19 @@ public class DMRokusTeleOp extends DMRokus_Abstract {
         motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         targetpos = HD_MOTOR_ENC * 84/360;
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit            = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled       = true;
+        parameters.useExternalCrystal   = true;
+        parameters.mode                 = BNO055IMU.SensorMode.IMU;
+        parameters.loggingTag           = "IMU";
+        imu                             = hardwareMap.get(BNO055IMU.class, "imu");
+
+        imu.initialize(parameters);
+        telemetry.setMsTransmissionInterval(100);
+
     }
 
     @Override
@@ -219,6 +245,18 @@ public class DMRokusTeleOp extends DMRokus_Abstract {
 
         motorExtend.setPower(extend);
 
+        angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        gravity = imu.getGravity();
+
+        telemetry.addData("Status", imu.getSystemStatus().toString());
+        telemetry.addData("Calib", imu.getCalibrationStatus().toString());
+        telemetry.addData("Heading", formatAngle(angles.angleUnit, angles.firstAngle));
+        telemetry.addData("Roll", formatAngle(angles.angleUnit, angles.secondAngle));
+        telemetry.addData("Pitch", formatAngle(angles.angleUnit, angles.thirdAngle));
+        telemetry.addData("Grav", gravity.toString());
+        telemetry.update();
+
+
         // Send telemetry message to signify robot running;
         //telemetry.addData("Press a to switch scaledrive, press b to switch single mode","");
         telemetry.addData("Pad1 - Left stick (s) drive, a-scale, b-single/dual, pad v - lift","");
@@ -240,4 +278,15 @@ public class DMRokusTeleOp extends DMRokus_Abstract {
     {
         super.stop();
     }
+
+    String formatAngle(AngleUnit angleUnit, double angle)
+    {
+        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
+    }
+
+    String formatDegrees(double degrees)
+    {
+        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
+    }
+
 }

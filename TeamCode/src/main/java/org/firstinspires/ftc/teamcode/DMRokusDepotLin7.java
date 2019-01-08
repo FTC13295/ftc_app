@@ -32,16 +32,21 @@ package org.firstinspires.ftc.teamcode;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
 import static java.lang.Math.abs;
 
 
-@Autonomous(name="DM Rokus Depot Linear v6", group="AutoLin")
+@Autonomous(name="DM Rokus Depot Linear v7 - testing", group="AutoLin")
 //@Disabled
-public class DMRokusDepotLin6 extends DMRokus_AbstractLin {
+public class DMRokusDepotLin7 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
@@ -100,6 +105,19 @@ public class DMRokusDepotLin6 extends DMRokus_AbstractLin {
         motorExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorExtend.setDirection(DcMotor.Direction.REVERSE);
 
+        //Init IMU
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit            = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled       = true;
+        parameters.useExternalCrystal   = true;
+        parameters.mode                 = BNO055IMU.SensorMode.IMU;
+        parameters.loggingTag           = "IMU";
+        imu                             = hardwareMap.get(BNO055IMU.class, "imu");
+
+        imu.initialize(parameters);
+        telemetry.setMsTransmissionInterval(100);
+
         //turn off auto clear for telemetry
         telemetry.setAutoClear(false);
 
@@ -111,15 +129,25 @@ public class DMRokusDepotLin6 extends DMRokus_AbstractLin {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+
+        //get initial angle
+        angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
 
         //Land the robot
         telemetry.addData("Step1", "Land the robot");    //
         telemetry.update();
-        eLift(1,(3650/ENCODER_CNT_PER_IN_DRIVE),7);
+        eLift(1,(2650/ENCODER_CNT_PER_IN_DRIVE),5);
         sleep(400);
-        eLift(1,(1000/ENCODER_CNT_PER_IN_DRIVE),2);
+        eLift(1,(2100/ENCODER_CNT_PER_IN_DRIVE),3);
+
+        //landing angle
+        angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        telemetry.addData("Landing angle: ", angles.firstAngle);
+        telemetry.update();
+
 
         //pause for 0.5sec
         sleep(500);
@@ -127,8 +155,20 @@ public class DMRokusDepotLin6 extends DMRokus_AbstractLin {
         // rotate ~180 deg
         telemetry.addData("Step2", "Rotate ~180");    //
         telemetry.update();
-        eDrive(0.5, (620/ENCODER_CNT_PER_IN_DRIVE),(-620/ENCODER_CNT_PER_IN_DRIVE),2);  //corrected from 650 due to angle of landing
+        //eDrive(0.5, (620/ENCODER_CNT_PER_IN_DRIVE),(-620/ENCODER_CNT_PER_IN_DRIVE),2);  //corrected from 650 due to angle of landing
 
+        while ((angles.firstAngle < 176) && (angles.firstAngle > 0)) {
+            //if (!motorLeft.isBusy() && !motorRight.isBusy()){
+               // temp_align=3.5*(180-angles.firstAngle)/ENCODER_CNT_PER_IN_DRIVE;
+               // telemetry.addData("Target alignment: ",temp_align);
+                //eDrive(0.5, 44,(-temp_align),2);
+                motorLeft.setPower(0.3);
+                motorRight.setPower(-0.3);
+                angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                telemetry.addData("current angle: ", angles.firstAngle);
+                telemetry.update();
+        }
+/*
         //move forward 2"
         targetPower = 0.5f;
         targetDrDistInch = -2;
@@ -308,11 +348,11 @@ public class DMRokusDepotLin6 extends DMRokus_AbstractLin {
         // rotate ~180 deg
         telemetry.addData("Step6", "Rotate ~180");    //
 
-        targetTurnInch = 650/ENCODER_CNT_PER_IN_DRIVE;
+        targetTurnInch = 700/ENCODER_CNT_PER_IN_DRIVE;
         if (rightPos) {
-            targetTurnInch = targetTurnInch * 1.2f;
+            targetTurnInch = targetTurnInch * 1.3f;
         } else if (leftPos){
-            targetTurnInch = targetTurnInch * 0.8f;
+            targetTurnInch = targetTurnInch * 0.7f;
         }
         telemetry.addData("Step6a - turning: ", targetTurnInch);
         telemetry.update();
@@ -322,9 +362,14 @@ public class DMRokusDepotLin6 extends DMRokus_AbstractLin {
         //move forward if left or right
         if (leftPos || rightPos) {
             targetDrDistInch = 8f;
-            sleep(250);
+            sleep(300);
             eDrive(targetPower,targetDrDistInch,targetDrDistInch,2);
             sleep(250);
+        }
+
+        if (rightPos){
+            eDrive(0.5, 2, -2, 300);
+            eDrive(0.5, 3, 3, 300);
         }
 
         // Deposit marker
@@ -341,7 +386,7 @@ public class DMRokusDepotLin6 extends DMRokus_AbstractLin {
         while (opModeIsActive() &&
                 (runtime.seconds() < 1.5)) {
         }
-
+*/
         //Done
         sleep(20000);     // pause for servos to move
 
