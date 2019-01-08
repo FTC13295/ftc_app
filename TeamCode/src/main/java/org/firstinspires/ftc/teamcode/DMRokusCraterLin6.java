@@ -39,9 +39,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static java.lang.Math.abs;
 
 
-@Autonomous(name="DM Rokus Crater Linear v5", group="AutoLin")
+@Autonomous(name="DM Rokus Crater Linear v6", group="AutoLin")
 //@Disabled
-public class DMRokusCraterLin5 extends DMRokus_AbstractLin {
+public class DMRokusCraterLin6 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
@@ -170,10 +170,15 @@ public class DMRokusCraterLin5 extends DMRokus_AbstractLin {
             telemetry.addData("Step3b", "Use DogeCV locate - found it");
 
             leftPos = false;
-            centerPos = true;
-            rightPos = false;
-            telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it (aligned) -> CENTER");
-            telemetry.update();
+            if (!overrotate){
+                rightPos = false;
+                centerPos = true;
+                telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
+            } else {
+                rightPos = true;
+                centerPos = false;
+                telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> RIGHT");
+            }
         } else {
 
             temp_align = detector.getXPosition() - detector.getAlignedx();
@@ -188,7 +193,6 @@ public class DMRokusCraterLin5 extends DMRokus_AbstractLin {
                     centerPos = true;
                     telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
                 }
-                telemetry.update();
             }
 
             if (temp_align < -100) {
@@ -196,15 +200,21 @@ public class DMRokusCraterLin5 extends DMRokus_AbstractLin {
                 centerPos = false;
                 rightPos = true;
                 telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> RIGHT");
-                telemetry.update();
             }
+            telemetry.addData("Check element position: ", temp_align);
+            telemetry.addData("Position L: ", leftPos);
+            telemetry.addData("Position C: ", centerPos);
+            telemetry.addData("Position R: ", rightPos);
+            telemetry.update();
+
+            sleep(500);
 
             runtime.reset();
             while ((abs(temp_align) > 100) &&
                     (runtime.seconds() < 5)) {
 
                 if (temp_align != 0) {
-                    targetPower = (float)(-0.0007*abs(temp_align));
+                    targetPower = (float)(-0.00065*abs(temp_align));
                 } else {
                     targetPower = -0.12f;
                 }
@@ -223,7 +233,7 @@ public class DMRokusCraterLin5 extends DMRokus_AbstractLin {
                 } else {
                     motorLeft.setPower(0);
                 }
-                sleep(80);
+                sleep(70);
                 temp_align = detector.getXPosition() - detector.getAlignedx();
                 telemetry.addData("Debug - Position is: ", temp_align);
                 telemetry.update();
@@ -304,7 +314,7 @@ public class DMRokusCraterLin5 extends DMRokus_AbstractLin {
         eDrive(targetPower,targetDrLeft,targetDrRight,1);
 
         //Done
-        sleep(10000);     // pause for servos to move
+        sleep(20000);     // pause for servos to move
 
         telemetry.addData("Step6", "Complete");
         telemetry.update();

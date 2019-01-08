@@ -33,6 +33,7 @@ import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -40,7 +41,7 @@ import static java.lang.Math.abs;
 
 
 @Autonomous(name="DM Rokus Crater Linear v4", group="AutoLin")
-//@Disabled
+@Disabled
 public class DMRokusCraterLin4 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
@@ -119,12 +120,17 @@ public class DMRokusCraterLin4 extends DMRokus_AbstractLin {
         //Land the robot
         telemetry.addData("Step1", "Land the robot");    //
         telemetry.update();
-        eLift(1,(5480/ENCODER_CNT_PER_IN_DRIVE),8);
+        eLift(1,(3700/ENCODER_CNT_PER_IN_DRIVE),7);
+        sleep(400);
+        eLift(1,(1000/ENCODER_CNT_PER_IN_DRIVE),2);
+
+        //pause for 0.5sec
+        sleep(500);
 
         // rotate ~180 deg
         telemetry.addData("Step2", "Rotate ~180");    //
         telemetry.update();
-        eDrive(0.5, (650/ENCODER_CNT_PER_IN_DRIVE),(-650/ENCODER_CNT_PER_IN_DRIVE),2);
+        eDrive(0.5, (620/ENCODER_CNT_PER_IN_DRIVE),(-620/ENCODER_CNT_PER_IN_DRIVE),2);  //corrected from 650 due to angle of landing
 
         // Use DogeCV to get sampling order
         telemetry.addData("Step3", "Use DogeCV to get sampling order");    //
@@ -135,7 +141,7 @@ public class DMRokusCraterLin4 extends DMRokus_AbstractLin {
         // reset the timeout time before starting
         runtime.reset();
         while (opModeIsActive() &&
-                (runtime.seconds() < 1.0) && !detector.isFound()) {
+                (runtime.seconds() < 1) && !detector.isFound()) {
             Thread.yield();
         }
 
@@ -145,14 +151,16 @@ public class DMRokusCraterLin4 extends DMRokus_AbstractLin {
         if (!detector.isFound()) {
             eDrive(0.5, (-180/ENCODER_CNT_PER_IN_DRIVE),(180/ENCODER_CNT_PER_IN_DRIVE),1);
             overrotate = true;
+            sleep(250);
             runtime.reset();
             while (opModeIsActive() &&
-                    (runtime.seconds() < 1.0) && !detector.isFound()) {
+                    (runtime.seconds() < 1) && !detector.isFound()) {
                 Thread.yield();
             }
         }
 
         telemetry.addData("Step3a - over rotated: ", overrotate);
+        sleep(250);
 
         if (detector.getAligned()) {
             telemetry.addData("Step3b", "Use DogeCV locate - found it");
@@ -211,7 +219,7 @@ public class DMRokusCraterLin4 extends DMRokus_AbstractLin {
                 } else {
                     motorLeft.setPower(0);
                 }
-                sleep(100);
+                sleep(80);
                 temp_align = detector.getXPosition() - detector.getAlignedx();
                 telemetry.addData("Debug - Position is: ", temp_align);
                 telemetry.update();

@@ -33,6 +33,7 @@ import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -40,7 +41,7 @@ import static java.lang.Math.abs;
 
 
 @Autonomous(name="DM Rokus Crater Linear - NO SAMPLING", group="AutoLin")
-//@Disabled
+@Disabled
 public class DMRokusCraterLin_noSample extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
@@ -98,7 +99,12 @@ public class DMRokusCraterLin_noSample extends DMRokus_AbstractLin {
         //Land the robot
         telemetry.addData("Step1", "Land the robot");    //
         telemetry.update();
-        eLift(1,(5480/ENCODER_CNT_PER_IN_DRIVE),8);
+        eLift(1,(4050/ENCODER_CNT_PER_IN_DRIVE),7);
+        sleep(400);
+        eLift(1,(1600/ENCODER_CNT_PER_IN_DRIVE),2);
+
+        //pause for 0.5sec
+        sleep(500);
 
         // rotate ~180 deg
         telemetry.addData("Step2", "Rotate ~180");    //

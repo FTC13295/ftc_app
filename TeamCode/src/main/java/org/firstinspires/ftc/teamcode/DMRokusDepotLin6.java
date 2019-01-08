@@ -39,9 +39,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static java.lang.Math.abs;
 
 
-@Autonomous(name="DM Rokus Depot Linear v5", group="AutoLin")
+@Autonomous(name="DM Rokus Depot Linear v6", group="AutoLin")
 //@Disabled
-public class DMRokusDepotLin5 extends DMRokus_AbstractLin {
+public class DMRokusDepotLin6 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
@@ -152,7 +152,7 @@ public class DMRokusDepotLin5 extends DMRokus_AbstractLin {
         telemetry.update();
 
         if (!detector.isFound()) {
-            eDrive(0.5, (-155/ENCODER_CNT_PER_IN_DRIVE),(155/ENCODER_CNT_PER_IN_DRIVE),1);  //adjusted from 180
+            eDrive(0.5, (-140/ENCODER_CNT_PER_IN_DRIVE),(140/ENCODER_CNT_PER_IN_DRIVE),1);  //adjusted from 180
             overrotate = true;
             sleep(250);
             runtime.reset();
@@ -169,10 +169,15 @@ public class DMRokusDepotLin5 extends DMRokus_AbstractLin {
             telemetry.addData("Step3b", "Use DogeCV locate - found it");
 
             leftPos = false;
-            centerPos = true;
-            rightPos = false;
-            telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
-            telemetry.update();
+            if (!overrotate){
+                rightPos = false;
+                centerPos = true;
+                telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
+            } else {
+                rightPos = true;
+                centerPos = false;
+                telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> RIGHT");
+            }
         } else {
 
             temp_align = detector.getXPosition() - detector.getAlignedx();
@@ -183,19 +188,11 @@ public class DMRokusDepotLin5 extends DMRokus_AbstractLin {
                     centerPos = false;
                     telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> LEFT");
                 } else {
-                    if(temp_align > 170) {
                         leftPos = false;
                         centerPos = true;
                         telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
-                    } else {
-                        leftPos = false;
-                        centerPos = false;
-                        rightPos = true;
-                        telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> RIGHT");
-                        telemetry.update();
-                    }
                 }
-                telemetry.update();
+
             }
 
             if (temp_align < -100) {
@@ -203,15 +200,16 @@ public class DMRokusDepotLin5 extends DMRokus_AbstractLin {
                 centerPos = false;
                 rightPos = true;
                 telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> RIGHT");
-                telemetry.update();
             }
+            telemetry.addData("Check element position: ", temp_align);
+            telemetry.update();
 
             runtime.reset();
             while ((abs(temp_align) > 100) &&
                     (runtime.seconds() < 5)) {
 
                 if (temp_align != 0) {
-                    targetPower = (float)(-0.0007*abs(temp_align));
+                    targetPower = (float)(-0.00065*abs(temp_align));
                 } else {
                     targetPower = -0.12f;
                 }
@@ -230,7 +228,7 @@ public class DMRokusDepotLin5 extends DMRokus_AbstractLin {
                 } else {
                     motorLeft.setPower(0);
                 }
-                sleep(80);
+                sleep(70);
                 temp_align = detector.getXPosition() - detector.getAlignedx();
                 telemetry.addData("Debug - Position is: ", temp_align);
                 telemetry.update();
@@ -345,7 +343,7 @@ public class DMRokusDepotLin5 extends DMRokus_AbstractLin {
         }
 
         //Done
-        sleep(10000);     // pause for servos to move
+        sleep(20000);     // pause for servos to move
 
         telemetry.addData("Step8", "Complete");
         telemetry.update();

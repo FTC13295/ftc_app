@@ -129,6 +129,12 @@ public class DMRokusDepotLin5 extends DMRokus_AbstractLin {
         telemetry.update();
         eDrive(0.5, (620/ENCODER_CNT_PER_IN_DRIVE),(-620/ENCODER_CNT_PER_IN_DRIVE),2);  //corrected from 650 due to angle of landing
 
+        //move forward 2"
+        targetPower = 0.5f;
+        targetDrDistInch = -2;
+        eDrive(targetPower,targetDrDistInch,targetDrDistInch,0.5);
+
+
         // Use DogeCV to get sampling order
         telemetry.addData("Step3", "Use DogeCV to get sampling order");    //
         telemetry.update();
@@ -177,9 +183,17 @@ public class DMRokusDepotLin5 extends DMRokus_AbstractLin {
                     centerPos = false;
                     telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> LEFT");
                 } else {
-                    leftPos = false;
-                    centerPos = true;
-                    telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
+                    if(temp_align > 100) {
+                        leftPos = false;
+                        centerPos = true;
+                        telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
+                    } else {
+                        leftPos = false;
+                        centerPos = false;
+                        rightPos = true;
+                        telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> RIGHT");
+                        telemetry.update();
+                    }
                 }
                 telemetry.update();
             }
@@ -233,23 +247,23 @@ public class DMRokusDepotLin5 extends DMRokus_AbstractLin {
         telemetry.addData("Step4", "Select gold element");
         telemetry.update();
 
-        targetDrDistInch = -26f; //default to center
+        targetDrDistInch = -24f; //default to center
         targetPower = DEFAULT_MOVE_SPEED;  // Set power
 
         if (leftPos)
         {
-            targetDrDistInch = -30f; // Set target distance - left element
+            targetDrDistInch = -28f; // Set target distance - left element
             telemetry.addData("Step4b", "Gold element at left position");
             telemetry.update();
             //eDrive(targetPower,-1.0,0,500);
         } else if (centerPos)
         {
-            targetDrDistInch = -26f; // Set target distance - center element
+            targetDrDistInch = -24f; // Set target distance - center element
             telemetry.addData("Step4b", "Gold element at center position");
             telemetry.update();
         } else if (rightPos)
         {
-            targetDrDistInch = -30f; // Set target distance - right element
+            targetDrDistInch = -28f; // Set target distance - right element
             telemetry.addData("Step4b", "Gold element at right position");
             telemetry.update();
             //eDrive(targetPower,0,-1.0,500);
