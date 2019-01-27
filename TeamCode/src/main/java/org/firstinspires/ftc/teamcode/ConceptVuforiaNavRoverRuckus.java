@@ -270,6 +270,7 @@ public class ConceptVuforiaNavRoverRuckus extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
+
         /** Start tracking the data sets we care about. */
         targetsRoverRuckus.activate();
         while (opModeIsActive()) {

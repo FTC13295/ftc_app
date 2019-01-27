@@ -62,10 +62,9 @@ public abstract class DMRokus_AbstractLin extends LinearOpMode {
             scaledrive,                 // Test for scale drive
             single,
             debug,                      // Flag for debugging
-            Gdown, Gopen,               // Flag for Glyph lift down and Glygh open or closed
-            bArmDown = false,           // Flag for Back Arm
-            slowdown = false,
+            foundelement = false,
             leftPos, rightPos, centerPos,
+            turncw,
             SetPos = false,             // Flag for set possition
             relicopen = false;          // Flg for Relic jaw
 
@@ -75,12 +74,14 @@ public abstract class DMRokus_AbstractLin extends LinearOpMode {
             targetDrLeft,
             targetDrRight,
             targetTurnInch,
+            turnPower,
             hsvValues[] = {0F, 0F, 0F};
     // Auto: Values used to determine current color detected
 
     protected double
             x,y,
-            temp_align;
+            temp_align,
+            temp_angle;
 
 
     // Establish Integer Variables

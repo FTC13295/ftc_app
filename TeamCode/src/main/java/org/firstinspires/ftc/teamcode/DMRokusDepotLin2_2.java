@@ -34,7 +34,6 @@ import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -44,10 +43,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 import static java.lang.Math.abs;
 
-
-@Autonomous(name="DM Rokus Depot Linear v7 - testing", group="AutoLin")
-@Disabled
-public class DMRokusDepotLin7 extends DMRokus_AbstractLin {
+@Autonomous(name="DM Rokus Depot Linear v2.2", group="AutoLin")
+//@Disabled
+public class DMRokusDepotLin2_2 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
@@ -108,13 +106,13 @@ public class DMRokusDepotLin7 extends DMRokus_AbstractLin {
 
         //Init IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit            = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled       = true;
-        parameters.useExternalCrystal   = true;
-        parameters.mode                 = BNO055IMU.SensorMode.IMU;
-        parameters.loggingTag           = "IMU";
-        imu                             = hardwareMap.get(BNO055IMU.class, "imu");
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = true;
+        parameters.useExternalCrystal = true;
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.loggingTag = "IMU";
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         imu.initialize(parameters);
         telemetry.setMsTransmissionInterval(100);
@@ -122,7 +120,7 @@ public class DMRokusDepotLin7 extends DMRokus_AbstractLin {
         //turn off auto clear for telemetry
         telemetry.setAutoClear(false);
 
-        telemetry.addData("I am alive - ","init");
+        telemetry.addData("I am alive - ", "init");
         telemetry.addData("Debug mode: ", debug);
 
         telemetry.update();
@@ -132,7 +130,7 @@ public class DMRokusDepotLin7 extends DMRokus_AbstractLin {
 
 
         //get initial angle
-        angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
@@ -143,10 +141,10 @@ public class DMRokusDepotLin7 extends DMRokus_AbstractLin {
         //eLift(1,(2650/ENCODER_CNT_PER_IN_DRIVE),5);
         //sleep(400);
         //eLift(1,(2100/ENCODER_CNT_PER_IN_DRIVE),3);
-        eLift(1,(4450/ENCODER_CNT_PER_IN_DRIVE),10);
+        eLift(1, (4250 / ENCODER_CNT_PER_IN_DRIVE), 10);
 
         //landing angle
-        angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         telemetry.addData("Landing angle: ", angles.firstAngle);
         telemetry.update();
 
@@ -157,37 +155,71 @@ public class DMRokusDepotLin7 extends DMRokus_AbstractLin {
         // rotate ~180 deg
         telemetry.addData("Step2", "Rotate ~180");    //
         telemetry.update();
-        //eDrive(0.5, (620/ENCODER_CNT_PER_IN_DRIVE),(-620/ENCODER_CNT_PER_IN_DRIVE),2);  //corrected from 650 due to angle of landing
 
         temp_angle = angles.firstAngle;
-        while ((temp_angle > -175) && (temp_angle < 60)) {
-            //if (!motorLeft.isBusy() && !motorRight.isBusy()){
-               // temp_align=3.5*(180-angles.firstAngle)/ENCODER_CNT_PER_IN_DRIVE;
-               // telemetry.addData("Target alignment: ",temp_align);
-                //eDrive(0.5, 44,(-temp_align),2);
-                motorLeft.setPower(0.3);
-                motorRight.setPower(-0.3);
-                angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                temp_angle = angles.firstAngle;
-                telemetry.addData("current angle: ", temp_angle);
-                telemetry.update();
+        turnPower = 0.25f;
+        motorRight.setDirection(DcMotor.Direction.FORWARD);
+        while ((temp_angle > -178) && (temp_angle < 60)) { //reduced from -175 to 170 due to overturning
+            motorLeft.setPower(turnPower);
+            motorRight.setPower(turnPower);
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            temp_angle = angles.firstAngle;
+            //telemetry.addData("current angle: ", temp_angle);
+            //telemetry.update();
         }
         telemetry.addData("exit while, angle: ", angles.firstAngle);
         motorLeft.setPower(0);
         motorRight.setPower(0);
-        telemetry.addData("Stopped motors"," Done");
+        motorRight.setDirection(DcMotor.Direction.REVERSE);
+        telemetry.addData("Stopped motors", " Done");
         telemetry.update();
-/*
-        //move forward 2"
-        targetPower = 0.5f;
-        targetDrDistInch = -2;
-        eDrive(targetPower,targetDrDistInch,targetDrDistInch,0.5);
 
+        //pause for 0.5sec
+        sleep(500);
+
+        // Get closer
+        eDrive(1, -6, -6, 5);
+
+        //make sure we are straight
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        temp_angle = angles.firstAngle;
+
+        if (temp_angle > 0) {
+            motorRight.setDirection(DcMotor.Direction.REVERSE);
+            motorLeft.setDirection(DcMotor.Direction.REVERSE);
+            turncw = false;
+        } else {
+            motorRight.setDirection(DcMotor.Direction.FORWARD);
+            motorLeft.setDirection(DcMotor.Direction.FORWARD);
+            turncw = true;
+        }
+        telemetry.addData("Rotate to 180 - angle: ", angles.firstAngle);
+        while (abs(temp_angle) < 178) {
+            motorLeft.setPower(turnPower);
+            motorRight.setPower(turnPower);
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            temp_angle = angles.firstAngle;
+            //telemetry.addData("current angle: ", temp_angle);
+            //telemetry.update();
+        }
+        telemetry.addData("exit (ST) while, angle: ", angles.firstAngle);
+        motorLeft.setPower(0);
+        motorRight.setPower(0);
+        if (turncw){
+            motorRight.setDirection(DcMotor.Direction.REVERSE);
+        } else {
+            motorLeft.setDirection(DcMotor.Direction.FORWARD);
+        }
+        telemetry.addData("Stopped motors", " Done");
+        telemetry.update();
+
+        sleep(250);
 
         // Use DogeCV to get sampling order
         telemetry.addData("Step3", "Use DogeCV to get sampling order");    //
         telemetry.update();
 
+        //CameraDevice.getInstance().setFlashTorchMode(true) ; //turns flash on
         detector.enable();
 
         // reset the timeout time before starting
@@ -197,120 +229,233 @@ public class DMRokusDepotLin7 extends DMRokus_AbstractLin {
             Thread.yield();
         }
 
-        telemetry.addData("Step3a - is found: ", detector.isFound());    //
-        telemetry.update();
+        leftPos = false;
+        centerPos = false;
+        rightPos = false;
+        foundelement = false;
 
-        if (!detector.isFound()) {
-            eDrive(0.5, (-140/ENCODER_CNT_PER_IN_DRIVE),(140/ENCODER_CNT_PER_IN_DRIVE),1);  //adjusted from 180
-            overrotate = true;
-            sleep(250);
-            runtime.reset();
-            while (opModeIsActive() &&
-                    (runtime.seconds() < 1.0) && !detector.isFound()) {
-                Thread.yield();
-            }
-        }
-
-        telemetry.addData("Step3a - over rotated: ", overrotate);
-        sleep(250);
-
-        if (detector.getAligned()) {
-            telemetry.addData("Step3b", "Use DogeCV locate - found it");
-
-            leftPos = false;
-            if (!overrotate){
-                rightPos = false;
-                centerPos = true;
-                telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
-            } else {
+        if (detector.isFound()) {
+            if ((detector.getXPosition() >= 1) && (detector.getXPosition() <= 213.5)) {
                 rightPos = true;
-                centerPos = false;
-                telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> RIGHT");
+                foundelement = true;
+                telemetry.addData("Step3b", "Use DogeCV locate - found it -> RIGHT");
+
+            } else if ((detector.getXPosition() >= 213.6) && (detector.getXPosition() <= 426.5)) {
+                centerPos = true;
+                foundelement = true;
+                telemetry.addData("Step3b", "Use DogeCV locate - found it -> CENTER");
+
+            } else if ((detector.getXPosition() >= 426.6) && (detector.getXPosition() <= 640)) {
+                leftPos = true;
+                foundelement = true;
+                telemetry.addData("Step3b", "Use DogeCV locate - found it -> LEFT");
+
+/*            } else {
+                telemetry.addData("Step3b", "Use DogeCV locate - couldn't find it, going with default");
+                centerPos = true;
+*/
             }
         } else {
-
-            temp_align = detector.getXPosition() - detector.getAlignedx();
-            if (temp_align > 100) {
-                rightPos = false;
-                if (!overrotate){
-                    leftPos = true;
-                    centerPos = false;
-                    telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> LEFT");
-                } else {
-                        leftPos = false;
-                        centerPos = true;
-                        telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> CENTER");
+                //Try Rotate 30 deg left
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                temp_angle = angles.firstAngle;
+                motorRight.setDirection(DcMotor.Direction.FORWARD);
+                telemetry.addData("Rotate 30 deg left - angle: ", angles.firstAngle);
+                while (abs(temp_angle)>165) {  //(temp_angle < -165) && (temp_angle > 160)
+                    motorLeft.setPower(turnPower);
+                    motorRight.setPower(turnPower);
+                    angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                    temp_angle = angles.firstAngle;
+                    //telemetry.addData("current angle: ", temp_angle);
+                    //telemetry.update();
                 }
-
-            }
-
-            if (temp_align < -100) {
-                leftPos = false;
-                centerPos = false;
-                rightPos = true;
-                telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> RIGHT");
-            }
-            telemetry.addData("Check element position: ", temp_align);
-            telemetry.update();
-
-            runtime.reset();
-            while ((abs(temp_align) > 100) &&
-                    (runtime.seconds() < 5)) {
-
-                if (temp_align != 0) {
-                    targetPower = (float)(-0.00065*abs(temp_align));
-                } else {
-                    targetPower = -0.12f;
-                }
-
-                if (temp_align >100){
-                    //telemetry.addData("move left"," wheel" );
-                    //eDrive(0.5,-3.0,0,1000);
-                    motorRight.setPower(targetPower);
-                } else {
-                    motorRight.setPower(0);
-                }
-                if (temp_align < -100){
-                    //telemetry.addData("move right"," wheel" );
-                    //eDrive(0.5,0,-3.0,1000);
-                    motorLeft.setPower(targetPower);
-                } else {
-                    motorLeft.setPower(0);
-                }
-                sleep(70);
-                temp_align = detector.getXPosition() - detector.getAlignedx();
-                telemetry.addData("Debug - Position is: ", temp_align);
+                telemetry.addData("exit while (left), angle: ", angles.firstAngle);
+                motorLeft.setPower(0);
+                motorRight.setPower(0);
+                motorRight.setDirection(DcMotor.Direction.REVERSE);
+                telemetry.addData("Stopped motors", " Done");
                 telemetry.update();
 
-            }
+                sleep(250);
+
+                if (detector.isFound()) {
+    /*                if ((detector.getXPosition() >= 1) && (detector.getXPosition() <= 213.5)) {
+                        rightPos = true;
+                        foundelement = true;
+                        telemetry.addData("Step3b", "Use DogeCV locate - found it -> RIGHT");
+
+                    } else
+    */
+                    if ((detector.getXPosition() >= 1) && (detector.getXPosition() <= 200)) {
+                        centerPos = true;
+                        foundelement = true;
+                        telemetry.addData("Step3b", "Use DogeCV locate - found it -> CENTER");
+
+                    } else if ((detector.getXPosition() > 200) && (detector.getXPosition() <= 640)) {
+                        leftPos = true;
+                        foundelement = true;
+                        telemetry.addData("Step3b", "Use DogeCV locate - found it -> LEFT");
+
+                    }
+                } else {
+                    //Try Rotate 30 deg right
+                    temp_angle = angles.firstAngle;
+                    motorRight.setDirection(DcMotor.Direction.REVERSE);
+                    motorLeft.setDirection(DcMotor.Direction.REVERSE);
+                    telemetry.addData("Rotate 30 deg right - angle: ", angles.firstAngle);
+                    while (abs(temp_angle) > 158) {
+                        motorLeft.setPower(0.1);
+                        motorRight.setPower(0.1);
+                        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                        temp_angle = angles.firstAngle;
+                        //telemetry.addData("current angle: ", temp_angle);
+                        //telemetry.update();
+                    }
+                    telemetry.addData("exit (right) while, angle: ", angles.firstAngle);
+                    motorLeft.setPower(0);
+                    motorRight.setPower(0);
+                    motorLeft.setDirection(DcMotor.Direction.FORWARD);
+                    telemetry.addData("Stopped motors", " Done");
+                    telemetry.update();
+
+                    sleep(250);
+
+                    if (detector.isFound()) {
+                        if ((detector.getXPosition() >= 1) && (detector.getXPosition() <= 440)) {
+                            rightPos = true;
+                            foundelement = true;
+                            telemetry.addData("Step3b", "Use DogeCV locate - found it -> RIGHT");
+
+                        } else if ((detector.getXPosition() > 440) && (detector.getXPosition() <= 426.5)) {
+                            centerPos = true;
+                            foundelement = true;
+                            telemetry.addData("Step3b", "Use DogeCV locate - found it -> CENTER");
+
+                        }
+                    } else {
+                        telemetry.addData("Step3b", "Use DogeCV locate - couldn't find it, going with default");
+                        centerPos = true;
+                    }
+                }
         }
 
+        /*
+        if (detector.getXPosition() > 170 && detector.getXPosition() < 470) {
+            telemetry.addData("Step3b", "Use DogeCV locate - found it -> CENTER");
+            centerPos = true;
+
+        } else {
+            while((temp_angle > 10) && (temp_angle < -150)) {
+                motorLeft.setPower(-0.3);
+                motorRight.setPower(0.3);
+            }
+            motorLeft.setPower(0);
+            motorRight.setPower(0);
+
+            if (detector.getXPosition() > 170 && detector.getXPosition() < 470) {
+                rightPos = true;
+                telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> RIGHT");
+
+            } else {
+                while((temp_angle > 140) && (temp_angle < -140)) {
+                    motorLeft.setPower(0.3);
+                    motorRight.setPower(-0.3);
+                }
+                motorLeft.setPower(0);
+                motorRight.setPower(0);
+
+                if(detector.getXPosition() > 170 && detector.getXPosition() < 470) {
+                    leftPos = true;
+                    telemetry.addData("Step3c", "Use DogeCV to get sampling order - found it -> LEFT");
+
+                } else {
+                    telemetry.addData("Step3c", "Use DogeCV to get sampling order - couldn't find it going with left");
+                }
+            }
+
+
+            runtime.reset();
+
+        }
+
+*/
         telemetry.update();
 
         // Turn off DogeCV
         detector.disable();
+        //CameraDevice.getInstance().setFlashTorchMode(false) ; //turns flash off
 
         // sample gold element
         telemetry.addData("Step4", "Select gold element");
         telemetry.update();
 
-        targetDrDistInch = -24f; //default to center
+        targetDrDistInch = -45f; //default to center
         targetPower = DEFAULT_MOVE_SPEED;  // Set power
 
+
+        //Current position
+        angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        temp_angle = angles.firstAngle;
+        telemetry.addData("**********current angle: ", temp_angle);
+        telemetry.update();
+
+        //reset IMU
+        imu.initialize(parameters);
+        //Current position
+        angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        temp_angle = angles.firstAngle;
+        telemetry.addData("**********rest - new angle: ", temp_angle);
+        telemetry.update();
+
+        sleep(3000);     // pause for motors to stop move
+/*
         if (leftPos)
         {
-            targetDrDistInch = -28f; // Set target distance - left element
+            while ((temp_angle > -28) && (temp_angle < 10)) {
+                motorLeft.setPower(0.3);
+                motorRight.setPower(-0.3);
+                angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                temp_angle = angles.firstAngle;
+                telemetry.addData("current angle: ", temp_angle);
+                telemetry.update();
+            }
+            motorLeft.setPower(0);
+            motorRight.setPower(0);
+
+            targetDrDistInch = -39f; // Set target distance - left element
             telemetry.addData("Step4b", "Gold element at left position");
             telemetry.update();
             //eDrive(targetPower,-1.0,0,500);
         } else if (centerPos)
         {
-            targetDrDistInch = -24f; // Set target distance - center element
+            while ((temp_angle > -8) && (temp_angle < 10)) {
+                motorLeft.setPower(0.3);
+                motorRight.setPower(-0.3);
+                angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                temp_angle = angles.firstAngle;
+                telemetry.addData("current angle: ", temp_angle);
+                telemetry.update();
+            }
+            motorLeft.setPower(0);
+            motorRight.setPower(0);
+
+            targetDrDistInch = -45f; // Set target distance - center element
             telemetry.addData("Step4b", "Gold element at center position");
             telemetry.update();
         } else if (rightPos)
         {
-            targetDrDistInch = -28f; // Set target distance - right element
+            while ((temp_angle < 23) && (temp_angle > -10)) {
+                motorLeft.setPower(-0.3);
+                motorRight.setPower(0.3);
+                angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                temp_angle = angles.firstAngle;
+                telemetry.addData("current angle: ", temp_angle);
+                telemetry.update();
+            }
+            motorLeft.setPower(0);
+            motorRight.setPower(0);
+
+            targetDrDistInch = -45f; // Set target distance - right element
             telemetry.addData("Step4b", "Gold element at right position");
             telemetry.update();
             //eDrive(targetPower,0,-1.0,500);
@@ -319,30 +464,51 @@ public class DMRokusDepotLin7 extends DMRokus_AbstractLin {
             telemetry.update();
         }
 
-        eDrive(targetPower,targetDrDistInch,targetDrDistInch,4);
+        eDrive(targetPower,targetDrDistInch,targetDrDistInch,9);
 
         sleep(500);     // pause for motors to stop move
 
         // Face depot
         telemetry.addData("Step5", "Face depot");
         telemetry.update();
-
+/*
         targetPower = DEFAULT_MOVE_SPEED;  // Set power
-        targetDrDistInch = -5f; //default to center
+        targetDrDistInch = -17f; //default to center
         targetDrLeft = targetDrDistInch;
         targetDrRight = targetDrDistInch;
 
         if (leftPos)
         {
+            while ((temp_angle > -43) && (temp_angle < -47)) {
+                motorLeft.setPower(0.3);
+                motorRight.setPower(-0.3);
+                angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                temp_angle = angles.firstAngle;
+                telemetry.addData("current angle: ", temp_angle);
+                telemetry.update();
+            }
+            motorLeft.setPower(0);
+            motorRight.setPower(0);
+
             telemetry.addData("Step5b", "Gold element at left position");
             telemetry.update();
-            targetDrRight = targetDrDistInch - 2;
         } else if (centerPos)
         {
             telemetry.addData("Step5b", "Gold element at center position");
             telemetry.update();
         } else if (rightPos)
         {
+            while ((temp_angle > 47) && (temp_angle < 43)) {
+                motorLeft.setPower(0.3);
+                motorRight.setPower(-0.3);
+                angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                temp_angle = angles.firstAngle;
+                telemetry.addData("current angle: ", temp_angle);
+                telemetry.update();
+            }
+            motorLeft.setPower(0);
+            motorRight.setPower(0);
+
             telemetry.addData("Step5b", "Gold element at right position");
             telemetry.update();
             targetDrLeft = targetDrDistInch -2;
@@ -350,7 +516,7 @@ public class DMRokusDepotLin7 extends DMRokus_AbstractLin {
             telemetry.addData("Step5b", " - no element info... going with default");
             telemetry.update();
         }
-
+/*
         eDrive(targetPower,targetDrLeft,targetDrRight,2);
         sleep(250);
 
@@ -370,15 +536,10 @@ public class DMRokusDepotLin7 extends DMRokus_AbstractLin {
 
         //move forward if left or right
         if (leftPos || rightPos) {
-            targetDrDistInch = 8f;
+            targetDrDistInch = 17f;
             sleep(300);
             eDrive(targetPower,targetDrDistInch,targetDrDistInch,2);
             sleep(250);
-        }
-
-        if (rightPos){
-            eDrive(0.5, 2, -2, 300);
-            eDrive(0.5, 3, 3, 300);
         }
 
         // Deposit marker
@@ -397,6 +558,13 @@ public class DMRokusDepotLin7 extends DMRokus_AbstractLin {
         }
 */
         //Done
+
+        //Pause
+        sleep(3000);
+
+        //lower the hook
+        eLift(1, (-4350 / ENCODER_CNT_PER_IN_DRIVE), 10);
+
         sleep(20000);     // pause for servos to move
 
         telemetry.addData("Step8", "Complete");
@@ -509,5 +677,7 @@ public class DMRokusDepotLin7 extends DMRokus_AbstractLin {
             //  sleep(250);   // optional pause after each move
         }
     }
+
+
 
 }
