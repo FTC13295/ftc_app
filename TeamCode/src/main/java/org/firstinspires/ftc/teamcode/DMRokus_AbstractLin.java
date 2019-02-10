@@ -109,7 +109,7 @@ public abstract class DMRokus_AbstractLin extends LinearOpMode {
     // Establish Float Constants
     final static float
             PowerRatio = 0.7f,
-            DEFAULT_MOVE_SPEED = 0.5f,                   //Default move speed for autonomous
+            DEFAULT_MOVE_SPEED = 0.8f,                   //Default move speed for autonomous
             SLOW_POWER = 0.4f,
             REG_POWER = 0.7f,
             FULL_POWER = 1.0f,
