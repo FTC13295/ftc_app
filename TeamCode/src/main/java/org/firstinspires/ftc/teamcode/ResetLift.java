@@ -97,7 +97,7 @@ public class ResetLift extends DMRokus_AbstractLin {
         //Land the robot
         telemetry.addData("Step1", "reset lift arm");    //
         telemetry.update();
-        eLift(1,(-5500/ENCODER_CNT_PER_IN_DRIVE),8);
+        eLift(1,(-6500/ENCODER_CNT_PER_IN_DRIVE),11);
 
         //Done
         sleep(1000);     // pause for servos to move
