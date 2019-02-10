@@ -34,6 +34,7 @@ import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -44,7 +45,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import static java.lang.Math.abs;
 
 @Autonomous(name="DM Rokus Depot Linear v2.2", group="AutoLin")
-//@Disabled
+@Disabled
 public class DMRokusDepotLin2_2 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
