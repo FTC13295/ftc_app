@@ -43,9 +43,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 import static java.lang.Math.abs;
 
-@Autonomous(name="DM Rokus Crater Linear 2.1 - w", group="AutoLin")
+@Autonomous(name="DM Rokus Crater Linear 2.2 - w", group="AutoLin")
 //@Disabled
-public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
+public class DMRokusCraterLin2_2 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
@@ -238,7 +238,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
         rightPos = false;
         foundelement = false;
 
-        sleep(150);
+        sleep(250);
 
         // scan for minerals and turn to left if not found
         if (detector.isFound()) {
@@ -285,12 +285,12 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
                 if ((detector.getXPosition() >= 1) && (detector.getXPosition() <= 200)) {
                     centerPos = true;
                     foundelement = true;
-                    telemetry.addData("Step3b", "Use DogeCV locate - found it -> CENTER");
+                    telemetry.addData("Step3c", "Use DogeCV locate - found it -> CENTER");
 
                 } else if ((detector.getXPosition() > 200) && (detector.getXPosition() <= 640)) {
                     leftPos = true;
                     foundelement = true;
-                    telemetry.addData("Step3b", "Use DogeCV locate - found it -> LEFT");
+                    telemetry.addData("Step3c", "Use DogeCV locate - found it -> LEFT");
 
                 }
             } else {
@@ -322,16 +322,16 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
                     if ((detector.getXPosition() >= 1) && (detector.getXPosition() <= 440)) {
                         rightPos = true;
                         foundelement = true;
-                        telemetry.addData("Step3b", "Use DogeCV locate - found it -> RIGHT");
+                        telemetry.addData("Step3d", "Use DogeCV locate - found it -> RIGHT");
 
                     } else if ((detector.getXPosition() > 440) && (detector.getXPosition() <= 426.5)) {
                         centerPos = true;
                         foundelement = true;
-                        telemetry.addData("Step3b", "Use DogeCV locate - found it -> CENTER");
+                        telemetry.addData("Step3d", "Use DogeCV locate - found it -> CENTER");
 
                     }
                 } else {
-                    telemetry.addData("Step3b", "Use DogeCV locate - couldn't find it, going with default");
+                    telemetry.addData("Step3d", "Use DogeCV locate - couldn't find it, going with default");
                     centerPos = true;
                 }
             }
@@ -412,7 +412,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
             telemetry.addData("Stopped motors", " Done");
             telemetry.update();
 
-            targetDrDistInch = -30f; // Set target distance - center element
+            targetDrDistInch = -26f; // Set target distance - center element
             telemetry.addData("Step4b", "Gold element at center position");
             telemetry.update();
         } else if (rightPos) {
@@ -479,20 +479,20 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
             telemetry.addData("Stopped motors", " Done");
             telemetry.update();
 
-            targetDrDistInch = -30f; // Set target distance - center element
+            targetDrDistInch = -26f; // Set target distance - center element
             telemetry.addData("Step4b", "Gold element at center position");
             telemetry.update();
         }
 
         eDrive(targetPower, targetDrDistInch, targetDrDistInch, 9);
 
-        sleep(100);     // pause for motors to stop move
+        //sleep(100);     // pause for motors to stop move
 
         //debug stuff
-        sleep(3000);
+        //sleep(3000);
 
         //lower the hook
-        eLift(1, (-4350 / ENCODER_CNT_PER_IN_DRIVE), 10);
+        //eLift(1, (-4350 / ENCODER_CNT_PER_IN_DRIVE), 10);
     }
 
     /*

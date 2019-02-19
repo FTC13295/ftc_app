@@ -43,9 +43,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 import static java.lang.Math.abs;
 
-@Autonomous(name="DM Rokus Crater Linear 2.1 - w", group="AutoLin")
+@Autonomous(name="DM Rokus Depot Linear v2.5.5 - w", group="AutoLin")
 //@Disabled
-public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
+public class DMRokusDepotLin2_55 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
@@ -348,7 +348,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
         telemetry.addData("Step4", "Select gold element");
         telemetry.update();
 
-        targetDrDistInch = -33f; //default to center
+        targetDrDistInch = -30f; //default to center
         targetPower = DEFAULT_MOVE_SPEED;  // Set power
 
         //turn to mineral depending on position
@@ -372,7 +372,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
 
             //eturn(turnPower,-28.0,true,5);
 
-            targetDrDistInch = -28f; // Set target distance - left element
+            targetDrDistInch = -35f; // Set target distance - left element
             telemetry.addData("Step4b", "Gold element at left position");
             telemetry.update();
             //eDrive(targetPower,-1.0,0,500);
@@ -407,12 +407,11 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
                     motorLeft.setPower(0);
                     motorRight.setPower(0);
                     motorRight.setDirection(DcMotor.Direction.REVERSE);
-
             }
             telemetry.addData("Stopped motors", " Done");
             telemetry.update();
 
-            targetDrDistInch = -30f; // Set target distance - center element
+            targetDrDistInch = -37f; // Set target distance - center element
             telemetry.addData("Step4b", "Gold element at center position");
             telemetry.update();
         } else if (rightPos) {
@@ -437,7 +436,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
 
             //eturn(turnPower,23,false,5);
 
-            targetDrDistInch = -28f; // Set target distance - right element
+            targetDrDistInch = -35f; // Set target distance - right element
             telemetry.addData("Step4b", "Gold element at right position");
             telemetry.update();
             //eDrive(targetPower,0,-1.0,500);
@@ -475,11 +474,12 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
                     motorLeft.setPower(0);
                     motorRight.setPower(0);
                     motorRight.setDirection(DcMotor.Direction.REVERSE);
+
             }
             telemetry.addData("Stopped motors", " Done");
             telemetry.update();
 
-            targetDrDistInch = -30f; // Set target distance - center element
+            targetDrDistInch = -37f; // Set target distance - center element
             telemetry.addData("Step4b", "Gold element at center position");
             telemetry.update();
         }
@@ -488,8 +488,105 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
 
         sleep(100);     // pause for motors to stop move
 
-        //debug stuff
-        sleep(3000);
+        // Face depot
+        telemetry.addData("Step5", "Face depot");
+        telemetry.update();
+
+        //sett default meaurements for center
+        targetPower = DEFAULT_MOVE_SPEED;  // Set power
+        targetDrDistInch = -17f; //default to center
+        targetDrLeft = targetDrDistInch;
+        targetDrRight = targetDrDistInch;
+
+        //turn to depot based on position
+        if (leftPos) {
+            tangle = 45;
+            motorRight.setDirection(DcMotor.Direction.FORWARD);
+            while (temp_angle > 45) {
+                tempratio = (float) (abs(temp_angle - tangle) / 180);
+                tempspeed = (float) turnPower * tempratio + 0.2f;
+                motorLeft.setPower(tempspeed);
+                motorRight.setPower(tempspeed);
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                temp_angle = angles.firstAngle;
+            }
+            telemetry.addData("exit while, angle: ", angles.firstAngle);
+            motorLeft.setPower(0);
+            motorRight.setPower(0);
+            motorRight.setDirection(DcMotor.Direction.REVERSE);
+            telemetry.addData("Stopped motors", " Done");
+            telemetry.update();
+
+            telemetry.addData("Step5b", "Gold element at left position");
+            telemetry.update();
+
+        } else if (centerPos) {
+            tangle = 5;
+            motorRight.setDirection(DcMotor.Direction.FORWARD);
+            while ((temp_angle < -170) || (temp_angle > 5)) {
+                tempratio = (float) (abs(temp_angle) / 180);
+                tempspeed = (float) turnPower * tempratio + 0.2f;
+                motorLeft.setPower(tempspeed);
+                motorRight.setPower(tempspeed);
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                temp_angle = angles.firstAngle;
+            }
+            telemetry.addData("exit while, angle: ", angles.firstAngle);
+            motorLeft.setPower(0);
+            motorRight.setPower(0);
+            motorRight.setDirection(DcMotor.Direction.REVERSE);
+            telemetry.addData("Stopped motors", " Done");
+            telemetry.update();
+
+            telemetry.addData("Step5b", "Gold element at center position");
+            telemetry.update();
+
+        } else if (rightPos) {
+            tangle = -45;
+            motorLeft.setDirection(DcMotor.Direction.REVERSE);
+            while (temp_angle < -45) { // || (temp_angle  < 0)
+                tempratio = (float) (abs(temp_angle - tangle) / 180);
+                tempspeed = (float) turnPower * tempratio + 0.2f;
+                motorLeft.setPower(tempspeed);
+                motorRight.setPower(tempspeed);
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                temp_angle = angles.firstAngle;
+            }
+            motorLeft.setDirection(DcMotor.Direction.FORWARD);
+
+            telemetry.addData("Step5b", "Gold element at right position");
+            telemetry.update();
+        } else {
+            telemetry.addData("Step5b", " - no element info... going with default");
+            telemetry.update();
+        }
+
+        //move forward if left or right
+        if (leftPos || rightPos) {
+            targetDrDistInch = 15f;
+            eDrive(targetPower, targetDrDistInch, targetDrDistInch, 3);
+            sleep(100);
+        }
+
+        // Deposit marker
+        telemetry.addData("Step7", "Deposit marker");    //
+        telemetry.update();
+
+        runtime.reset();
+        motorArm.setPower(1);
+        while (opModeIsActive() &&
+                (runtime.seconds() < 0.35)) {
+        }
+        runtime.reset();
+        //motorArm.setDirection(DcMotor.Direction.REVERSE);
+        //motorArm.setPower(1);
+        motorArm.setPower(-1);
+        while (opModeIsActive() &&
+                (runtime.seconds()  < 0.7)) {
+        }
+        //motorArm.setDirection(DcMotor.Direction.FORWARD);
+        motorArm.setPower(0);
+        //Done
 
         //lower the hook
         eLift(1, (-4350 / ENCODER_CNT_PER_IN_DRIVE), 10);
@@ -536,6 +633,13 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
                     (motorLeft.isBusy() && motorRight.isBusy())) {
+
+                // Display it for the driver.
+                //telemetry.addData("Target - ",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
+                //telemetry.addData("Current Position - ",  "Running at %7d :%7d",
+                //        motorLeft.getCurrentPosition(),
+                //        motorRight.getCurrentPosition());
+                //telemetry.update();
             }
 
             // Stop all motion;
@@ -545,6 +649,8 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
             // Turn off RUN_TO_POSITION
             motorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //  sleep(250);   // optional pause after each move
         }
     }
 
@@ -575,6 +681,12 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
                     (motorLift.isBusy())) {
+
+                // Display it for the driver.
+                //telemetry.addData("Target - ",  "Running to %7d", newTarget);
+                //telemetry.addData("Current Position - ",  "Running at %7d",
+                //        motorLift.getCurrentPosition());
+                //telemetry.update();
             }
 
             // Stop all motion;
@@ -582,6 +694,8 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
 
             // Turn off RUN_TO_POSITION
             motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //  sleep(250);   // optional pause after each move
         }
     }
 }

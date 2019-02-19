@@ -35,6 +35,7 @@ import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -43,9 +44,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 import static java.lang.Math.abs;
 
-@Autonomous(name="DM Rokus Crater Linear 2.1 - w", group="AutoLin")
+@Autonomous(name="DM Rokus Crater Linear 2.333 go to depo", group="AutoLin")
 //@Disabled
-public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
+public class DMRokusCraterLin2_3333 extends DMRokus_AbstractLin {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
@@ -141,7 +142,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
         telemetry.addData("Step1", "Land the robot");    //
         telemetry.update();
 
-        eLift(1.0, (4250 / ENCODER_CNT_PER_IN_DRIVE), 10);
+        eLift(1.0, (4270 / ENCODER_CNT_PER_IN_DRIVE), 10);
 
         //landing angle
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -179,7 +180,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
         sleep(100);
 
         // Get closer
-        eDrive(1, -6, -6, 5);
+        eDrive(1, -6.5, -6.5, 5);
 
         //get current angle
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -224,6 +225,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
         telemetry.update();
 
         detector.enable();
+        sleep(250);
 
         // reset the timeout time before starting
         runtime.reset();
@@ -238,7 +240,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
         rightPos = false;
         foundelement = false;
 
-        sleep(150);
+        sleep(100);
 
         // scan for minerals and turn to left if not found
         if (detector.isFound()) {
@@ -348,7 +350,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
         telemetry.addData("Step4", "Select gold element");
         telemetry.update();
 
-        targetDrDistInch = -33f; //default to center
+        targetDrDistInch = -18f; //default to center
         targetPower = DEFAULT_MOVE_SPEED;  // Set power
 
         //turn to mineral depending on position
@@ -357,7 +359,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
             motorRight.setDirection(DcMotor.Direction.FORWARD);
             while ((temp_angle > 135) || (temp_angle < 0)) {
                 tempratio = (float) (abs(temp_angle - tangle) / 180);
-                tempspeed = (float) turnPower * tempratio + 0.2f;
+                tempspeed = (float) turnPower * tempratio + 0.3f;
                 motorLeft.setPower(tempspeed);
                 motorRight.setPower(tempspeed);
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -372,7 +374,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
 
             //eturn(turnPower,-28.0,true,5);
 
-            targetDrDistInch = -28f; // Set target distance - left element
+            //targetDrDistInch = -28f; // Set target distance - left element
             telemetry.addData("Step4b", "Gold element at left position");
             telemetry.update();
             //eDrive(targetPower,-1.0,0,500);
@@ -382,7 +384,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
                 motorLeft.setDirection(DcMotor.Direction.REVERSE);
                 while (temp_angle < 175) {
                     tempratio = (float) (abs(temp_angle - tangle) / 180);
-                    tempspeed = (float) turnPower * tempratio + 0.2f;
+                    tempspeed = (float) turnPower * tempratio + 0.3f;
                     motorLeft.setPower(tempspeed);
                     motorRight.setPower(tempspeed);
                     angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -397,7 +399,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
                 motorRight.setDirection(DcMotor.Direction.FORWARD);
                 while ((temp_angle > 175) || (temp_angle < 0)) {
                     tempratio = (float) (abs(abs(temp_angle) - tangle) / 180);
-                    tempspeed = (float) turnPower * tempratio + 0.2f;
+                    tempspeed = (float) turnPower * tempratio + 0.3f;
                     motorLeft.setPower(tempspeed);
                     motorRight.setPower(tempspeed);
                     angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -412,7 +414,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
             telemetry.addData("Stopped motors", " Done");
             telemetry.update();
 
-            targetDrDistInch = -30f; // Set target distance - center element
+            //targetDrDistInch = -26f; // Set target distance - center element
             telemetry.addData("Step4b", "Gold element at center position");
             telemetry.update();
         } else if (rightPos) {
@@ -420,7 +422,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
             motorLeft.setDirection(DcMotor.Direction.REVERSE);
             while ((temp_angle < -150) || (temp_angle > 0)) {
                 tempratio = (float) (abs(temp_angle - tangle) / 180);
-                tempspeed = (float) turnPower * tempratio + 0.2f;
+                tempspeed = (float) turnPower * tempratio + 0.3f;
                 motorLeft.setPower(tempspeed);
                 motorRight.setPower(tempspeed);
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -437,7 +439,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
 
             //eturn(turnPower,23,false,5);
 
-            targetDrDistInch = -28f; // Set target distance - right element
+            //targetDrDistInch = -28f; // Set target distance - right element
             telemetry.addData("Step4b", "Gold element at right position");
             telemetry.update();
             //eDrive(targetPower,0,-1.0,500);
@@ -450,7 +452,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
                 motorLeft.setDirection(DcMotor.Direction.REVERSE);
                 while (temp_angle < 175) {
                     tempratio = (float) (abs(temp_angle - tangle) / 180);
-                    tempspeed = (float) turnPower * tempratio + 0.2f;
+                    tempspeed = (float) turnPower * tempratio + 0.3f;
                     motorLeft.setPower(tempspeed);
                     motorRight.setPower(tempspeed);
                     angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -465,7 +467,7 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
                 motorRight.setDirection(DcMotor.Direction.FORWARD);
                 while ((temp_angle > 175) || (temp_angle < 0)) {
                     tempratio = (float) (abs(abs(temp_angle) - tangle) / 180);
-                    tempspeed = (float) turnPower * tempratio + 0.2f;
+                    tempspeed = (float) turnPower * tempratio + 0.3f;
                     motorLeft.setPower(tempspeed);
                     motorRight.setPower(tempspeed);
                     angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -479,20 +481,131 @@ public class DMRokusCraterLin2_1 extends DMRokus_AbstractLin {
             telemetry.addData("Stopped motors", " Done");
             telemetry.update();
 
-            targetDrDistInch = -30f; // Set target distance - center element
+            //targetDrDistInch = -26f; // Set target distance - center element
             telemetry.addData("Step4b", "Gold element at center position");
             telemetry.update();
         }
 
         eDrive(targetPower, targetDrDistInch, targetDrDistInch, 9);
 
-        sleep(100);     // pause for motors to stop move
+        //move toward rover
+        //determine turn direction
+        if (temp_angle > 0) {
+            motorRight.setDirection(DcMotor.Direction.REVERSE);
+            motorLeft.setDirection(DcMotor.Direction.REVERSE);
+            turncw = false;
+        } else {
+            motorRight.setDirection(DcMotor.Direction.FORWARD);
+            motorLeft.setDirection(DcMotor.Direction.FORWARD);
+            turncw = true;
+        }
+
+        //turn to 180
+        telemetry.addData("Rotate to 180 - angle: ", angles.firstAngle);
+        while (abs(temp_angle) < 178) {
+            motorLeft.setPower(turnPower);
+            motorRight.setPower(turnPower);
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            temp_angle = angles.firstAngle;
+        }
+        telemetry.addData("exit (ST) while, angle: ", angles.firstAngle);
+
+        //reset motors
+        motorLeft.setPower(0);
+        motorRight.setPower(0);
+        if (turncw) {
+            motorRight.setDirection(DcMotor.Direction.REVERSE);
+        } else {
+            motorLeft.setDirection(DcMotor.Direction.FORWARD);
+        }
+        telemetry.addData("Stopped motors", " Done");
+        telemetry.update();
+
+        sleep(100);
+
+        targetDrDistInch = 12f;
+        eDrive(targetPower,targetDrDistInch,targetDrDistInch,5);
+
+        //turn to +90
+
+        tangle = 90;
+        motorRight.setDirection(DcMotor.Direction.FORWARD);
+        while ((temp_angle > 90) || (temp_angle < 0)) {
+            tempratio = (float) (abs(temp_angle - tangle) / 180);
+            tempspeed = (float) turnPower * tempratio + 0.3f;
+            motorLeft.setPower(tempspeed);
+            motorRight.setPower(tempspeed);
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            temp_angle = angles.firstAngle;
+        }
+        telemetry.addData("exit while, angle: ", angles.firstAngle);
+        motorLeft.setPower(0);
+        motorRight.setPower(0);
+        motorRight.setDirection(DcMotor.Direction.REVERSE);
+        telemetry.addData("Stopped motors", " Done");
+        telemetry.update();
+
+        sleep(100);
+
+        targetDrDistInch = 27f;
+        if (centerPos) {
+            targetDrDistInch +=15;
+        } else if (leftPos) {
+            targetDrDistInch +=30;
+        }
+
+        eDrive(targetPower,targetDrDistInch,targetDrDistInch,5);
+
+        //head to depot
+        tangle = 135;
+        motorLeft.setDirection(DcMotor.Direction.REVERSE);
+        while (temp_angle < 135) {
+            tempratio = (float) (abs(temp_angle - tangle) / 180);
+            tempspeed = (float) turnPower * tempratio + 0.3f;
+            motorLeft.setPower(tempspeed);
+            motorRight.setPower(tempspeed);
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            temp_angle = angles.firstAngle;
+        }
+        telemetry.addData("exit while, angle: ", angles.firstAngle);
+        motorLeft.setPower(0);
+        motorRight.setPower(0);
+        motorLeft.setDirection(DcMotor.Direction.FORWARD);
+        telemetry.addData("Stopped motors", " Done");
+        telemetry.update();
+
+        sleep(100);
+
+        targetDrDistInch = 44f;
+
+        eDrive(targetPower,targetDrDistInch,targetDrDistInch,7);
+
+        // Deposit marker
+        telemetry.addData("Step7", "Deposit marker");    //
+        telemetry.update();
+
+        runtime.reset();
+        motorArm.setPower(1);
+        while (opModeIsActive() &&
+                (runtime.seconds() < 0.35)) {
+        }
+        runtime.reset();
+        //motorArm.setDirection(DcMotor.Direction.REVERSE);
+        //motorArm.setPower(1);
+        motorArm.setPower(-1);
+        while (opModeIsActive() &&
+                (runtime.seconds()  < 0.7)) {
+        }
+        //motorArm.setDirection(DcMotor.Direction.FORWARD);
+        motorArm.setPower(0);
+        //Done
+        //sleep(100);     // pause for motors to stop move
 
         //debug stuff
-        sleep(3000);
+        //sleep(3000);
 
         //lower the hook
-        eLift(1, (-4350 / ENCODER_CNT_PER_IN_DRIVE), 10);
+        //eLift(1, (-4350 / ENCODER_CNT_PER_IN_DRIVE), 10);
     }
 
     /*

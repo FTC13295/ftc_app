@@ -574,16 +574,19 @@ public class DMRokusDepotLin2_54 extends DMRokus_AbstractLin {
         telemetry.update();
 
         runtime.reset();
-        motorArm.setPower(1);
         while (opModeIsActive() &&
-                (runtime.seconds() < 0.45)) {
+                (runtime.seconds() < 0.35)) {
+            motorArm.setPower(1);
         }
-        motorArm.setPower(-1);
         runtime.reset();
         while (opModeIsActive() &&
                 (runtime.seconds() < 0.55)) {
+            motorArm.setDirection(DcMotor.Direction.REVERSE);
+            motorArm.setPower(1);
+            //motorArm.setPower(-1);
         }
-
+        motorArm.setDirection(DcMotor.Direction.FORWARD);
+        motorArm.setPower(0);
         //Done
 
         //lower the hook
