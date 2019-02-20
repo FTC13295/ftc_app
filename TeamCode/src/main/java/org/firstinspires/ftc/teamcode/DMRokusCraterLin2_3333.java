@@ -158,7 +158,9 @@ public class DMRokusCraterLin2_3333 extends DMRokus_AbstractLin {
         telemetry.update();
 
         temp_angle = angles.firstAngle;
-        turnPower = 0.7f;
+        turnPower = 1.0f;
+        targetPower=1.0f;
+
         tangle = 178;
         motorRight.setDirection(DcMotor.Direction.FORWARD);
         while (temp_angle > -178) { //reduced from -175 to 170 due to overturning
@@ -225,12 +227,12 @@ public class DMRokusCraterLin2_3333 extends DMRokus_AbstractLin {
         telemetry.update();
 
         detector.enable();
-        sleep(250);
+        //sleep(250);
 
         // reset the timeout time before starting
         runtime.reset();
         while (opModeIsActive() &&
-                (runtime.seconds() < 1.0) && !detector.isFound()) {
+                (runtime.seconds() < 0.5) && !detector.isFound()) {
             Thread.yield();
         }
 
@@ -240,7 +242,7 @@ public class DMRokusCraterLin2_3333 extends DMRokus_AbstractLin {
         rightPos = false;
         foundelement = false;
 
-        sleep(100);
+        //sleep(100);
 
         // scan for minerals and turn to left if not found
         if (detector.isFound()) {
